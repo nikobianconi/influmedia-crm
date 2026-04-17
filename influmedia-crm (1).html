@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM — Influmedia</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#116776;--teal-light:#1a8fa3;--coral:#FF5F5F;--coral-dark:#e04848;--cream:#F4F2ED;--dark:#0d1f24;--dark2:#122830;--dark3:#1a3540;--mid:#1e3d48;--muted:#6a9aaa;--border:rgba(255,255,255,0.07);--green:#2ecc71;--orange:#f39c12;--red:#e74c3c;--blue:#3498db;--purple:#9b59b6;--grey:#7f8c8d}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--dark);color:var(--cream);min-height:100vh;font-size:14px}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 50% at 90% 0%,rgba(17,103,118,.2) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 0% 100%,rgba(255,95,95,.06) 0%,transparent 55%);pointer-events:none}
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:220px;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-badge{width:36px;height:36px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:white;flex-shrink:0}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px}
+.logo-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.sidebar-nav{padding:16px 10px;flex:1}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:6px;margin-top:16px}
+.nav-label:first-child{margin-top:0}
+.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;transition:all .2s;text-align:left}
+.nav-btn:hover{background:rgba(255,255,255,.05);color:var(--cream)}
+.nav-btn.active{background:rgba(17,103,118,.2);color:var(--teal-light);border-left:2px solid var(--teal);padding-left:8px}
+.nav-btn .icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+.sidebar-footer strong{color:var(--teal-light)}
+.main{margin-left:220px;flex:1;padding:28px 28px 60px}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;letter-spacing:.5px}
+.page-title span{color:var(--teal-light)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:15px 17px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;right:0;width:55px;height:55px;border-radius:0 14px 0 55px;background:rgba(255,255,255,.02)}
+.kpi-icon{font-size:19px;margin-bottom:5px}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;line-height:1}
+.kpi-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.kpi-sub{font-size:11px;margin-top:3px}
+.kpi.k-teal .kpi-val{color:var(--teal-light)}
+.kpi.k-green .kpi-val{color:var(--green)}
+.kpi.k-coral .kpi-val{color:var(--coral)}
+.kpi.k-orange .kpi-val{color:var(--orange)}
+.kpi.k-purple .kpi-val{color:var(--purple)}
+.kpi.k-blue .kpi-val{color:var(--blue)}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;flex:1;min-width:180px}
+.search-box input{background:none;border:none;color:var(--cream);font-family:'Barlow',sans-serif;font-size:13px;width:100%;outline:none}
+.search-box input::placeholder{color:var(--muted)}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s}
+.pill:hover,.pill.active{background:rgba(17,103,118,.2);border-color:var(--teal);color:var(--teal-light)}
+.pill.active.f-green{background:rgba(46,204,113,.15);border-color:var(--green);color:var(--green)}
+.pill.active.f-red{background:rgba(231,76,60,.15);border-color:var(--red);color:var(--red)}
+.pill.active.f-orange{background:rgba(243,156,18,.15);border-color:var(--orange);color:var(--orange)}
+.pill.active.f-grey{background:rgba(127,140,141,.15);border-color:var(--grey);color:var(--grey)}
+.pill.active.f-blue{background:rgba(52,152,219,.15);border-color:var(--blue);color:var(--blue)}
+.pill.active.f-purple{background:rgba(155,89,182,.15);border-color:var(--purple);color:var(--purple)}
+.btn-primary{background:var(--coral);color:white;border:none;border-radius:8px;padding:9px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s,transform .15s;white-space:nowrap}
+.btn-primary:hover{background:var(--coral-dark);transform:translateY(-1px)}
+.sort-sel{background:var(--dark2);border:1px solid var(--border);border-radius:8px;color:var(--cream);font-size:12px;padding:7px 10px;outline:none;cursor:pointer;font-family:'Barlow',sans-serif}
+.table-wrap{background:var(--dark2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.table-wrap table{width:100%;border-collapse:collapse}
+.table-wrap thead tr{border-bottom:1px solid var(--border)}
+.table-wrap th{padding:10px 11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;background:rgba(0,0,0,.1);white-space:nowrap}
+.th-current{background:rgba(17,103,118,.25)!important;color:var(--teal-light)!important;position:relative}
+.th-current::after{content:'▼';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--teal-light)}
+.table-wrap td{padding:10px 11px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.table-wrap tr:last-child td{border-bottom:none}
+.table-wrap tbody tr{transition:background .15s}
+.table-wrap tbody tr:hover{background:rgba(255,255,255,.025)}
+.td-current{background:rgba(17,103,118,.07)}
+.late-row td:first-child{border-left:3px solid var(--red)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;white-space:nowrap}
+.badge-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.b-green{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.25)}.b-green .badge-dot{background:var(--green)}
+.b-orange{background:rgba(243,156,18,.15);color:var(--orange);border:1px solid rgba(243,156,18,.25)}.b-orange .badge-dot{background:var(--orange)}
+.b-red{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.25)}.b-red .badge-dot{background:var(--red)}
+.b-blue{background:rgba(52,152,219,.15);color:var(--blue);border:1px solid rgba(52,152,219,.25)}.b-blue .badge-dot{background:var(--blue)}
+.b-purple{background:rgba(155,89,182,.15);color:var(--purple);border:1px solid rgba(155,89,182,.25)}.b-purple .badge-dot{background:var(--purple)}
+.b-grey{background:rgba(127,140,141,.15);color:var(--grey);border:1px solid rgba(127,140,141,.25)}.b-grey .badge-dot{background:var(--grey)}
+.b-teal{background:rgba(17,103,118,.2);color:var(--teal-light);border:1px solid rgba(17,103,118,.3)}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;margin:1px;font-family:'Barlow Condensed',sans-serif}
+.tag-ads{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.2)}
+.tag-meta{background:rgba(52,73,219,.2);color:#7f8ff4;border:1px solid rgba(52,73,219,.2)}
+.tag-social{background:rgba(17,103,118,.25);color:var(--teal-light);border:1px solid rgba(17,103,118,.3)}
+.tag-com{background:rgba(46,204,113,.15);color:#58d68d;border:1px solid rgba(46,204,113,.2)}
+.tag-crea{background:rgba(243,156,18,.15);color:#f8c471;border:1px solid rgba(243,156,18,.2)}
+.month-check{width:18px;height:18px;border-radius:4px;border:1.5px solid rgba(255,255,255,.15);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-size:10px}
+.month-check.checked{background:var(--teal);border-color:var(--teal)}
+.month-check.checked::after{content:'✓';color:white;font-weight:700}
+.month-check.late-month{border-color:rgba(231,76,60,.5)!important;background:rgba(231,76,60,.07)!important}
+.act-btn{width:27px;height:27px;border-radius:6px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:12px;transition:background .2s;background:transparent}
+.act-edit{color:var(--teal-light)}.act-edit:hover{background:rgba(17,103,118,.25)}
+.act-del{color:var(--coral)}.act-del:hover{background:rgba(255,95,95,.15)}
+.act-conv{color:var(--green)}.act-conv:hover{background:rgba(46,204,113,.15)}
+.act-note{color:var(--muted)}.act-note:hover{background:rgba(255,255,255,.08)}
+.actions-cell{display:flex;gap:3px;align-items:center}
+.client-name{font-weight:600;color:var(--cream)}
+.ca-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--green)}
+.unpaid-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-left:5px;box-shadow:0 0 5px rgba(255,95,95,.6);animation:pulse 1.5s infinite;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.inline-note-row td{padding:0!important;background:rgba(17,103,118,.05)!important}
+.inline-note-form{display:flex;gap:8px;padding:8px 12px;align-items:center}
+.inline-note-form input{flex:1;background:var(--dark);border:1px solid rgba(17,103,118,.3);border-radius:6px;color:var(--cream);font-size:12px;padding:6px 10px;outline:none;font-family:'Barlow',sans-serif}
+.alert-banner{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;line-height:1.5}
+.alert-banner.hidden{display:none}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+.dash-card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:18px}
+.dash-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
+.ca-bar{margin-bottom:8px}
+.ca-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.ca-bar-label .nm{color:var(--cream);font-weight:500}
+.ca-bar-label .vl{color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.ca-bar-track{height:5px;background:rgba(255,255,255,.06);border-radius:3px}
+.ca-bar-fill{height:5px;background:var(--teal);border-radius:3px;transition:width .6s ease}
+.funnel-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.funnel-item:last-child{border-bottom:none}
+.funnel-label{display:flex;align-items:center;gap:8px;font-size:13px}
+.funnel-dot{width:8px;height:8px;border-radius:50%}
+.funnel-count{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px}
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:56px}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s ease;position:relative;cursor:default}
+.mini-bar:hover .mini-tip{display:block}
+.mini-tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;white-space:nowrap;z-index:10}
+.mini-labels{display:flex;gap:4px;margin-top:4px}
+.mini-label{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(13,31,36,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--dark2);border:1px solid rgba(17,103,118,.3);border-radius:18px;width:100%;max-width:520px;padding:26px;animation:popIn .25s ease;max-height:90vh;overflow-y:auto}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;margin-bottom:18px}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:5px}
+.fg input,.fg select{width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:13px;padding:9px 13px;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus{border-color:var(--teal)}
+.fg select option{background:var(--dark)}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.btn-cancel{background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:8px;padding:9px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:background .2s}
+.btn-cancel:hover{background:rgba(255,255,255,.12)}
+.btn-save{background:var(--teal);color:white;border:none;border-radius:8px;padding:9px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s}
+.btn-save:hover{background:var(--teal-light)}
+.months-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:4px}
+.month-toggle{padding:5px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:var(--dark);color:var(--muted);text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:all .15s;user-select:none}
+.month-toggle.on{background:rgba(17,103,118,.3);border-color:var(--teal);color:var(--teal-light)}
+.act-move{color:var(--muted);cursor:grab;font-size:14px}.act-move:hover{color:var(--cream);background:rgba(255,255,255,.08)}
+.act-move:active{cursor:grabbing}
+.move-btns{display:flex;flex-direction:column;gap:1px}
+.move-btn{width:22px;height:13px;border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:3px;transition:all .15s}
+.move-btn:hover{background:rgba(255,255,255,.1);color:var(--cream)}
+.toast{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--mid);border:1px solid rgba(17,103,118,.4);border-radius:10px;padding:11px 18px;font-size:13px;font-weight:500;transform:translateY(60px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.empty{text-align:center;padding:48px;color:var(--muted);font-size:13px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+@media(max-width:768px){.sidebar{width:56px}.sidebar .logo-text,.sidebar .logo-sub,.sidebar .nav-btn span,.sidebar-footer{display:none}.main{margin-left:56px;padding:16px}.dash-grid{grid-template-columns:1fr}.table-wrap{overflow-x:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">IN</div>
+    <div><div class="logo-text">Influmedia</div><div class="logo-sub">CRM v2.0</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Navigation</div>
+    <button class="nav-btn active" onclick="showTab('dashboard',this)"><span class="icon">📊</span><span>Dashboard</span></button>
+    <button class="nav-btn" onclick="showTab('clients',this)"><span class="icon">👥</span><span>Clients</span></button>
+    <button class="nav-btn" onclick="showTab('prospection',this)"><span class="icon">🎯</span><span>Prospection</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <strong>Nicolas B.</strong><br>CEO & Founder
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--teal-light);line-height:1.5;font-style:italic">
+      "Chaque client satisfait est une vitrine pour les dix suivants."
+    </div>
+  </div>
+</aside>
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="tab-content active">
+  <div class="page-header">
+    <div class="page-title">Dashboard <span>Influmedia</span></div>
+    <div style="font-size:12px;color:var(--muted)" id="dashDate"></div>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+  <div class="dash-grid">
+    <div class="dash-card"><h3>🏆 Top clients CA</h3><div id="topClients"></div></div>
+    <div class="dash-card"><h3>🎯 Funnel prospection</h3><div id="funnelChart"></div></div>
+    <div class="dash-card"><h3 id="payTitle">📅 Suivi paiements</h3><div id="paymentStatus"></div></div>
+    <div class="dash-card"><h3>📈 CA encaissé — évolution</h3><div id="caEvo"></div></div>
+  </div>
+</div>
+
+<!-- CLIENTS -->
+<div id="tab-clients" class="tab-content">
+  <div class="page-header">
+    <div class="page-title">👥 <span>Clients</span></div>
+    <button class="btn-primary" onclick="openClientModal()">＋ Nouveau client</button>
+  </div>
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted)">🔍</span>
+      <input type="text" id="clientSearch" placeholder="Rechercher un client..." oninput="renderClients()">
+    </div>
+    <div class="filter-pills" id="clientFilters"></div>
+    <select class="sort-sel" id="sortSel" onchange="renderClients()">
+      <option value="manual">Ordre manuel</option>
+      <option value="name">Trier A→Z</option>
+      <option value="ca-desc">CA ↓</option>
+      <option value="ca-asc">CA ↑</option>
+      <option value="status">Par statut</option>
+      <option value="prel">Par prélèvement</option>
+    </select>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr id="clientsHead"></tr></thead><tbody id="clientsBody"></tbody></table>
+  </div>
+</div>
+
+<!-- PROSPECTION -->
+<div id="tab-prospection" class="tab-content">
+  <div class="page-header">
+    <div class="page-title">🎯 <span>Prospection</span></div>
+    <button class="btn-primary" onclick="openProspModal()">＋ Nouveau prospect</button>
+  </div>
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted)">🔍</span>
+      <input type="text" id="prospSearch" placeholder="Rechercher..." oninput="renderProspects()">
+    </div>
+    <div class="filter-pills" id="prospFilters"></div>
+    <select class="sort-sel" id="prospSortSel" onchange="renderProspects()">
+      <option value="manual">Ordre manuel</option>
+      <option value="name">A→Z</option>
+      <option value="status">Par statut</option>
+    </select>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr id="prospHead"></tr></thead><tbody id="prospectsBody"></tbody></table>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- CLIENT MODAL -->
+<div class="overlay" id="clientOverlay" onclick="closeBg(event,'clientOverlay')">
+  <div class="modal">
+    <h2 id="clientModalTitle">👥 Nouveau client</h2>
+    <div class="fg-row">
+      <div class="fg"><label>Nom *</label><input id="c_name" placeholder="Ex: Ouiglass France"></div>
+      <div class="fg"><label>Statut *</label><select id="c_status"><option>Prestations en cours</option><option>En difficulté CA</option><option>Fin de contrat</option><option>A venir</option></select></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>CA mensuel (€)</label><input id="c_ca" type="number" placeholder="Ex: 1240"></div>
+      <div class="fg"><label>Prélèvement</label><input id="c_prel" placeholder="Ex: 1 du mois"></div>
+    </div>
+    <div class="fg"><label>Accompagnement</label>
+      <select id="c_accomp" multiple style="height:85px"><option>Com complète</option><option>Social média</option><option>Google Ads</option><option>Meta Ads</option><option>Création contenu</option><option>Autre</option></select>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">Cmd/Ctrl+clic pour plusieurs</div>
+    </div>
+    <div class="fg"><label>Mois payés</label><div class="months-grid" id="clientMonthsGrid"></div></div>
+    <div class="fg"><label>Notes</label><input id="c_notes" placeholder="Informations complémentaires"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('clientOverlay')">Annuler</button>
+      <button class="btn-save" onclick="saveClient()"><span id="clientSaveLabel">Enregistrer</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- PROSPECT MODAL -->
+<div class="overlay" id="prospOverlay" onclick="closeBg(event,'prospOverlay')">
+  <div class="modal">
+    <h2 id="prospModalTitle">🎯 Nouveau prospect</h2>
+    <div class="fg-row">
+      <div class="fg"><label>Prospect *</label><input id="p_name" placeholder="Ex: OuiGlass Suisse"></div>
+      <div class="fg"><label>Statut *</label><select id="p_status"><option>A prospecter</option><option>R1 à venir</option><option>R2 à venir</option><option>Devis signé</option><option>Accord verbal</option><option>blocage</option></select></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Mois d'ouverture</label><select id="p_date"><option value="">—</option><option>JANVIER</option><option>FÉVRIER</option><option>MARS</option><option>AVRIL</option><option>MAI</option><option>JUIN</option><option>JUILLET</option><option>AOÛT</option><option>SEPTEMBRE</option><option>OCTOBRE</option><option>NOVEMBRE</option><option>DÉCEMBRE</option></select></div>
+      <div class="fg"><label>CA estimé (€/mois)</label><input id="p_ca" type="number" placeholder="Optionnel"></div>
+    </div>
+    <div class="fg"><label>Secteur</label><input id="p_secteur" placeholder="Ex: PPF rénovation"></div>
+    <div class="fg"><label>Solutions retenues</label>
+      <select id="p_solutions" multiple style="height:85px"><option>Google Ads</option><option>Meta Ads</option><option>Social média</option><option>Com complète</option><option>Création contenu</option></select>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">Cmd/Ctrl+clic pour plusieurs</div>
+    </div>
+    <div class="fg"><label>Notes</label><input id="p_notes" placeholder="Blocages, suite à donner..."></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('prospOverlay')">Annuler</button>
+      <button class="btn-save" onclick="saveProspect()"><span id="prospSaveLabel">Enregistrer</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
+const MONTHS_FULL=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const NOW=new Date();
+const CM=NOW.getMonth();
+const CUR_M=MONTHS[CM];
+const CUR_MF=MONTHS_FULL[CM];
+const PREV_M=MONTHS[CM>0?CM-1:11];
+const CUR_Y=NOW.getFullYear();
+
+let clients=JSON.parse(localStorage.getItem('influ_clients2')||'null')||[
+  {id:1,name:'Ouiglass France',status:'Prestations en cours',ca:3500,prel:'1 du mois',accomp:['Com complète'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:2,name:'Ouiglass Nîmes',status:'Prestations en cours',ca:490,prel:'1 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:3,name:'Ouiglass Dieppe',status:'Prestations en cours',ca:490,prel:'1 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:4,name:'Ouiglass Montpellier',status:'Prestations en cours',ca:1240,prel:'1 du mois',accomp:['Google Ads','Social média'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:5,name:'Ouiglass Rouen',status:'Prestations en cours',ca:490,prel:'1 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:6,name:'Maty',status:'Prestations en cours',ca:400,prel:'1 du mois',accomp:['Social média'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:7,name:'Boucherie Dynamique',status:'Prestations en cours',ca:1100,prel:'1 du mois',accomp:['Social média'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:8,name:'Ouiglass Pacy sur Eure',status:'Prestations en cours',ca:1240,prel:'10 du mois',accomp:['Social média','Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:9,name:"L'auto Pare-brise",status:'Fin de contrat',ca:0,prel:'10 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:10,name:'Global cars - AZ PARE BRIZ',status:'Prestations en cours',ca:175,prel:'10 du mois',accomp:['Meta Ads'],months:{Jan:0,Fév:0,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:11,name:'Groupe ABAP x10',status:'Prestations en cours',ca:5750,prel:'18 du mois',accomp:['Com complète'],months:{Jan:1,Fév:1,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:12,name:'Ouiglass La Réunion',status:'Prestations en cours',ca:1240,prel:'18 du mois',accomp:['Google Ads','Social média'],months:{Jan:0,Fév:1,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:13,name:'Ouiglass Cherbourg',status:'En difficulté CA',ca:490,prel:'18 du mois',accomp:[],months:{Jan:0,Fév:0,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:14,name:'Drive pare brise',status:'Prestations en cours',ca:500,prel:'18 du mois',accomp:['Meta Ads'],months:{Jan:0,Fév:0,Mar:1,Avr:1,Mai:1,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:15,name:'Ouiglass Bordeaux x3',status:'En difficulté CA',ca:175,prel:'10 du mois',accomp:['Google Ads','Création contenu'],months:{Jan:1,Fév:1,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:16,name:'Ouiglass Saint-Lys',status:'En difficulté CA',ca:490,prel:'20 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:17,name:"Ouiglass Saint Jean d'illac",status:'Prestations en cours',ca:490,prel:'20 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:18,name:'Ouiglass Guyanne',status:'Prestations en cours',ca:490,prel:'20 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:19,name:'Ouiglass le beausset/Toulon',status:'Prestations en cours',ca:1240,prel:'20 du mois',accomp:['Social média','Google Ads'],months:{Jan:0,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:20,name:'Le Labo',status:'Prestations en cours',ca:0,prel:'',accomp:['Création contenu'],months:{Jan:0,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:21,name:'Ouiglass Orléans sud / Oparebrise',status:'Fin de contrat',ca:0,prel:'1 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:1,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:22,name:'Ouiglass Valence',status:'Fin de contrat',ca:0,prel:'10 du mois',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:23,name:'Ouiglass Chambery',status:'Fin de contrat',ca:0,prel:'',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:24,name:'Ouiglass Audenge',status:'Fin de contrat',ca:0,prel:'',accomp:['Google Ads'],months:{Jan:1,Fév:1,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:25,name:'Ouiglass ABAP Castres',status:'Fin de contrat',ca:0,prel:'18 du mois',accomp:['Google Ads','Meta Ads'],months:{Jan:1,Fév:1,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:1},notes:''},
+  {id:26,name:'Lorenove Pacy-Evreux',status:'A venir',ca:500,prel:'',accomp:['Création contenu'],months:{Jan:0,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:27,name:'Glass4Lux',status:'A venir',ca:0,prel:'',accomp:['Google Ads'],months:{Jan:0,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+  {id:28,name:'Ouiglass Anglet',status:'A venir',ca:0,prel:'',accomp:[],months:{Jan:0,Fév:0,Mar:0,Avr:0,Mai:0,Juin:0,Juil:0,Aoû:0,Sep:0,Oct:0,Nov:0,Déc:0},notes:''},
+];
+
+let prospects=JSON.parse(localStorage.getItem('influ_prospects2')||'null')||[
+  {id:1,name:'Anglet (sonia)',status:'Accord verbal',date:'JUIN',secteur:'',solutions:['Créa + community'],ca:0,notes:''},
+  {id:2,name:'OuiGlass Suisse',status:'blocage',date:'JANVIER',secteur:'',solutions:['Google Ads','Meta Ads'],ca:0,notes:''},
+  {id:3,name:'Glass4lux',status:'Devis signé',date:'AVRIL',secteur:'',solutions:['Google Ads','Meta Ads'],ca:0,notes:''},
+  {id:4,name:'PPF (rénovation énergétique)',status:'R2 à venir',date:'',secteur:'PPF rénovation',solutions:['Com complète'],ca:0,notes:''},
+  {id:5,name:'OuiGlass Le Mans',status:'R1 à venir',date:'MARS',secteur:'',solutions:['Com complète','Google Ads','Meta Ads'],ca:0,notes:''},
+  {id:6,name:'OuiGlass Andrézieux-Bouthéon',status:'R1 à venir',date:'AVRIL',secteur:'',solutions:['Com complète','Google Ads','Meta Ads'],ca:0,notes:''},
+  {id:7,name:'Ouiglass cambronne',status:'blocage',date:'FEVRIER',secteur:'',solutions:['Google Ads'],ca:0,notes:''},
+  {id:8,name:'Savigny 77',status:'R1 à venir',date:'AVRIL',secteur:'',solutions:[],ca:0,notes:''},
+  {id:9,name:'OuiGlass Marseille 13ème',status:'blocage',date:'MARS',secteur:'',solutions:['Google Ads','Meta Ads'],ca:0,notes:''},
+  {id:10,name:'aubenas (Romane)',status:'A prospecter',date:'',secteur:'',solutions:[],ca:0,notes:''},
+  {id:11,name:'Ouiglass Mayotte',status:'A prospecter',date:'',secteur:'',solutions:[],ca:0,notes:'Pas de rep au mail'},
+];
+
+let clientId=Math.max(...clients.map(c=>c.id))+1;
+let prospId=Math.max(...prospects.map(p=>p.id))+1;
+let editClientId=null,editProspId=null,clientFilter='all',prospFilter='all',openNoteId=null;
+
+function saveData(){localStorage.setItem('influ_clients2',JSON.stringify(clients));localStorage.setItem('influ_prospects2',JSON.stringify(prospects));}
+
+const cStatusMap={'Prestations en cours':{cls:'b-green'},'En difficulté CA':{cls:'b-red'},'Fin de contrat':{cls:'b-orange'},'A venir':{cls:'b-grey'}};
+const pStatusMap={'A prospecter':{cls:'b-grey'},'R1 à venir':{cls:'b-blue'},'R2 à venir':{cls:'b-purple'},'Devis signé':{cls:'b-teal'},'Accord verbal':{cls:'b-green'},'blocage':{cls:'b-red'}};
+const accompMap={'Com complète':'tag-com','Social média':'tag-social','Google Ads':'tag-ads','Meta Ads':'tag-meta','Création contenu':'tag-crea','Créa + community':'tag-crea'};
+
+function bdg(map,val){const c=map[val]||{cls:'b-grey'};return `<span class="badge ${c.cls}"><span class="badge-dot"></span>${val}</span>`;}
+function tgs(arr){if(!arr||!arr.length) return '<span style="color:var(--muted);font-size:12px">—</span>';return arr.map(a=>`<span class="tag ${accompMap[a]||'b-grey'}">${a}</span>`).join('');}
+function isActive(c){return c.status==='Prestations en cours'||c.status==='En difficulté CA';}
+function isLate(c){return isActive(c)&&!c.months[CUR_M]&&!c.months[PREV_M];}
+
+function showTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='dashboard') renderDashboard();
+  if(name==='clients') renderClients();
+  if(name==='prospection') renderProspects();
+}
+
+function renderClients(){
+  const search=(document.getElementById('clientSearch')?.value||'').toLowerCase();
+  const sort=document.getElementById('sortSel')?.value||'name';
+  const statuses=['all','Prestations en cours','En difficulté CA','Fin de contrat','A venir'];
+  const fCls={'all':'','Prestations en cours':'f-green','En difficulté CA':'f-red','Fin de contrat':'f-orange','A venir':'f-grey'};
+
+  document.getElementById('clientFilters').innerHTML=statuses.map(s=>{
+    const act=clientFilter===s?'active '+(fCls[s]||''):'';
+    const cnt=s==='all'?clients.length:clients.filter(c=>c.status===s).length;
+    return `<button class="pill ${act}" onclick="setClientFilter('${s}')">${s==='all'?'Tous':s} (${cnt})</button>`;
+  }).join('');
+
+  let filtered=clients;
+  if(clientFilter!=='all') filtered=filtered.filter(c=>c.status===clientFilter);
+  if(search) filtered=filtered.filter(c=>c.name.toLowerCase().includes(search)||(c.notes||'').toLowerCase().includes(search));
+  filtered=[...filtered].sort((a,b)=>{
+    if(sort==='ca-desc') return (b.ca||0)-(a.ca||0);
+    if(sort==='ca-asc') return (a.ca||0)-(b.ca||0);
+    if(sort==='status') return a.status.localeCompare(b.status);
+    if(sort==='prel'){
+      const num=s=>(parseInt((s||'').match(/\d+/)?.[0])||99);
+      return num(a.prel)-num(b.prel);
+    }
+    if(sort==='manual') return 0; // keep array order
+    return a.name.localeCompare(b.name,'fr');
+  });
+
+  document.getElementById('clientsHead').innerHTML=`<th style="width:36px"></th><th>Statut</th><th>Client</th><th>CA</th><th>Accompagnement</th><th>Prélèvement</th>${MONTHS.map(m=>`<th class="${m===CUR_M?'th-current':''}" style="padding:10px 5px">${m}</th>`).join('')}<th></th>`;
+
+  const tbody=document.getElementById('clientsBody');
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="20" class="empty">Aucun client trouvé</td></tr>`;return;}
+
+  const isManual = sort==='manual';
+
+  tbody.innerHTML=filtered.map((c,idx)=>{
+    const late=isLate(c);
+    const unpaidNow=isActive(c)&&!c.months[CUR_M];
+    const mCells=MONTHS.map(m=>{
+      const pastUnpaid=isActive(c)&&!c.months[m]&&MONTHS.indexOf(m)<CM;
+      return `<td style="text-align:center;padding:8px 3px" class="${m===CUR_M?'td-current':''}"><div class="month-check ${c.months[m]?'checked':''} ${pastUnpaid?'late-month':''}" onclick="toggleMonth(${c.id},'${m}')"></div></td>`;
+    }).join('');
+    const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="20"><div class="inline-note-form"><input id="ni_${c.id}" value="${(c.notes||'').replace(/"/g,'&quot;')}" placeholder="Note rapide..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderClients()">✕</button></div></td></tr>`:'';
+    const moveCell = isManual ? `<td style="padding:8px 6px"><div class="move-btns"><button class="move-btn" onclick="moveClient(${c.id},-1)" title="Monter" ${idx===0?'disabled style="opacity:.3"':''}>▲</button><button class="move-btn" onclick="moveClient(${c.id},1)" title="Descendre" ${idx===filtered.length-1?'disabled style="opacity:.3"':''}>▼</button></div></td>` : `<td></td>`;
+    return `<tr class="${late?'late-row':''}">${moveCell}<td>${bdg(cStatusMap,c.status)}</td><td><span class="client-name">${c.name}</span>${unpaidNow?`<span class="unpaid-dot" title="${CUR_MF} non payé"></span>`:''} ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${c.notes}</div>`:''}</td><td>${c.ca?`<span class="ca-val">${c.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td><td>${tgs(c.accomp)}</td><td style="font-size:12px;color:var(--muted)">${c.prel||'—'}</td>${mCells}<td><div class="actions-cell"><button class="act-btn act-note" onclick="toggleNote(${c.id})" title="Note rapide">📝</button><button class="act-btn act-edit" onclick="editClient(${c.id})" title="Modifier">✏️</button><button class="act-btn act-del" onclick="deleteClient(${c.id})" title="Supprimer">✕</button></div></td></tr>${noteRow}`;
+  }).join('');
+}
+
+function setClientFilter(f){clientFilter=f;renderClients();}
+
+function moveClient(id, dir){
+  const idx=clients.findIndex(c=>c.id===id);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=clients.length) return;
+  const tmp=clients[idx];
+  clients[idx]=clients[newIdx];
+  clients[newIdx]=tmp;
+  saveData();renderClients();
+}
+function toggleMonth(id,m){const c=clients.find(c=>c.id===id);c.months[m]=c.months[m]?0:1;saveData();renderClients();renderDashboard();}
+function toggleNote(id){openNoteId=openNoteId===id?null:id;renderClients();if(openNoteId)setTimeout(()=>document.getElementById('ni_'+id)?.focus(),50);}
+function saveNote(id){const c=clients.find(c=>c.id===id);c.notes=document.getElementById('ni_'+id)?.value||'';openNoteId=null;saveData();renderClients();toast('Note sauvegardée ✓');}
+
+function renderProspects(){
+  const search=(document.getElementById('prospSearch')?.value||'').toLowerCase();
+  const sort=document.getElementById('prospSortSel')?.value||'manual';
+  const statuses=['all','A prospecter','R1 à venir','R2 à venir','Devis signé','Accord verbal','blocage'];
+  const fCls={'all':'','A prospecter':'f-grey','R1 à venir':'f-blue','R2 à venir':'f-purple','Devis signé':'f-teal','Accord verbal':'f-green','blocage':'f-red'};
+  document.getElementById('prospFilters').innerHTML=statuses.map(s=>{
+    const act=prospFilter===s?'active '+(fCls[s]||''):'';
+    const cnt=s==='all'?prospects.length:prospects.filter(p=>p.status===s).length;
+    return `<button class="pill ${act}" onclick="setProspFilter('${s}')">${s==='all'?'Tous':s} (${cnt})</button>`;
+  }).join('');
+
+  let filtered=prospects;
+  if(prospFilter!=='all') filtered=filtered.filter(p=>p.status===prospFilter);
+  if(search) filtered=filtered.filter(p=>p.name.toLowerCase().includes(search)||(p.secteur||'').toLowerCase().includes(search));
+  if(sort==='name') filtered=[...filtered].sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+  if(sort==='status') filtered=[...filtered].sort((a,b)=>a.status.localeCompare(b.status));
+
+  const isManual=sort==='manual';
+  document.getElementById('prospHead').innerHTML=`<th style="width:36px"></th><th>Statut</th><th>Prospect</th><th>Mois</th><th>Secteur</th><th>Solutions</th><th>CA estimé</th><th>Notes</th><th></th>`;
+
+  const tbody=document.getElementById('prospectsBody');
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" class="empty">Aucun prospect</td></tr>`;return;}
+  tbody.innerHTML=filtered.map((p,idx)=>{
+    const moveCell=isManual?`<td style="padding:8px 6px"><div class="move-btns"><button class="move-btn" onclick="moveProspect(${p.id},-1)" ${idx===0?'disabled style="opacity:.3"':''}>▲</button><button class="move-btn" onclick="moveProspect(${p.id},1)" ${idx===filtered.length-1?'disabled style="opacity:.3"':''}>▼</button></div></td>`:'<td></td>';
+    return `<tr>${moveCell}<td>${bdg(pStatusMap,p.status)}</td><td><span class="client-name">${p.name}</span></td><td><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--muted)">${p.date||'—'}</span></td><td>${p.secteur||'<span style="color:var(--muted)">—</span>'}</td><td>${tgs(p.solutions)}</td><td>${p.ca?`<span style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700">~${p.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td><td style="max-width:140px;font-size:12px;color:var(--muted)">${p.notes||'—'}</td><td><div class="actions-cell"><button class="act-btn act-conv" onclick="convertToClient(${p.id})" title="Convertir en client ✅">✅</button><button class="act-btn act-edit" onclick="editProspect(${p.id})" title="Modifier">✏️</button><button class="act-btn act-del" onclick="deleteProspect(${p.id})" title="Supprimer">✕</button></div></td></tr>`;
+  }).join('');
+}
+
+function setProspFilter(f){prospFilter=f;renderProspects();}
+
+function moveProspect(id,dir){
+  const idx=prospects.findIndex(p=>p.id===id);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=prospects.length) return;
+  const tmp=prospects[idx];
+  prospects[idx]=prospects[newIdx];
+  prospects[newIdx]=tmp;
+  saveData();renderProspects();
+}
+
+function convertToClient(id){
+  const p=prospects.find(p=>p.id===id);
+  if(!confirm(`Convertir "${p.name}" en client actif ?`)) return;
+  const months={};MONTHS.forEach(m=>months[m]=0);
+  clients.push({id:clientId++,name:p.name,status:'Prestations en cours',ca:p.ca||0,prel:'',accomp:p.solutions||[],months,notes:`Converti depuis prospection (${p.date||''})`});
+  prospects=prospects.filter(x=>x.id!==id);
+  saveData();renderProspects();renderDashboard();
+  toast(`✅ ${p.name} ajouté aux clients !`);
+}
+
+function renderDashboard(){
+  document.getElementById('dashDate').textContent=NOW.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const actifs=clients.filter(c=>c.status==='Prestations en cours');
+  const enDiff=clients.filter(c=>c.status==='En difficulté CA');
+  const caTotal=([...actifs,...enDiff]).reduce((s,c)=>s+(c.ca||0),0);
+  const caAvenir=clients.filter(c=>c.status==='A venir').reduce((s,c)=>s+(c.ca||0),0);
+  const late=clients.filter(isLate);
+  const activeAll=[...actifs,...enDiff];
+  const paidNow=activeAll.filter(c=>c.months[CUR_M]);
+  const taux=Math.round(paidNow.length/Math.max(activeAll.length,1)*100);
+  const prevCa=activeAll.filter(c=>c.months[PREV_M]).reduce((s,c)=>s+(c.ca||0),0);
+  const diff=caTotal-prevCa;
+  const diffHtml=diff>=0?`<span style="color:var(--green)">▲ +${diff.toLocaleString('fr-FR')} € vs ${PREV_M}</span>`:`<span style="color:var(--red)">▼ ${Math.abs(diff).toLocaleString('fr-FR')} € vs ${PREV_M}</span>`;
+
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi k-green"><div class="kpi-icon">💰</div><div class="kpi-val">${caTotal.toLocaleString('fr-FR')} €</div><div class="kpi-label">CA mensuel</div><div class="kpi-sub">${diffHtml}</div></div>
+    <div class="kpi k-teal"><div class="kpi-icon">✅</div><div class="kpi-val">${actifs.length}</div><div class="kpi-label">Clients actifs</div><div class="kpi-sub" style="color:var(--muted)">${taux}% ont payé ce mois</div></div>
+    <div class="kpi k-coral"><div class="kpi-icon">⚠️</div><div class="kpi-val">${enDiff.length}</div><div class="kpi-label">En difficulté</div><div class="kpi-sub" style="color:var(--muted)">${enDiff.reduce((s,c)=>s+(c.ca||0),0).toLocaleString('fr-FR')} € à risque</div></div>
+    <div class="kpi k-orange"><div class="kpi-icon">🎯</div><div class="kpi-val">${prospects.length}</div><div class="kpi-label">Prospects</div></div>
+    <div class="kpi k-purple"><div class="kpi-icon">🚀</div><div class="kpi-val">${caAvenir.toLocaleString('fr-FR')} €</div><div class="kpi-label">CA potentiel</div><div class="kpi-sub" style="color:var(--muted)">clients "A venir"</div></div>
+    <div class="kpi k-blue"><div class="kpi-icon">🔴</div><div class="kpi-val">${late.length}</div><div class="kpi-label">Retards paiement</div></div>
+  `;
+
+  const top=[...actifs,...enDiff].sort((a,b)=>(b.ca||0)-(a.ca||0)).slice(0,7);
+  const maxCa=top[0]?.ca||1;
+  document.getElementById('topClients').innerHTML=top.map(c=>`<div class="ca-bar"><div class="ca-bar-label"><span class="nm">${c.name}</span><span class="vl">${(c.ca||0).toLocaleString('fr-FR')} €</span></div><div class="ca-bar-track"><div class="ca-bar-fill" style="width:${Math.round((c.ca||0)/maxCa*100)}%"></div></div></div>`).join('');
+
+  const funnelData=[{l:'A prospecter',c:'var(--grey)',s:'A prospecter'},{l:'R1 à venir',c:'var(--blue)',s:'R1 à venir'},{l:'R2 à venir',c:'var(--purple)',s:'R2 à venir'},{l:'Devis signé',c:'var(--teal-light)',s:'Devis signé'},{l:'Accord verbal',c:'var(--green)',s:'Accord verbal'},{l:'Blocage',c:'var(--red)',s:'blocage'}];
+  document.getElementById('funnelChart').innerHTML=funnelData.map(f=>{const cnt=prospects.filter(p=>p.status===f.s).length;return `<div class="funnel-item"><div class="funnel-label"><div class="funnel-dot" style="background:${f.c}"></div>${f.l}</div><div class="funnel-count" style="color:${f.c}">${cnt}</div></div>`;}).join('');
+
+  document.getElementById('payTitle').textContent=`📅 Suivi paiements — ${CUR_MF} ${CUR_Y}`;
+  const unpaidNow=activeAll.filter(c=>!c.months[CUR_M]);
+  const caPaid=paidNow.reduce((s,c)=>s+(c.ca||0),0);
+  document.getElementById('paymentStatus').innerHTML=`
+    <div style="display:flex;gap:12px;margin-bottom:12px">
+      <div style="flex:1;text-align:center;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:10px;padding:10px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--green)">${paidNow.length}</div>
+        <div style="font-size:10px;color:var(--muted)">Payés ✓</div>
+        <div style="font-size:11px;color:var(--green);margin-top:2px">${caPaid.toLocaleString('fr-FR')} €</div>
+      </div>
+      <div style="flex:1;text-align:center;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.2);border-radius:10px;padding:10px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--red)">${unpaidNow.length}</div>
+        <div style="font-size:10px;color:var(--muted)">En attente</div>
+        <div style="font-size:11px;color:var(--orange);margin-top:2px">Recouvrement : ${taux}%</div>
+      </div>
+    </div>
+    ${unpaidNow.slice(0,5).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="display:flex;align-items:center;gap:5px"><span class="unpaid-dot"></span>${c.name}</span><span style="color:var(--orange)">${c.prel||'—'}</span></div>`).join('')}
+    ${unpaidNow.length>5?`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">+${unpaidNow.length-5} autres</div>`:''}
+    ${unpaidNow.length===0?`<div style="text-align:center;padding:10px;color:var(--green);font-weight:600">🎉 Tous ont payé ce mois !</div>`:''}
+  `;
+
+  const last6=[...Array(6)].map((_,i)=>{const idx=(CM-5+i+12)%12;const m=MONTHS[idx];const ca=activeAll.filter(c=>c.months[m]).reduce((s,c)=>s+(c.ca||0),0);return{m,ca};});
+  const maxBar=Math.max(...last6.map(x=>x.ca),1);
+  document.getElementById('caEvo').innerHTML=`
+    <div class="mini-chart">${last6.map(x=>`<div class="mini-bar" style="background:${x.m===CUR_M?'var(--teal)':'rgba(17,103,118,.35)'};height:${Math.max(Math.round(x.ca/maxBar*100),4)}%"><div class="mini-tip">${x.m} : ${x.ca.toLocaleString('fr-FR')} €</div></div>`).join('')}</div>
+    <div class="mini-labels">${last6.map(x=>`<div class="mini-label" style="${x.m===CUR_M?'color:var(--teal-light);font-weight:700':''}">${x.m}</div>`).join('')}</div>
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:12px">
+      <span style="color:var(--muted)">Recouvrement ${CUR_MF}</span>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:${taux>=80?'var(--green)':taux>=50?'var(--orange)':'var(--red)'}">${taux}%</span>
+    </div>
+    <div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:4px"><div style="height:5px;border-radius:3px;width:${taux}%;background:${taux>=80?'var(--green)':taux>=50?'var(--orange)':'var(--red)'};transition:width .6s"></div></div>
+  `;
+}
+
+function buildMonthsGrid(sel){document.getElementById('clientMonthsGrid').innerHTML=MONTHS.map(m=>`<div class="month-toggle ${sel[m]?'on':''}" onclick="this.classList.toggle('on')" data-month="${m}">${m}</div>`).join('');}
+
+function openClientModal(){editClientId=null;document.getElementById('clientModalTitle').textContent='👥 Nouveau client';document.getElementById('clientSaveLabel').textContent='Enregistrer';['c_name','c_ca','c_prel','c_notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('c_status').value='Prestations en cours';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=false);buildMonthsGrid({});document.getElementById('clientOverlay').classList.add('open');}
+
+function editClient(id){const c=clients.find(c=>c.id===id);editClientId=id;document.getElementById('clientModalTitle').textContent='✏️ Modifier le client';document.getElementById('clientSaveLabel').textContent='Mettre à jour';document.getElementById('c_name').value=c.name;document.getElementById('c_status').value=c.status;document.getElementById('c_ca').value=c.ca||'';document.getElementById('c_prel').value=c.prel||'';document.getElementById('c_notes').value=c.notes||'';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=(c.accomp||[]).includes(o.value));buildMonthsGrid(c.months||{});document.getElementById('clientOverlay').classList.add('open');}
+
+function saveClient(){
+  const name=document.getElementById('c_name').value.trim();if(!name){alert('Nom requis');return;}
+  const accomp=Array.from(document.getElementById('c_accomp').selectedOptions).map(o=>o.value);
+  const months={};document.querySelectorAll('#clientMonthsGrid .month-toggle').forEach(el=>months[el.dataset.month]=el.classList.contains('on')?1:0);
+  const data={name,status:document.getElementById('c_status').value,ca:parseFloat(document.getElementById('c_ca').value)||0,prel:document.getElementById('c_prel').value.trim(),accomp,months,notes:document.getElementById('c_notes').value.trim()};
+  if(editClientId!==null){const i=clients.findIndex(c=>c.id===editClientId);clients[i]={...clients[i],...data};toast('Client mis à jour ✓');}
+  else{clients.push({id:clientId++,...data});toast('Client ajouté ✓');}
+  saveData();closeModal('clientOverlay');renderClients();renderDashboard();
+}
+
+function deleteClient(id){if(!confirm('Supprimer ce client ?')) return;clients=clients.filter(c=>c.id!==id);saveData();renderClients();renderDashboard();toast('Client supprimé');}
+
+function openProspModal(){editProspId=null;document.getElementById('prospModalTitle').textContent='🎯 Nouveau prospect';document.getElementById('prospSaveLabel').textContent='Enregistrer';['p_name','p_secteur','p_notes','p_ca'].forEach(id=>document.getElementById(id).value='');document.getElementById('p_status').value='A prospecter';document.getElementById('p_date').value='';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=false);document.getElementById('prospOverlay').classList.add('open');}
+
+function editProspect(id){const p=prospects.find(p=>p.id===id);editProspId=id;document.getElementById('prospModalTitle').textContent='✏️ Modifier le prospect';document.getElementById('prospSaveLabel').textContent='Mettre à jour';document.getElementById('p_name').value=p.name;document.getElementById('p_status').value=p.status;document.getElementById('p_date').value=p.date||'';document.getElementById('p_secteur').value=p.secteur||'';document.getElementById('p_ca').value=p.ca||'';document.getElementById('p_notes').value=p.notes||'';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=(p.solutions||[]).includes(o.value));document.getElementById('prospOverlay').classList.add('open');}
+
+function saveProspect(){
+  const name=document.getElementById('p_name').value.trim();if(!name){alert('Nom requis');return;}
+  const solutions=Array.from(document.getElementById('p_solutions').selectedOptions).map(o=>o.value);
+  const data={name,status:document.getElementById('p_status').value,date:document.getElementById('p_date').value,secteur:document.getElementById('p_secteur').value.trim(),solutions,ca:parseFloat(document.getElementById('p_ca').value)||0,notes:document.getElementById('p_notes').value.trim()};
+  if(editProspId!==null){const i=prospects.findIndex(p=>p.id===editProspId);prospects[i]={...prospects[i],...data};toast('Prospect mis à jour ✓');}
+  else{prospects.push({id:prospId++,...data});toast('Prospect ajouté ✓');}
+  saveData();closeModal('prospOverlay');renderProspects();renderDashboard();
+}
+
+function deleteProspect(id){if(!confirm('Supprimer ce prospect ?')) return;prospects=prospects.filter(p=>p.id!==id);saveData();renderProspects();renderDashboard();toast('Prospect supprimé');}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeBg(e,id){if(e.target.id===id)closeModal(id);}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
+
+renderDashboard();
+</script>
+</body>
+</html>
