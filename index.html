@@ -543,6 +543,10 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .lock-avatar img{width:100%;height:100%;object-fit:cover}
 .lock-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:var(--cream);letter-spacing:.5px}
 .lock-role{font-size:11px;color:var(--teal-light);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-top:-8px}
+.lock-question{font-family:'Barlow',sans-serif;font-style:italic;font-size:14px;color:var(--teal-light);text-align:center;max-width:320px;margin:6px auto 0;line-height:1.4}
+.lock-question.success{color:var(--green);font-style:normal;font-weight:600}
+.lock-actions-row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:2px}
+.lock-pwd2{margin-top:6px}
 .lock-pwd-wrap{display:flex;gap:8px;margin-top:8px}
 .lock-pwd-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:18px;padding:13px 18px;outline:none;width:200px;text-align:center;letter-spacing:6px;transition:all .2s}
 .lock-pwd-input::placeholder{letter-spacing:normal;font-size:14px;color:var(--muted)}
@@ -903,12 +907,18 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
     <div class="lock-avatar" id="lockAvatar">NB</div>
     <div class="lock-name" id="lockName">Nicolas Bianconi</div>
     <div class="lock-role" id="lockRole">Admin · Influmedia</div>
+    <div class="lock-question" id="lockQuestion" style="display:none">🤔 Qui est le plus Bg du monde ?</div>
     <div class="lock-pwd-wrap">
-      <input type="password" id="lockPwd" class="lock-pwd-input" placeholder="Mot de passe" maxlength="32" inputmode="numeric" onkeydown="if(event.key==='Enter')attemptLogin()">
-      <button class="lock-btn" onclick="attemptLogin()" title="Se connecter">→</button>
+      <input type="password" id="lockPwd" class="lock-pwd-input" placeholder="Mot de passe" maxlength="32" inputmode="numeric" onkeydown="lockPwdKeydown(event)">
+      <button class="lock-btn" id="lockBtn" onclick="lockSubmit()" title="Valider">→</button>
     </div>
+    <input type="password" id="lockPwd2" class="lock-pwd-input lock-pwd2" placeholder="Confirmer le nouveau mot de passe" maxlength="32" style="display:none" onkeydown="if(event.key==='Enter')lockSubmit()">
     <div class="lock-error" id="lockError"></div>
-    <button class="lock-switch" onclick="toggleLockUserList()">Changer de profil</button>
+    <div class="lock-actions-row">
+      <button class="lock-switch" id="lockBackLink" onclick="lockBackToLogin()" style="display:none">← Retour</button>
+      <button class="lock-switch" id="lockSwitchLink" onclick="toggleLockUserList()">Changer de profil</button>
+      <button class="lock-switch" id="lockForgotLink" onclick="lockShowForgot()">Mot de passe oublié ?</button>
+    </div>
     <div class="lock-user-list" id="lockUserList" style="display:none"></div>
   </div>
   <div class="lock-footer">Influmedia · SaaS Agence — 🔒 Espace sécurisé</div>
@@ -1752,6 +1762,24 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('chatChannelOverlay')">Annuler</button>
       <button class="btn-save" onclick="createChatChannel()">Créer le canal</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECRET ANSWER MODAL -->
+<div class="overlay" id="secretAnsOverlay" onclick="closeBg(event,'secretAnsOverlay')">
+  <div class="modal" style="max-width:420px">
+    <h2 id="secretAnsModalTitle">🤔 Ma réponse secrète</h2>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">
+      Cette réponse te permettra de débloquer ton compte si tu oublies ton mot de passe.<br>
+      Question : <b style="color:var(--teal-light);font-style:italic">Qui est le plus Bg du monde ?</b><br>
+      <span style="font-size:10px">Insensible à la casse et aux accents. Connue uniquement de toi.</span>
+    </div>
+    <div class="fg"><label>Ta réponse</label><input id="sa_new" type="text" placeholder="Ex: Bouboule" maxlength="50"></div>
+    <div class="fg"><label>Confirmer</label><input id="sa_confirm" type="text" placeholder="Retape ta réponse" maxlength="50" onkeydown="if(event.key==='Enter')saveSecretAns()"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('secretAnsOverlay')">Annuler</button>
+      <button class="btn-save" onclick="saveSecretAns()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -3022,6 +3050,7 @@ function toggleLockUserList(){
 function switchLockUser(id){
   lockUserId=id;
   document.getElementById('lockUserList').style.display='none';
+  if(typeof lockBackToLogin==='function') lockBackToLogin(); // sortir d'un éventuel mode "oublié"
   renderLockScreen();
   setTimeout(()=>document.getElementById('lockPwd').focus(),50);
 }
@@ -3039,6 +3068,116 @@ function attemptLogin(){
     document.getElementById('lockError').textContent='Mot de passe incorrect';
     inp.value='';inp.focus();
   }
+}
+
+// ── MOT DE PASSE OUBLIÉ — question secrète personnelle par membre ──
+let lockMode='login'; // 'login' | 'forgot' | 'newPwd'
+const SECRET_QUESTION='🤔 Qui est le plus Bg du monde ?';
+
+// Définir / modifier sa propre réponse secrète (depuis Paramètres)
+function openSecretAnsModal(){
+  document.getElementById('sa_new').value='';
+  document.getElementById('sa_confirm').value='';
+  const m=teamMembers.find(x=>x.id===currentUser.id);
+  const has=!!(m&&m.secretAns);
+  document.getElementById('secretAnsModalTitle').textContent=has?'🤔 Modifier ma réponse secrète':'🤔 Définir ma réponse secrète';
+  document.getElementById('secretAnsOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('sa_new').focus(),50);
+}
+
+function saveSecretAns(){
+  const a=document.getElementById('sa_new').value.trim();
+  const c=document.getElementById('sa_confirm').value.trim();
+  if(a.length<2){alert('Réponse trop courte (au moins 2 caractères)');return;}
+  if(normalizeAnswer(a)!==normalizeAnswer(c)){alert('Les deux réponses ne correspondent pas');return;}
+  const m=teamMembers.find(x=>x.id===currentUser.id);
+  if(!m) return;
+  m.secretAns=hashPwd(normalizeAnswer(a));
+  saveTeam(); // sync auto au cloud
+  closeModal('secretAnsOverlay');
+  renderSettings();
+  toast('🤔 Réponse secrète enregistrée ✓');
+}
+
+function lockSubmit(){
+  if(lockMode==='login') attemptLogin();
+  else if(lockMode==='forgot') attemptForgotAnswer();
+  else if(lockMode==='newPwd') saveNewPwdFromLock();
+}
+function lockPwdKeydown(e){ if(e.key==='Enter') lockSubmit(); }
+
+function lockShowForgot(){
+  lockMode='forgot';
+  document.getElementById('lockQuestion').textContent=SECRET_QUESTION;
+  document.getElementById('lockQuestion').classList.remove('success');
+  document.getElementById('lockQuestion').style.display='block';
+  const pwd=document.getElementById('lockPwd');
+  pwd.type='text';pwd.placeholder='Réponse';pwd.value='';pwd.removeAttribute('inputmode');pwd.focus();
+  document.getElementById('lockPwd2').style.display='none';
+  document.getElementById('lockForgotLink').style.display='none';
+  document.getElementById('lockSwitchLink').style.display='none';
+  document.getElementById('lockBackLink').style.display='inline-block';
+  document.getElementById('lockUserList').style.display='none';
+  document.getElementById('lockError').textContent='';
+}
+
+function lockBackToLogin(){
+  lockMode='login';
+  document.getElementById('lockQuestion').style.display='none';
+  document.getElementById('lockQuestion').classList.remove('success');
+  const pwd=document.getElementById('lockPwd');
+  pwd.type='password';pwd.placeholder='Mot de passe';pwd.value='';pwd.setAttribute('inputmode','numeric');
+  document.getElementById('lockPwd2').style.display='none';
+  document.getElementById('lockPwd2').value='';
+  document.getElementById('lockForgotLink').style.display='inline-block';
+  document.getElementById('lockSwitchLink').style.display='inline-block';
+  document.getElementById('lockBackLink').style.display='none';
+  document.getElementById('lockError').textContent='';
+  pwd.focus();
+}
+
+function normalizeAnswer(s){
+  return (s||'').toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
+}
+function attemptForgotAnswer(){
+  const m=teamMembers.find(x=>x.id===lockUserId);
+  if(!m){ document.getElementById('lockError').textContent='Profil introuvable'; return; }
+  if(!m.secretAns){
+    document.getElementById('lockError').textContent='Aucune réponse secrète définie. Demande à ton admin de réinitialiser ton mot de passe.';
+    return;
+  }
+  const a=normalizeAnswer(document.getElementById('lockPwd').value);
+  if(hashPwd(a)===m.secretAns){
+    lockMode='newPwd';
+    const q=document.getElementById('lockQuestion');
+    q.textContent='✅ Bonne réponse — choisis un nouveau mot de passe';
+    q.classList.add('success');
+    const pwd=document.getElementById('lockPwd');
+    pwd.type='password';pwd.placeholder='Nouveau mot de passe';pwd.value='';pwd.focus();
+    const pwd2=document.getElementById('lockPwd2');
+    pwd2.style.display='block';pwd2.value='';
+    document.getElementById('lockError').textContent='';
+  } else {
+    const inp=document.getElementById('lockPwd');
+    inp.classList.add('shake');
+    setTimeout(()=>inp.classList.remove('shake'),400);
+    document.getElementById('lockError').textContent='Mauvaise réponse 🤨';
+    inp.value='';inp.focus();
+  }
+}
+
+function saveNewPwdFromLock(){
+  const p1=document.getElementById('lockPwd').value;
+  const p2=document.getElementById('lockPwd2').value;
+  if(p1.length<4){document.getElementById('lockError').textContent='4 caractères minimum';return;}
+  if(p1!==p2){document.getElementById('lockError').textContent='Les mots de passe ne correspondent pas';document.getElementById('lockPwd2').focus();return;}
+  const m=teamMembers.find(x=>x.id===lockUserId);
+  if(!m){lockBackToLogin();return;}
+  m.pwd=hashPwd(p1);
+  saveTeam(); // sync auto au cloud → tous les autres appareils reçoivent
+  toast('🔑 Mot de passe réinitialisé !');
+  lockBackToLogin();
+  doUnlock(m); // auto-login
 }
 
 function doUnlock(member){
@@ -3062,6 +3201,7 @@ function doUnlock(member){
 function lockApp(){
   lockUserId=currentUser.id;
   document.getElementById('lockScreen').classList.remove('hidden');
+  if(typeof lockBackToLogin==='function') lockBackToLogin();
   renderLockScreen();
   // Masquer la messagerie flottante quand verrouillé
   chatWidgetOpen=false;
@@ -3903,6 +4043,7 @@ function saveContact(){
 // ╚══════════════════════════════════════════════════════════════
 function renderSettings(){
   const body=document.getElementById('settingsBody');
+  const admin=isAdmin();
   body.innerHTML=`
     <div class="settings-section">
       <h3>👤 Mon profil</h3>
@@ -3918,19 +4059,24 @@ function renderSettings(){
         </div>
       </div>
       <div class="settings-row">
-        <div><div class="settings-label">Nom affiché</div><div class="settings-sub">Visible dans la sidebar</div></div>
+        <div><div class="settings-label">Nom affiché</div><div class="settings-sub">Visible dans la sidebar et l'équipe</div></div>
         <input id="set_userName" value="${currentUser.name}" style="background:var(--dark);border:1px solid var(--border);border-radius:8px;color:var(--cream);padding:8px 12px;font-size:13px;width:240px" onblur="updateMyProfile()">
       </div>
       <div class="settings-row">
-        <div><div class="settings-label">🔑 Mot de passe</div><div class="settings-sub">Pour te connecter à l'app. Par défaut : 0000</div></div>
+        <div><div class="settings-label">🔑 Mot de passe</div><div class="settings-sub">Pour te connecter à l'app. Défaut : 0000</div></div>
         <button class="btn-mini" onclick="openPwdModal('${currentUser.id}')">Modifier mon mot de passe</button>
       </div>
+      ${(function(){
+        const me=teamMembers.find(x=>x.id===currentUser.id);
+        const has=!!(me&&me.secretAns);
+        return `<div class="settings-row">
+          <div><div class="settings-label">🤔 Ma réponse secrète</div><div class="settings-sub">Pour débloquer mon compte si j'oublie mon mot de passe.<br><i style="color:var(--teal-light)">Question : "Qui est le plus Bg du monde ?"</i> · ${has?'<span style="color:var(--green);font-weight:700">✅ Définie</span>':'<span style="color:var(--orange);font-weight:700">⚠️ Non définie</span>'}</div></div>
+          <button class="btn-mini" onclick="openSecretAnsModal()">${has?'Modifier':'Définir maintenant'}</button>
+        </div>`;
+      })()}
       <div class="settings-row">
-        <div><div class="settings-label">Rôle</div><div class="settings-sub">⚠️ Bascule en mode "Équipe" : tu n'auras plus accès à Gestion Client</div></div>
-        <div class="role-toggle">
-          <button class="role-btn ${isAdmin()?'active':''}" onclick="setMyRole('admin')">Admin</button>
-          <button class="role-btn ${!isAdmin()?'active':''}" onclick="setMyRole('team')">Équipe</button>
-        </div>
+        <div><div class="settings-label">Mon rôle</div><div class="settings-sub">${admin?'🔐 Admin · accès complet à toutes les pages':'👤 Équipe · accès aux pages de production'}</div></div>
+        <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:${admin?'rgba(46,204,113,.18)':'rgba(127,140,141,.18)'};color:${admin?'var(--green)':'var(--grey)'};text-transform:uppercase;letter-spacing:.5px">${admin?'Admin':'Équipe'}</span>
       </div>
       <div class="settings-row">
         <div><div class="settings-label">Verrouiller la session</div><div class="settings-sub">Revenir à l'écran de connexion</div></div>
@@ -3938,21 +4084,26 @@ function renderSettings(){
       </div>
     </div>
 
+    ${admin?`
     <div class="settings-section">
-      <h3>👥 Équipe (${teamMembers.length} membres)</h3>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Ces membres apparaissent dans le sélecteur d'assignation des To-Do partagées. La vraie auth viendra en Phase 2.</div>
+      <h3>👥 Équipe (${teamMembers.length} membres) <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(46,204,113,.18);color:var(--green);letter-spacing:.5px;margin-left:6px">ADMIN</span></h3>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Gère les comptes de ton équipe : noms, mots de passe, rôles. Seul l'admin (toi) peut modifier cette section.</div>
       ${teamMembers.map((m,i)=>`
         <div class="settings-row">
           <div style="display:flex;align-items:center;gap:10px">
             <div class="user-avatar" style="background:${m.color}">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.initials}</div>
             <div>
               <input value="${m.name}" onblur="updateTeamName('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 10px;font-size:12px;width:180px">
-              <div class="settings-sub">${m.role==='admin'?'Admin · accès complet':'Équipe · accès production'}${m.pwd===DEFAULT_PWD_HASH?' · 🔓 mdp par défaut (0000)':' · 🔑 mdp défini'}</div>
+              <div class="settings-sub">${m.role==='admin'?'🔐 Admin · accès complet':'👤 Équipe · accès production'}${m.pwd===DEFAULT_PWD_HASH?' · 🔓 mdp par défaut':' · 🔑 mdp défini'}</div>
             </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
+            <select onchange="setMemberRole('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700"${m.id===currentUser.id?' title="Tu ne peux pas changer ton propre rôle"':''}>
+              <option value="team"${m.role!=='admin'?' selected':''}>Équipe</option>
+              <option value="admin"${m.role==='admin'?' selected':''}>Admin</option>
+            </select>
             <button class="btn-mini" onclick="openPwdModal('${m.id}')" title="Définir / réinitialiser le mot de passe">🔑</button>
-            ${m.id!==currentUser.id?`<button class="act-btn act-del" onclick="removeTeamMember('${m.id}')">✕</button>`:'<span style="font-size:11px;color:var(--teal-light)">Toi</span>'}
+            ${m.id!==currentUser.id?`<button class="act-btn act-del" onclick="removeTeamMember('${m.id}')">✕</button>`:'<span style="font-size:11px;color:var(--teal-light);padding:0 6px">Toi</span>'}
           </div>
         </div>
       `).join('')}
@@ -3961,26 +4112,29 @@ function renderSettings(){
         <button class="btn-save" onclick="addTeamMember()">＋ Ajouter</button>
       </div>
     </div>
+    `:''}
 
     <div class="settings-section">
-      <h3>💾 Données</h3>
+      <h3>💾 Données ${admin?'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(46,204,113,.18);color:var(--green);letter-spacing:.5px;margin-left:6px">ADMIN POUR ACTIONS SENSIBLES</span>':''}</h3>
       <div class="settings-row">
-        <div><div class="settings-label">Sauvegarde locale</div><div class="settings-sub">Toutes tes données sont stockées dans le navigateur (localStorage)</div></div>
-        <button class="btn-mini" onclick="exportData()">💾 Exporter</button>
+        <div><div class="settings-label">Sauvegarde locale</div><div class="settings-sub">Toutes les données sont aussi stockées dans le navigateur (cache)</div></div>
+        <button class="btn-mini" onclick="exportData()">💾 Exporter (JSON)</button>
       </div>
       ${cloudSettingsHtml()}
+      ${admin?`
       <div class="settings-row">
-        <div><div class="settings-label">Reset des données</div><div class="settings-sub" style="color:var(--coral)">Efface TOUT (clients, prospects, todos, etc.) — irréversible</div></div>
-        <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3)" onclick="resetAllData()">🗑️ Reset</button>
+        <div><div class="settings-label">Reset des données</div><div class="settings-sub" style="color:var(--coral)">⚠️ Efface TOUT (clients, prospects, todos, cloud config…) — irréversible</div></div>
+        <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3)" onclick="resetAllData()">🗑️ Reset complet</button>
       </div>
+      `:''}
     </div>
 
     <div class="settings-section">
       <h3>ℹ️ À propos</h3>
       <div style="font-size:13px;color:var(--muted);line-height:1.7">
-        <strong style="color:var(--teal-light)">Influmedia · SaaS v3.0</strong><br>
-        Outil de gestion d'agence — CRM + Production équipe<br>
-        Hébergé sur GitHub Pages · zéro dépendance · sauvegarde locale + export JSON
+        <strong style="color:var(--teal-light)">Influmedia · SaaS v3.2</strong><br>
+        Outil de gestion d'agence — CRM + Production équipe + Messagerie + Cloud<br>
+        Hébergé sur GitHub Pages · synchronisation Firebase Firestore
       </div>
     </div>
   `;
@@ -4042,18 +4196,50 @@ function removeAvatar(){
 }
 
 function setMyRole(role){
-  if(role==='team'&&!confirm('Passer en mode Équipe ? Tu perdras l\'accès à "Gestion Client". Tu peux revenir admin à tout moment.')) return;
+  // Admin uniquement (sécurité — ne devrait pas être appelable depuis l'UI non-admin)
+  if(!isAdmin()){ toast('⛔ Action admin uniquement'); return; }
+  if(role==='team'&&!confirm('Passer en mode Équipe ? Tu perdras l\'accès à "Gestion Client" et "Finance".')) return;
   currentUser.role=role;
-  saveUser();buildSidebar();
-  // Si on perd accès à la page courante, basculer
+  saveUser();syncCurrentUserToTeam();buildSidebar();
   const cur=document.querySelector('.tab-content.active')?.id?.replace('tab-','');
-  const adminTabs=['dashboard','clients','fins','prospection','tasks','contacts'];
-  if(role==='team'&&adminTabs.includes(cur)) showTab('todo');
+  const adminTabs=['dashboard','clients','fins','prospection','tasks','contacts','quotes','invoices'];
+  if(role==='team'&&adminTabs.includes(cur)) showTab('home');
   renderSettings();
   toast(role==='admin'?'Mode Admin activé ✓':'Mode Équipe activé');
 }
 
+// Admin uniquement : change le rôle d'un membre de l'équipe
+function setMemberRole(memberId, newRole){
+  if(!isAdmin()){ toast('⛔ Action admin uniquement'); return; }
+  const m=teamMembers.find(x=>x.id===memberId);
+  if(!m) return;
+  // Empêcher l'admin de se rétrograder s'il est le SEUL admin
+  if(memberId===currentUser.id){
+    const otherAdmins=teamMembers.filter(x=>x.id!==memberId&&x.role==='admin').length;
+    if(newRole==='team' && otherAdmins===0){
+      alert('Tu ne peux pas te retirer le rôle Admin tant qu\'aucun autre membre n\'est admin (sinon plus personne pour gérer l\'équipe).');
+      renderSettings();return;
+    }
+    if(!confirm('Modifier ton propre rôle vers "'+(newRole==='admin'?'Admin':'Équipe')+'" ?')) {renderSettings();return;}
+  } else {
+    if(!confirm('Définir '+m.name+' comme "'+(newRole==='admin'?'Admin (accès complet)':'Équipe (accès production)')+'" ?')){renderSettings();return;}
+  }
+  m.role=newRole;
+  saveTeam();
+  // Si on modifie son propre rôle, mettre à jour currentUser
+  if(memberId===currentUser.id){
+    currentUser.role=newRole;saveUser();buildSidebar();
+    const cur=document.querySelector('.tab-content.active')?.id?.replace('tab-','');
+    const adminTabs=['dashboard','clients','fins','prospection','tasks','contacts','quotes','invoices'];
+    if(newRole==='team'&&adminTabs.includes(cur)) showTab('home');
+  }
+  renderSettings();
+  toast('🔐 Rôle mis à jour : '+m.name+' → '+(newRole==='admin'?'Admin':'Équipe'));
+}
+
 function updateTeamName(id,name){
+  // Seul l'admin peut renommer d'autres membres ; un membre peut renommer son propre profil via updateMyProfile
+  if(id!==currentUser.id && !isAdmin()){ toast('⛔ Action admin uniquement'); return; }
   const m=teamMembers.find(x=>x.id===id);if(!m||!name.trim()) return;
   m.name=name.trim();
   m.initials=name.trim().split(' ').filter(x=>x).slice(0,2).map(x=>x[0].toUpperCase()).join('');
@@ -4063,6 +4249,7 @@ function updateTeamName(id,name){
 }
 
 function addTeamMember(){
+  if(!isAdmin()){ toast('⛔ Action admin uniquement'); return; }
   const name=document.getElementById('newMemberName').value.trim();
   if(!name) return;
   const colors=['#9b59b6','#e67e22','#27ae60','#3498db','#e74c3c','#f39c12','#1abc9c'];
@@ -4073,6 +4260,8 @@ function addTeamMember(){
 }
 
 function removeTeamMember(id){
+  if(!isAdmin()){ toast('⛔ Action admin uniquement'); return; }
+  if(id===currentUser.id){ alert('Tu ne peux pas te supprimer toi-même.'); return; }
   if(!confirm('Retirer ce membre ?')) return;
   teamMembers=teamMembers.filter(m=>m.id!==id);
   saveTeam();renderSettings();
@@ -4091,8 +4280,8 @@ function cloudSettingsHtml(){
           <div class="settings-sub">Espace de travail : <b style="color:var(--teal-light)">${escapeHtml(ws)}</b> · sauvegarde automatique à chaque action</div>
         </div>
         <div style="display:flex;gap:6px">
-          <button class="btn-mini" onclick="forceCloudPush()">↑ Tout renvoyer</button>
-          <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3)" onclick="disableCloud()">Désactiver</button>
+          ${isAdmin()?'<button class="btn-mini" onclick="forceCloudPush()" title="ADMIN — Écraser le cloud avec mes données locales">↑ Tout renvoyer</button>':''}
+          <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3)" onclick="disableCloud()" title="Désactiver le cloud sur CE device uniquement">Désactiver</button>
         </div>
       </div>`;
   }
@@ -4182,7 +4371,9 @@ function disableCloud(){
 }
 
 function forceCloudPush(){
+  if(!isAdmin()){ toast('⛔ Action admin uniquement (peut écraser les données partagées)'); return; }
   if(!Cloud.enabled){alert('Cloud non activé');return;}
+  if(!confirm('⚠️ Renvoyer toutes tes données locales au cloud va ÉCRASER les données cloud existantes. Confirmer ?')) return;
   toast('☁️ Envoi de toutes les données...');
   Cloud.pushAll().then(n=>toast('☁️ '+n+' éléments envoyés au cloud ✓')).catch(e=>{console.error(e);toast('⚠️ Erreur d\'envoi');});
 }
@@ -6354,6 +6545,8 @@ function convertQuoteToInvoice(quoteId){
 }
 
 function openPwdModal(memberId){
+  // Un membre peut changer SON propre mot de passe ; seul l'admin peut changer celui des autres
+  if(memberId!==currentUser.id && !isAdmin()){ toast('⛔ Action admin uniquement'); return; }
   pwdEditMemberId=memberId;
   const m=teamMembers.find(x=>x.id===memberId);
   const isMe=memberId===currentUser.id;
