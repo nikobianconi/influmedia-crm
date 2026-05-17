@@ -1981,6 +1981,10 @@ const Cloud = {
   },
 
   // Écoute temps réel des changements des autres appareils
+  // ── FIX anti-boucle : on ne déclenche un signal "external" QUE si la valeur
+  // cloud diffère réellement de ce qui est en localStorage. Sinon snapshot ignoré.
+  // Et on throttle pour éviter les rafales de toasts.
+  _lastExternalToast: 0,
   listen(){
     if(!this.enabled||!this.db) return;
     if(this._listener) this._listener();
@@ -1990,18 +1994,28 @@ const Cloud = {
         const d=ch.doc.data();
         if(!d||!('value' in d)) return;
         const mine=d.updatedBy===(typeof currentUser!=='undefined'?currentUser.id:'?');
-        if(mine && Date.now()<this._suppressUntil) return; // notre propre écho
-        if(!mine){
-          try{ localStorage.setItem(ch.doc.id, JSON.stringify(d.value)); external=true; }catch(e){}
-        }
+        // Écho de notre propre push récent : ignorer entièrement
+        if(mine && Date.now()<this._suppressUntil) return;
+        // Compare la valeur cloud avec ce qu'on a en local
+        const newVal = JSON.stringify(d.value);
+        const oldVal = localStorage.getItem(ch.doc.id);
+        if(newVal === oldVal) return; // Pas de vrai changement → ignorer (anti-boucle)
+        // Changement réel : écrire en local
+        try{ localStorage.setItem(ch.doc.id, newVal); }catch(e){}
+        // Ne déclencher reload que si ça ne vient PAS de nous (autre appareil/utilisateur)
+        if(!mine) external = true;
       });
       this.status='synced'; this.updateIndicator();
-      if(external) this.onExternalChange();
+      // Throttle : maximum un signal external toutes les 10 secondes
+      if(external && Date.now() - this._lastExternalToast > 10000){
+        this._lastExternalToast = Date.now();
+        this.onExternalChange();
+      }
     }, e=>{ console.error('Cloud listen',e); this.status='error'; this.updateIndicator(); });
   },
 
   onExternalChange(){
-    // Un autre appareil a modifié des données → proposer de recharger
+    // Un autre appareil a modifié des données → notification passive (PAS de reload auto)
     if(typeof showCloudReloadToast==='function') showCloudReloadToast();
   },
 
@@ -4347,15 +4361,9 @@ function cloudSettingsHtml(){
 
 // ── CLOUD : toast de rechargement quand un autre appareil modifie les données ──
 function showCloudReloadToast(){
-  const modalOpen=document.querySelector('.overlay.open');
-  const ae=document.activeElement;
-  const inputFocused=ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA');
-  if(!modalOpen&&!inputFocused){
-    toast('🔄 Données mises à jour sur un autre appareil — rechargement...');
-    setTimeout(()=>location.reload(),1600);
-  } else {
-    toast('🔄 Nouvelles données dispo — recharge la page quand tu veux');
-  }
+  // FIX anti-boucle : on ne recharge JAMAIS la page tout seul.
+  // L'utilisateur reçoit juste une notif et clique manuellement s'il veut.
+  toast('🔄 Nouvelles données dispo — clique sur 🔄 dans la sidebar ou recharge la page (Cmd+R)');
 }
 
 // ── CLOUD : activer la synchronisation ──
