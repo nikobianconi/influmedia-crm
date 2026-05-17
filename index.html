@@ -1884,13 +1884,30 @@ const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_tod
   'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
   'influ_chat_read','influ_home_widgets','influ_home_note'];
 
+// ── Firebase config HARDCODÉE (projet saas-influ) ──
+// Permet à n'importe quel appareil/navigateur d'auto-connecter au cloud
+// sans aucun setup manuel. C'est ce qui rend le CRM "vraiment SaaS".
+const FIREBASE_CONFIG_DEFAULT = {
+  apiKey: "AIzaSyBdBaPbU7hioZv76Anblh6TN2Tp6Muqsf0",
+  authDomain: "saas-influ.firebaseapp.com",
+  databaseURL: "https://saas-influ-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "saas-influ",
+  storageBucket: "saas-influ.firebasestorage.app",
+  messagingSenderId: "961577100239",
+  appId: "1:961577100239:web:46f926bbdd7ab2bad928ba",
+  measurementId: "G-XJK94VDS7R"
+};
+const WORKSPACE_DEFAULT = 'influmedia-main';
+
 const Cloud = {
   enabled:false, db:null, status:'off',
   _pushQueue:{}, _pushTimer:null, _suppressUntil:0, _listener:null,
 
-  getConfig(){ return Storage.get('influ_cloud_config', null); },
-  getWorkspace(){ return Storage.get('influ_cloud_workspace', 'influmedia-main'); },
+  // Retourne la config sauvée si l'utilisateur a override, sinon le défaut hardcodé
+  getConfig(){ return Storage.get('influ_cloud_config', null) || FIREBASE_CONFIG_DEFAULT; },
+  getWorkspace(){ return Storage.get('influ_cloud_workspace', WORKSPACE_DEFAULT); },
 
+  // Toujours configuré (config par défaut existe), il suffit que le SDK soit chargé
   isConfigured(){ return !!this.getConfig() && typeof firebase!=='undefined'; },
 
   init(){
@@ -4307,43 +4324,23 @@ function removeTeamMember(id){
 }
 
 // ── CLOUD : HTML du panneau de configuration dans Paramètres ──
+// Note : Firebase config est désormais HARDCODÉE dans le HTML (projet saas-influ).
+// Plus jamais besoin de coller une config quelque part — chaque appareil/navigateur
+// auto-se-connecte au cloud à l'ouverture de la page. Vrai mode SaaS.
 function cloudSettingsHtml(){
-  const configured=Cloud.isConfigured();
   const ws=Cloud.getWorkspace();
-  if(configured){
-    return `
-      <div class="settings-row">
-        <div>
-          <div class="settings-label">☁️ Synchro Cloud <span class="cloud-badge-live">ACTIVÉE</span></div>
-          <div class="settings-sub">Espace de travail : <b style="color:var(--teal-light)">${escapeHtml(ws)}</b> · sauvegarde automatique à chaque action</div>
-        </div>
-        <div style="display:flex;gap:6px">
-          ${isAdmin()?'<button class="btn-mini" onclick="forceCloudPush()" title="ADMIN — Écraser le cloud avec mes données locales">↑ Tout renvoyer</button>':''}
-          <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3)" onclick="disableCloud()" title="Désactiver le cloud sur CE device uniquement">Désactiver</button>
-        </div>
-      </div>`;
-  }
+  const statusLabel = {
+    off:'Démarrage…', connecting:'Connexion…', syncing:'Sync en cours…',
+    synced:'Synchronisé ✓', error:'Hors-ligne ⚠️'
+  }[Cloud.status] || '—';
   return `
-    <div class="settings-row" style="align-items:flex-start;flex-direction:column;gap:0">
-      <div style="margin-bottom:6px">
-        <div class="settings-label">☁️ Synchro Cloud <span class="cloud-badge-off">NON CONFIGURÉE</span></div>
-        <div class="settings-sub">Sauvegarde auto + accès multi-appareils pour toi et ton équipe. Gratuit via Firebase.</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-label">☁️ Synchro Cloud <span class="cloud-badge-live">AUTO-CONFIGURÉE</span></div>
+        <div class="settings-sub">Projet Firebase : <b style="color:var(--teal-light)">saas-influ</b> · Workspace : <b style="color:var(--teal-light)">${escapeHtml(ws)}</b><br>État actuel : <b>${statusLabel}</b> · Sauvegarde automatique à chaque action · Sync temps réel entre tous les appareils.</div>
       </div>
-      <div class="cloud-setup-box" style="width:100%">
-        <div class="cloud-steps">
-          <b>Setup en 5 min :</b><br>
-          1. Va sur <b>console.firebase.google.com</b> → crée un projet (gratuit)<br>
-          2. Menu <b>Build → Firestore Database</b> → "Créer une base" → mode <b>test</b><br>
-          3. ⚙️ <b>Paramètres du projet → Tes applications → Web (&lt;/&gt;)</b> → enregistre l'app<br>
-          4. Copie l'objet <b>firebaseConfig</b> et colle-le ci-dessous :
-        </div>
-        <textarea id="cloud_config_input" placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..." }'></textarea>
-        <div style="margin-top:8px">
-          <label class="settings-sub" style="display:block;margin-bottom:3px">ID de l'espace de travail (le même pour toute ton équipe)</label>
-          <input id="cloud_workspace_input" value="influmedia-main" placeholder="influmedia-main">
-        </div>
-        <button class="btn-save" style="margin-top:10px;width:100%" onclick="activateCloud()">☁️ Activer la synchronisation cloud</button>
-        <div class="cloud-steps" style="margin-top:8px;font-size:10px">⚠️ En mode "test", n'importe qui avec ta config peut accéder aux données. Pour un usage pro durable, on sécurisera avec des règles Firestore + authentification (étape suivante).</div>
+      <div style="display:flex;gap:6px">
+        ${isAdmin()?'<button class="btn-mini" onclick="forceCloudPush()" title="ADMIN — Écraser le cloud avec mes données locales (utile une fois après migration)">↑ Tout renvoyer</button>':''}
       </div>
     </div>`;
 }
