@@ -4918,17 +4918,38 @@ function renderCwGifGallery(){
   `).join('');
 }
 
+// Convertit une URL "page" Giphy/Tenor en URL d'image directe utilisable dans <img>
+function normalizeGifUrl(url){
+  if(!url) return url;
+  url = url.trim();
+  // Giphy share URL : https://giphy.com/gifs/[slug]-[id] → https://media.giphy.com/media/[id]/giphy.gif
+  const giphyMatch = url.match(/^https?:\/\/(?:www\.)?giphy\.com\/gifs\/(?:[^/]+-)?([a-zA-Z0-9]+)(?:\?.*)?$/);
+  if(giphyMatch){
+    return 'https://media.giphy.com/media/' + giphyMatch[1] + '/giphy.gif';
+  }
+  // Tenor share URL : https://tenor.com/view/[slug]-[id] → fallback (Tenor requires API, on garde tel quel)
+  // L'utilisateur peut clic-droit → Copier l'adresse de l'image pour avoir une URL directe
+  return url;
+}
+
 function addCwGifToLibrary(){
   const inp=document.getElementById('cwGifUrl');
-  const url=inp.value.trim();
+  let url=inp.value.trim();
   if(!url){ alert('Colle l\'URL d\'un GIF ou d\'une image dans le champ.'); return; }
   if(!/^https?:\/\//.test(url)){ alert('L\'URL doit commencer par http:// ou https://'); return; }
+  // Auto-convertit les URLs "page" Giphy en URLs d'image directes
+  const original = url;
+  url = normalizeGifUrl(url);
   if(chatGifs.indexOf(url)!==-1){ toast('Déjà dans la galerie'); return; }
   chatGifs.unshift(url);
   Storage.set('influ_chat_gifs',chatGifs);
   inp.value='';
   renderCwGifGallery();
-  toast('GIF ajouté à la galerie ✓');
+  if(url !== original){
+    toast('GIF Giphy ajouté ✓ (URL convertie)');
+  } else {
+    toast('GIF ajouté à la galerie ✓');
+  }
 }
 
 function removeCwGif(i){
