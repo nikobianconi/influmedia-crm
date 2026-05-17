@@ -2002,6 +2002,15 @@ const Cloud = {
         if(newVal === oldVal) return; // Pas de vrai changement → ignorer (anti-boucle)
         // Changement réel : écrire en local
         try{ localStorage.setItem(ch.doc.id, newVal); }catch(e){}
+        // ── FIX chat temps réel : ré-émet un événement storage synthétique pour
+        // que les listeners existants (chat son+notif, etc.) se déclenchent
+        // exactement comme si la modif venait d'un autre onglet du même navigateur.
+        try{
+          window.dispatchEvent(new StorageEvent('storage',{
+            key: ch.doc.id, oldValue: oldVal, newValue: newVal,
+            storageArea: localStorage, url: location.href
+          }));
+        }catch(e){}
         // Ne déclencher reload que si ça ne vient PAS de nous (autre appareil/utilisateur)
         if(!mine) external = true;
       });
