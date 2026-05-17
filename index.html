@@ -1997,20 +1997,45 @@ const Cloud = {
         // Écho de notre propre push récent : ignorer entièrement
         if(mine && Date.now()<this._suppressUntil) return;
         // Compare la valeur cloud avec ce qu'on a en local
-        const newVal = JSON.stringify(d.value);
+        let newVal = JSON.stringify(d.value);
         const oldVal = localStorage.getItem(ch.doc.id);
+        // ── FIX anti-perte chat : pour les messages, on MERGE cloud + local
+        // (union par message id) plutôt que d'écraser. Ainsi même si quelqu'un
+        // push une version stale, aucun message envoyé en parallèle n'est perdu.
+        let mergedForCloud = null;
+        if(ch.doc.id === 'influ_chat_messages' && typeof mergeChatMessages === 'function'){
+          try{
+            const localObj = oldVal ? JSON.parse(oldVal) : {};
+            const merged = mergeChatMessages(d.value || {}, localObj);
+            const mergedStr = JSON.stringify(merged);
+            // Si le merge ajoute des trucs absents du cloud → on republie pour
+            // que le cloud soit aussi à jour (sinon les autres devices auraient
+            // la version stale).
+            if(mergedStr !== JSON.stringify(d.value || {})){
+              mergedForCloud = merged;
+            }
+            newVal = mergedStr;
+          }catch(e){ console.error('chat merge', e); }
+        }
         if(newVal === oldVal) return; // Pas de vrai changement → ignorer (anti-boucle)
         // Changement réel : écrire en local
         try{ localStorage.setItem(ch.doc.id, newVal); }catch(e){}
-        // ── FIX chat temps réel : ré-émet un événement storage synthétique pour
-        // que les listeners existants (chat son+notif, etc.) se déclenchent
-        // exactement comme si la modif venait d'un autre onglet du même navigateur.
+        // ── FIX chat : appel direct des fonctions de mise à jour (garantit que
+        // ça marche partout, sans dépendre du comportement variable du synthetic
+        // StorageEvent). Couvre messages, channels, read.
         try{
-          window.dispatchEvent(new StorageEvent('storage',{
-            key: ch.doc.id, oldValue: oldVal, newValue: newVal,
-            storageArea: localStorage, url: location.href
-          }));
-        }catch(e){}
+          if(typeof applyChatStorageUpdate === 'function' &&
+             (ch.doc.id === 'influ_chat_messages' ||
+              ch.doc.id === 'influ_chat_channels' ||
+              ch.doc.id === 'influ_chat_read')){
+            applyChatStorageUpdate(ch.doc.id);
+          }
+        }catch(e){ console.error('applyChatStorageUpdate', e); }
+        // Si on a mergé du chat → repousse la version mergée vers le cloud
+        // pour que les autres devices voient l'état complet.
+        if(mergedForCloud){
+          try{ this.push('influ_chat_messages', mergedForCloud); }catch(e){}
+        }
         // Ne déclencher reload que si ça ne vient PAS de nous (autre appareil/utilisateur)
         if(!mine) external = true;
       });
@@ -4978,18 +5003,41 @@ function detectNewIncoming(oldMsgs,newMsgs){
   return incoming;
 }
 
-// Synchro temps réel entre onglets/fenêtres + notifications
-window.addEventListener('storage',(e)=>{
-  if(e.key==='influ_chat_messages'){
+// Merge intelligent : union des messages par convId par id (pas de perte possible)
+function mergeChatMessages(a, b){
+  const out = {};
+  const allKeys = new Set([...Object.keys(a||{}), ...Object.keys(b||{})]);
+  allKeys.forEach(k => {
+    const ma = (a||{})[k] || [];
+    const mb = (b||{})[k] || [];
+    const seen = new Set();
+    const merged = [];
+    [...ma, ...mb].forEach(m => {
+      if(m && m.id != null && !seen.has(m.id)){
+        seen.add(m.id);
+        merged.push(m);
+      }
+    });
+    merged.sort((x,y) => new Date(x.sentAt||0) - new Date(y.sentAt||0));
+    out[k] = merged;
+  });
+  return out;
+}
+
+// Logique de mise à jour appelable directement (par le cloud listener ET le storage event)
+function applyChatStorageUpdate(key){
+  if(key==='influ_chat_messages'){
     const oldMsgs=chatMessages;
     const newMsgs=Storage.get('influ_chat_messages',{});
     const incoming=detectNewIncoming(oldMsgs,newMsgs);
     chatMessages=newMsgs;
+    // Recompute nextChatMsgId pour éviter les collisions d'IDs entre membres
+    let mx=0; Object.values(chatMessages).forEach(arr=>arr.forEach(m=>{if(m.id>mx)mx=m.id;}));
+    if(mx>=nextChatMsgId) nextChatMsgId=mx+1;
     if(chatWidgetOpen){
       if(currentConv) renderCwConv(); else renderCwConvList();
     }
     updateChatFab();
-    // Notifier seulement si on ne regarde pas activement cette conversation
     incoming.forEach(({msg,convId})=>{
       const lookingAtIt=chatWidgetOpen && currentConv===convId;
       if(!lookingAtIt){
@@ -4998,12 +5046,19 @@ window.addEventListener('storage',(e)=>{
         pulseChatFab();
       }
     });
-  } else if(e.key==='influ_chat_channels'){
+  } else if(key==='influ_chat_channels'){
     chatChannels=Storage.get('influ_chat_channels',chatChannels);
     if(chatWidgetOpen&&!currentConv) renderCwConvList();
-  } else if(e.key==='influ_chat_read'){
+  } else if(key==='influ_chat_read'){
     chatRead=Storage.get('influ_chat_read',chatRead);
     updateChatFab();
+  }
+}
+
+// Synchro temps réel entre onglets/fenêtres + notifications (storage event natif)
+window.addEventListener('storage',(e)=>{
+  if(e.key==='influ_chat_messages' || e.key==='influ_chat_channels' || e.key==='influ_chat_read'){
+    applyChatStorageUpdate(e.key);
   }
 });
 
