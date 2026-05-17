@@ -1834,8 +1834,12 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
     <div class="cw-input-bar">
       <div class="cw-emoji-pop" id="cwEmojiPop"></div>
       <div class="cw-gif-bar" id="cwGifBar">
-        <input type="text" id="cwGifUrl" placeholder="URL d'un GIF ou d'une image (https://...)" onkeydown="if(event.key==='Enter')sendCwGif()">
-        <button onclick="sendCwGif()">OK</button>
+        <div class="cw-gif-gallery" id="cwGifGallery"></div>
+        <div class="cw-gif-url-row">
+          <input type="text" id="cwGifUrl" placeholder="Coller URL pour ajouter à la galerie..." onkeydown="if(event.key==='Enter')addCwGifToLibrary()">
+          <button onclick="addCwGifToLibrary()" title="Ajouter à la galerie">+ Galerie</button>
+          <button onclick="sendCwGif()" title="Envoyer cette URL en direct">Envoyer</button>
+        </div>
       </div>
       <button class="cw-tool" onclick="toggleCwEmoji()" title="Emoji">😊</button>
       <button class="cw-tool" onclick="toggleCwGif()" title="GIF / Image">🎬</button>
@@ -1882,7 +1886,7 @@ const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_tod
   'influ_client_services','influ_client_offers','influ_service_catalog','influ_team',
   'influ_quotes','influ_invoices','influ_trips','influ_trips_seeded_v1','influ_agenda',
   'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
-  'influ_chat_read','influ_home_widgets','influ_home_note'];
+  'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note'];
 
 // ── Firebase config HARDCODÉE (projet saas-influ) ──
 // Permet à n'importe quel appareil/navigateur d'auto-connecter au cloud
@@ -2020,17 +2024,12 @@ const Cloud = {
         if(newVal === oldVal) return; // Pas de vrai changement → ignorer (anti-boucle)
         // Changement réel : écrire en local
         try{ localStorage.setItem(ch.doc.id, newVal); }catch(e){}
-        // ── FIX chat : appel direct des fonctions de mise à jour (garantit que
-        // ça marche partout, sans dépendre du comportement variable du synthetic
-        // StorageEvent). Couvre messages, channels, read.
+        // ── TEMPS RÉEL GLOBAL : appel direct de la fonction qui met à jour
+        // l'in-memory + re-render la page active. Couvre TOUTES les entités
+        // (clients, prospects, trips, agenda, devis, factures, chat, etc.)
         try{
-          if(typeof applyChatStorageUpdate === 'function' &&
-             (ch.doc.id === 'influ_chat_messages' ||
-              ch.doc.id === 'influ_chat_channels' ||
-              ch.doc.id === 'influ_chat_read')){
-            applyChatStorageUpdate(ch.doc.id);
-          }
-        }catch(e){ console.error('applyChatStorageUpdate', e); }
+          if(typeof applyExternalUpdate === 'function') applyExternalUpdate(ch.doc.id);
+        }catch(e){ console.error('applyExternalUpdate', e); }
         // Si on a mergé du chat → repousse la version mergée vers le cloud
         // pour que les autres devices voient l'état complet.
         if(mergedForCloud){
@@ -4395,9 +4394,9 @@ function cloudSettingsHtml(){
 
 // ── CLOUD : toast de rechargement quand un autre appareil modifie les données ──
 function showCloudReloadToast(){
-  // FIX anti-boucle : on ne recharge JAMAIS la page tout seul.
-  // L'utilisateur reçoit juste une notif et clique manuellement s'il veut.
-  toast('🔄 Nouvelles données dispo — clique sur 🔄 dans la sidebar ou recharge la page (Cmd+R)');
+  // Temps réel global actif : la page s'est déjà mise à jour toute seule.
+  // On affiche juste un petit feedback discret pour l'info.
+  toast('🔄 Données mises à jour en direct');
 }
 
 // ── CLOUD : activer la synchronisation ──
@@ -4895,7 +4894,56 @@ function toggleCwGif(){
   document.getElementById('cwEmojiPop').classList.remove('open');
   const bar=document.getElementById('cwGifBar');
   bar.classList.toggle('open');
-  if(bar.classList.contains('open')) setTimeout(()=>document.getElementById('cwGifUrl').focus(),50);
+  if(bar.classList.contains('open')){
+    renderCwGifGallery();
+    setTimeout(()=>document.getElementById('cwGifUrl').focus(),50);
+  }
+}
+
+// ── GALERIE GIF — collection partagée d'images/GIFs à envoyer en 1 clic ──
+let chatGifs = Storage.get('influ_chat_gifs', []);
+
+function renderCwGifGallery(){
+  const el=document.getElementById('cwGifGallery');
+  if(!el) return;
+  if(!chatGifs.length){
+    el.innerHTML='<div class="cw-gif-empty">Aucun GIF dans ta galerie pour l\'instant.<br>Colle une URL ci-dessous et clique <b>+ Galerie</b> pour ajouter.</div>';
+    return;
+  }
+  el.innerHTML=chatGifs.map((url,i)=>`
+    <div class="cw-gif-thumb" onclick="sendCwGifFromLibrary(${i})" title="Cliquer pour envoyer">
+      <img src="${escapeHtml(url)}" alt="GIF" onerror="this.style.opacity='.3';this.parentElement.title='⚠️ URL inaccessible — clic ✕ pour retirer'">
+      <button class="gt-rm" onclick="event.stopPropagation();removeCwGif(${i})" title="Retirer de la galerie">✕</button>
+    </div>
+  `).join('');
+}
+
+function addCwGifToLibrary(){
+  const inp=document.getElementById('cwGifUrl');
+  const url=inp.value.trim();
+  if(!url){ alert('Colle l\'URL d\'un GIF ou d\'une image dans le champ.'); return; }
+  if(!/^https?:\/\//.test(url)){ alert('L\'URL doit commencer par http:// ou https://'); return; }
+  if(chatGifs.indexOf(url)!==-1){ toast('Déjà dans la galerie'); return; }
+  chatGifs.unshift(url);
+  Storage.set('influ_chat_gifs',chatGifs);
+  inp.value='';
+  renderCwGifGallery();
+  toast('GIF ajouté à la galerie ✓');
+}
+
+function removeCwGif(i){
+  if(!confirm('Retirer ce GIF de la galerie partagée ?')) return;
+  chatGifs.splice(i,1);
+  Storage.set('influ_chat_gifs',chatGifs);
+  renderCwGifGallery();
+  toast('GIF retiré');
+}
+
+function sendCwGifFromLibrary(i){
+  const url=chatGifs[i];
+  if(!url||!currentConv) return;
+  pushChatMessage({id:nextChatMsgId++,author:currentUser.id,gif:url,sentAt:new Date().toISOString()});
+  document.getElementById('cwGifBar').classList.remove('open');
 }
 
 function openChatChannelModal(){
@@ -5055,10 +5103,145 @@ function applyChatStorageUpdate(key){
   }
 }
 
+// ── TEMPS RÉEL GLOBAL : recharge l'entité depuis localStorage et re-render la
+// page active. Appelé par le cloud listener ET par les events storage cross-tab.
+// Couvre TOUTES les entités synchronisées (pas que le chat).
+function activeTabName(){
+  const el = document.querySelector('.tab-content.active');
+  return el ? el.id.replace('tab-','') : null;
+}
+
+function applyExternalUpdate(key){
+  // Chat : déjà géré par sa propre logique (merge + notif)
+  if(key==='influ_chat_messages' || key==='influ_chat_channels' || key==='influ_chat_read'){
+    applyChatStorageUpdate(key);
+    return;
+  }
+  const raw = localStorage.getItem(key);
+  if(raw == null) return;
+  let parsed;
+  try{ parsed = JSON.parse(raw); }catch(e){ return; }
+  const tab = activeTabName();
+  const inDash = tab==='dashboard';
+  switch(key){
+    case 'influ_clients3':
+      clients = parsed;
+      if(tab==='clients') renderClients();
+      else if(tab==='fins') renderFins();
+      else if(tab==='services') renderServices();
+      else if(tab==='avis') renderAvis();
+      else if(tab==='contacts') renderContacts();
+      else if(tab==='editorial') renderEditorial();
+      else if(tab==='cnotes') renderClientNotes();
+      else if(tab==='articles') renderArticles();
+      else if(tab==='trips') renderTrips();
+      if(inDash) renderDashboard();
+      break;
+    case 'influ_prospects3':
+      prospects = parsed;
+      if(tab==='prospection') renderProspects();
+      if(inDash) renderDashboard();
+      break;
+    case 'influ_tasks3':
+      tasks = parsed;
+      if(tab==='tasks') renderTasks();
+      if(typeof updateNavTaskBadge==='function') updateNavTaskBadge();
+      if(inDash) renderDashboard();
+      break;
+    case 'influ_todos':
+      todos = parsed;
+      if(tab==='todo') renderTodo();
+      if(typeof updateNavTodoBadge==='function') updateNavTodoBadge();
+      break;
+    case 'influ_avis_clients':
+      avisClients = parsed;
+      if(tab==='avis') renderAvis();
+      break;
+    case 'influ_avis_days':
+      avisDays = parsed;
+      if(tab==='avis') renderAvis();
+      break;
+    case 'influ_editorial':
+      editorial = parsed;
+      if(tab==='editorial') renderEditorial();
+      break;
+    case 'influ_contacts':
+      contactsData = parsed;
+      if(tab==='contacts') renderContacts();
+      break;
+    case 'influ_team':
+      teamMembers = parsed;
+      if(tab==='settings') renderSettings();
+      else if(tab==='home') renderHome();
+      else if(tab==='todo') renderTodo();
+      else if(tab==='agenda') renderAgenda();
+      if(chatWidgetOpen && typeof renderCwConvList==='function' && !currentConv) renderCwConvList();
+      break;
+    case 'influ_quotes':
+      quotes = parsed;
+      if(tab==='quotes') renderQuotes();
+      if(typeof updateNavInvBadge==='function') updateNavInvBadge();
+      break;
+    case 'influ_invoices':
+      invoices = parsed;
+      if(tab==='invoices') renderInvoices();
+      if(typeof updateNavInvBadge==='function') updateNavInvBadge();
+      if(inDash) renderDashboard();
+      break;
+    case 'influ_trips':
+      trips = parsed;
+      if(tab==='trips') renderTrips();
+      if(typeof updateNavTripBadge==='function') updateNavTripBadge();
+      break;
+    case 'influ_agenda':
+      agenda = parsed;
+      if(tab==='agenda') renderAgenda();
+      break;
+    case 'influ_articles':
+      articles = parsed;
+      if(tab==='articles') renderArticles();
+      break;
+    case 'influ_client_notes':
+      clientNotes = parsed;
+      if(tab==='cnotes') renderClientNotes();
+      break;
+    case 'influ_home_widgets':
+      homeWidgets = parsed;
+      if(tab==='home') renderHome();
+      break;
+    case 'influ_home_note':
+      homeNote = parsed;
+      if(tab==='home') renderHome();
+      break;
+    case 'influ_service_catalog':
+      serviceCatalog = parsed;
+      if(tab==='services') renderServices();
+      break;
+    case 'influ_client_services':
+      clientServices = parsed;
+      if(tab==='services') renderServices();
+      break;
+    case 'influ_client_offers':
+      clientOffers = parsed;
+      if(tab==='services') renderServices();
+      break;
+    case 'influ_chat_gifs':
+      chatGifs = parsed;
+      // Si la galerie GIF est ouverte, la re-render pour voir les ajouts/retraits des autres
+      const gifBar = document.getElementById('cwGifBar');
+      if(gifBar && gifBar.classList.contains('open')) renderCwGifGallery();
+      break;
+  }
+}
+
 // Synchro temps réel entre onglets/fenêtres + notifications (storage event natif)
+// Couvre maintenant TOUTES les entités, pas que le chat.
 window.addEventListener('storage',(e)=>{
+  if(!e.key) return;
   if(e.key==='influ_chat_messages' || e.key==='influ_chat_channels' || e.key==='influ_chat_read'){
     applyChatStorageUpdate(e.key);
+  } else if(e.key.startsWith('influ_')){
+    applyExternalUpdate(e.key);
   }
 });
 
