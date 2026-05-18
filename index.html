@@ -396,6 +396,7 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .agenda-status{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.4px;text-transform:uppercase;border:1.5px solid transparent;line-height:1}
 .ag-st-office{background:rgba(46,204,113,.18);color:#2ecc71;border-color:rgba(46,204,113,.4)}
 .ag-st-remote{background:rgba(52,152,219,.18);color:#3498db;border-color:rgba(52,152,219,.4)}
+.ag-st-school{background:rgba(241,196,15,.18);color:#f1c40f;border-color:rgba(241,196,15,.4)}
 .ag-st-off{background:rgba(243,156,18,.18);color:#f39c12;border-color:rgba(243,156,18,.4)}
 .ag-st-ext{background:rgba(155,89,182,.18);color:#9b59b6;border-color:rgba(155,89,182,.4)}
 .ag-st-busy{background:rgba(231,76,60,.18);color:#e74c3c;border-color:rgba(231,76,60,.4)}
@@ -1250,6 +1251,7 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
   <div class="agenda-legend">
     <span><span class="agenda-status ag-st-office">🏢 Bureau</span></span>
     <span><span class="agenda-status ag-st-remote">🏠 Télétravail</span></span>
+    <span><span class="agenda-status ag-st-school">🎓 École</span></span>
     <span><span class="agenda-status ag-st-off">🏖 Congé</span></span>
     <span><span class="agenda-status ag-st-ext">📅 RDV ext.</span></span>
     <span><span class="agenda-status ag-st-busy">⛔ Indispo</span></span>
@@ -4712,7 +4714,7 @@ const WIDGET_CATALOG = {
     const rows=teamMembers.map(m=>{
       const st=(agenda[m.id]||{})[tk];
       const info=AGENDA_STATUS.find(s=>s.k===st);
-      const dotCol={office:'#2ecc71',remote:'#3498db',off:'#f39c12',ext:'#9b59b6',busy:'#e74c3c'}[st]||'rgba(255,255,255,.15)';
+      const dotCol={office:'#2ecc71',remote:'#3498db',school:'#f1c40f',off:'#f39c12',ext:'#9b59b6',busy:'#e74c3c'}[st]||'rgba(255,255,255,.15)';
       return `<div class="hw-list-item"><span class="li-dot" style="background:${dotCol}"></span><span class="li-txt">${escapeHtml(m.name)}</span><span class="li-meta">${info?info.short:'—'}</span></div>`;
     }).join('');
     return rows;
@@ -5405,11 +5407,16 @@ function applyExternalUpdate(key){
     case 'influ_trips':
       trips = parsed;
       if(tab==='trips') renderTrips();
+      if(tab==='home') renderHome();
       if(typeof updateNavTripBadge==='function') updateNavTripBadge();
       break;
     case 'influ_agenda':
       agenda = parsed;
       if(tab==='agenda') renderAgenda();
+      // FIX sync widget Accueil : le widget "Qui est là aujourd'hui" lit agenda,
+      // donc il faut le re-render dès qu'agenda change même sur la page d'accueil
+      if(tab==='home') renderHome();
+      if(inDash) renderDashboard();
       break;
     case 'influ_articles':
       articles = parsed;
@@ -6150,6 +6157,7 @@ let agendaCurrentMonth = (function(){const d=new Date();d.setDate(1);d.setHours(
 const AGENDA_STATUS=[
   {k:'office', l:'🏢 Bureau',     short:'🏢 Bureau',     cls:'ag-st-office'},
   {k:'remote', l:'🏠 Télétravail',short:'🏠 TT',         cls:'ag-st-remote'},
+  {k:'school', l:'🎓 École',      short:'🎓 École',      cls:'ag-st-school'},
   {k:'off',    l:'🏖 Congé',      short:'🏖 Congé',      cls:'ag-st-off'},
   {k:'ext',    l:'📅 RDV ext.',   short:'📅 Ext',        cls:'ag-st-ext'},
   {k:'busy',   l:'⛔ Indispo',     short:'⛔ Indispo',    cls:'ag-st-busy'}
