@@ -2305,7 +2305,8 @@ function importData(event){
       clientId=Math.max(...clients.map(c=>c.id))+1;
       prospId=Math.max(...prospects.map(p=>p.id))+1;
       taskId=tasks.length?Math.max(...tasks.map(t=>t.id))+1:1;
-      nextTodoId=todos.length?Math.max(...todos.map(t=>t.id))+1:1;
+      // FIX collision IDs : on n'utilise plus de compteur incrémental pour les todos
+      todos.forEach(t => { if(typeof t.id !== 'string') t.id = String(t.id); });
       nextEdId=editorial.length?Math.max(...editorial.map(e=>e.id))+1:1;
       nextQuoteId=quotes.length?Math.max(...quotes.map(q=>q.id))+1:1;
       nextInvoiceId=invoices.length?Math.max(...invoices.map(i=>i.id))+1:1;
@@ -3355,7 +3356,16 @@ function lockApp(){
 // ║ TO-DO LIST (Perso + Équipe)
 // ╚══════════════════════════════════════════════════════════════
 let todos = Storage.get('influ_todos', []);
-let todoBucket='perso',todoFilter='open',editTodoId=null,nextTodoId=todos.length?Math.max(...todos.map(t=>t.id))+1:1;
+let todoBucket='perso',todoFilter='open',editTodoId=null;
+// ── FIX collision IDs : normalise tous les IDs existants en string pour qu'ils
+// ne rentrent jamais en conflit avec les IDs numériques générés par un autre
+// appareil. Toutes les nouvelles todos auront un ID globalement unique.
+todos.forEach(t => { if(typeof t.id !== 'string') t.id = String(t.id); });
+function newTodoId(){
+  // ID globalement unique : user prefix + timestamp + random suffix
+  const userPrefix = (typeof currentUser!=='undefined' && currentUser.id) ? currentUser.id+'_' : 'a_';
+  return userPrefix + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+}
 /// ── FIX : ne PLUS auto-migrer les todos perso orphelines à l'admin
 // Avant : chaque boot assignait toute perso sans propriétaire à Niko,
 // donc les vieilles perso de Léonie/Marina/Sara devenaient celles de Niko.
@@ -3486,10 +3496,10 @@ function renderTodo(){
     const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${owner.name}">✍️ ${(owner.name||'').split(' ')[0]}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
     const stamp=st==='in_progress'?'<div class="postit-stamp">EN COURS</div>':'';
-    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="cycleTodoState(${t.id})" title="Clic = changer le statut · Edit pour détailler">
+    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="cycleTodoState('${t.id}')" title="Clic = changer le statut · Edit pour détailler">
       <div class="postit-actions">
-        <button class="postit-act" onclick="event.stopPropagation();editTodo(${t.id})" title="Modifier">✏️</button>
-        <button class="postit-act" onclick="event.stopPropagation();deleteTodo(${t.id})" title="Supprimer">✕</button>
+        <button class="postit-act" onclick="event.stopPropagation();editTodo('${t.id}')" title="Modifier">✏️</button>
+        <button class="postit-act" onclick="event.stopPropagation();deleteTodo('${t.id}')" title="Supprimer">✕</button>
       </div>
       ${stamp}
       <div class="postit-title">${(t.title||'').replace(/</g,'&lt;')}</div>
@@ -3543,18 +3553,19 @@ function renderOrphanTodosList(){
           <option value="">— Attribuer à... —</option>
           ${memberOpts}
         </select>
-        <button class="btn-mini" onclick="assignOrphanTodo(${t.id})" title="Attribuer au membre sélectionné">✓ Attribuer</button>
-        <button class="btn-mini" onclick="convertOrphanToTeam(${t.id})" title="En faire une todo d'équipe partagée">👥 → Équipe</button>
-        <button class="btn-mini" style="background:rgba(231,76,60,.18);color:var(--coral);border-color:rgba(231,76,60,.3)" onclick="deleteOrphanTodo(${t.id})" title="Supprimer définitivement">🗑</button>
+        <button class="btn-mini" onclick="assignOrphanTodo('${t.id}')" title="Attribuer au membre sélectionné">✓ Attribuer</button>
+        <button class="btn-mini" onclick="convertOrphanToTeam('${t.id}')" title="En faire une todo d'équipe partagée">👥 → Équipe</button>
+        <button class="btn-mini" style="background:rgba(231,76,60,.18);color:var(--coral);border-color:rgba(231,76,60,.3)" onclick="deleteOrphanTodo('${t.id}')" title="Supprimer définitivement">🗑</button>
       </div>
     </div>`;
   }).join('');
 }
 
 function assignOrphanTodo(id){
+  id = String(id);
   const sel=document.getElementById('orphan_assign_'+id);
   if(!sel||!sel.value){ alert('Choisis un membre dans la liste avant d\'attribuer.'); return; }
-  const i=todos.findIndex(t=>t.id===id);
+  const i=todos.findIndex(t=>String(t.id)===id);
   if(i<0) return;
   todos[i].owner=sel.value;
   Storage.set('influ_todos',todos);
@@ -3565,8 +3576,9 @@ function assignOrphanTodo(id){
 }
 
 function convertOrphanToTeam(id){
+  id = String(id);
   if(!confirm('Convertir cette todo perso en todo d\'équipe (visible par tous) ?')) return;
-  const i=todos.findIndex(t=>t.id===id);
+  const i=todos.findIndex(t=>String(t.id)===id);
   if(i<0) return;
   todos[i].bucket='team';
   todos[i].owner=currentUser.id; // owner = admin qui a converti
@@ -3577,8 +3589,9 @@ function convertOrphanToTeam(id){
 }
 
 function deleteOrphanTodo(id){
+  id = String(id);
   if(!confirm('Supprimer définitivement cette todo orpheline ?')) return;
-  todos=todos.filter(t=>t.id!==id);
+  todos=todos.filter(t=>String(t.id)!==id);
   Storage.set('influ_todos',todos);
   toast('Supprimée');
   renderOrphanTodosList();
@@ -3615,7 +3628,8 @@ function openTodoModal(){
 }
 
 function editTodo(id){
-  const t=todos.find(x=>x.id===id);if(!t) return;
+  id = String(id);
+  const t=todos.find(x=>String(x.id)===id);if(!t) return;
   editTodoId=id;
   // Titre du modal avec le créateur pour qu'on sache toujours d'où vient la note
   const owner=teamMembers.find(m=>m.id===t.owner);
@@ -3658,7 +3672,7 @@ function saveTodo(){
     notes:document.getElementById('td_notes').value.trim()
   };
   if(editTodoId!==null){
-    const i=todos.findIndex(t=>t.id===editTodoId);
+    const i=todos.findIndex(t=>String(t.id)===String(editTodoId));
     if(i<0){ toast('Todo introuvable'); return; }
     // Garde le propriétaire d'origine intact (sécurité multi-user)
     todos[i]={...todos[i],...data};
@@ -3679,7 +3693,7 @@ function saveTodo(){
     }
   } else {
     // Création : owner = créateur (= moi)
-    todos.push({id:nextTodoId++,...data,owner:currentUser.id,done:false,createdAt:new Date().toISOString(),completedAt:null});
+    todos.push({id:newTodoId(),...data,owner:currentUser.id,done:false,createdAt:new Date().toISOString(),completedAt:null});
     toast('Todo ajoutée ✓');
   }
   Storage.set('influ_todos',todos);
@@ -3688,7 +3702,8 @@ function saveTodo(){
 }
 
 function cycleTodoState(id){
-  const t=todos.find(x=>x.id===id);if(!t) return;
+  id = String(id);
+  const t=todos.find(x=>String(x.id)===id);if(!t) return;
   const cur=todoState(t);
   const next={'todo':'in_progress','in_progress':'done','done':'todo'}[cur];
   t.state=next;
@@ -3704,8 +3719,9 @@ function cycleTodoState(id){
 function toggleTodoDone(id){cycleTodoState(id);}
 
 function deleteTodo(id){
+  id = String(id);
   if(!confirm('Supprimer cette todo ?')) return;
-  todos=todos.filter(t=>t.id!==id);
+  todos=todos.filter(t=>String(t.id)!==id);
   Storage.set('influ_todos',todos);
   renderTodo();
   toast('Todo supprimée');
@@ -5345,6 +5361,9 @@ function applyExternalUpdate(key){
       break;
     case 'influ_todos':
       todos = parsed;
+      // FIX collision IDs : normalise toujours en string (cas de données provenant
+      // de versions anciennes du code qui poussaient des numéros)
+      todos.forEach(t => { if(typeof t.id !== 'string') t.id = String(t.id); });
       if(tab==='todo') renderTodo();
       if(typeof updateNavTodoBadge==='function') updateNavTodoBadge();
       break;
