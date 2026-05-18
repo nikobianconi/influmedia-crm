@@ -1450,6 +1450,13 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
       </select></div>
     </div>
     <div class="fg"><label>Notes</label><input id="td_notes" placeholder="Détails..."></div>
+    <!-- Champ Propriétaire visible UNIQUEMENT à l'admin (pour ré-attribuer en cas de migration buggée) -->
+    <div class="fg" id="td_owner_row" style="display:none">
+      <label>👑 Propriétaire <span style="font-size:10px;color:var(--muted);font-weight:400">(ADMIN — pour ré-attribuer une todo mal assignée)</span></label>
+      <select id="td_owner">
+        <option value="">— Aucun (todo orpheline, invisible) —</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('todoOverlay')">Annuler</button>
       <button class="btn-save" onclick="saveTodo()"><span id="todoSaveLabel">Enregistrer</span></button>
@@ -3474,6 +3481,9 @@ function renderTodo(){
     const due=st==='done'?{txt:'✓ Fait',cls:'done'}:fmtDue(t.due);
     const assignee=teamMembers.find(m=>m.id===t.assignee);
     const asgHtml=assignee?`<span class="postit-assignee" title="Assigné à ${assignee.name}">👤 ${(assignee.name||'').split(' ')[0]}</span>`:'';
+    // Créateur (owner) — surtout utile pour les todos d'équipe
+    const owner=teamMembers.find(m=>m.id===t.owner);
+    const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${owner.name}">✍️ ${(owner.name||'').split(' ')[0]}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
     const stamp=st==='in_progress'?'<div class="postit-stamp">EN COURS</div>':'';
     return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="cycleTodoState(${t.id})" title="Clic = changer le statut · Edit pour détailler">
@@ -3486,6 +3496,7 @@ function renderTodo(){
       ${t.notes?`<div class="postit-notes">${(t.notes||'').replace(/</g,'&lt;')}</div>`:'<div class="postit-notes" style="opacity:.4">—</div>'}
       <div class="postit-meta">
         <span class="postit-due ${due.cls}">${due.txt}</span>
+        ${ownerHtml}
         ${asgHtml}
       </div>
     </div>`;
@@ -3596,6 +3607,9 @@ function openTodoModal(){
   document.getElementById('td_due').value=todayISO();
   document.getElementById('td_notes').value='';
   fillAssigneeOptions(document.getElementById('td_assignee'),'');
+  // Cache le champ propriétaire en mode création (le créateur est automatiquement propriétaire)
+  const ownerRow=document.getElementById('td_owner_row');
+  if(ownerRow) ownerRow.style.display='none';
   document.getElementById('todoOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('td_title').focus(),50);
 }
@@ -3603,7 +3617,10 @@ function openTodoModal(){
 function editTodo(id){
   const t=todos.find(x=>x.id===id);if(!t) return;
   editTodoId=id;
-  document.getElementById('todoModalTitle').textContent='✏️ Modifier la note';
+  // Titre du modal avec le créateur pour qu'on sache toujours d'où vient la note
+  const owner=teamMembers.find(m=>m.id===t.owner);
+  const byLabel=owner?` · ✍️ créée par ${owner.id===currentUser.id?'toi':owner.name}`:'';
+  document.getElementById('todoModalTitle').innerHTML='✏️ Modifier la note<span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:8px">'+byLabel+'</span>';
   document.getElementById('todoSaveLabel').textContent='Mettre à jour';
   document.getElementById('td_title').value=t.title||'';
   document.getElementById('td_bucket').value=t.bucket||'perso';
@@ -3612,6 +3629,15 @@ function editTodo(id){
   document.getElementById('td_due').value=t.due||'';
   document.getElementById('td_notes').value=t.notes||'';
   fillAssigneeOptions(document.getElementById('td_assignee'),t.assignee||'');
+  // Champ propriétaire visible uniquement pour l'admin
+  const ownerRow=document.getElementById('td_owner_row');
+  const ownerSel=document.getElementById('td_owner');
+  if(isAdmin() && ownerRow && ownerSel){
+    ownerRow.style.display='block';
+    ownerSel.innerHTML='<option value="">— Aucun (orpheline, invisible) —</option>'+teamMembers.map(m=>`<option value="${m.id}"${(t.owner||'')===m.id?' selected':''}>${escapeHtml(m.name)}</option>`).join('');
+  } else if(ownerRow){
+    ownerRow.style.display='none';
+  }
   document.getElementById('todoOverlay').classList.add('open');
 }
 
@@ -3636,7 +3662,21 @@ function saveTodo(){
     if(i<0){ toast('Todo introuvable'); return; }
     // Garde le propriétaire d'origine intact (sécurité multi-user)
     todos[i]={...todos[i],...data};
-    toast('Todo mise à jour ✓');
+    // SAUF si l'admin a explicitement utilisé le champ "Propriétaire" pour ré-attribuer
+    const ownerRow=document.getElementById('td_owner_row');
+    if(isAdmin() && ownerRow && ownerRow.style.display!=='none'){
+      const newOwner=document.getElementById('td_owner').value;
+      const oldOwner=todos[i].owner;
+      todos[i].owner = newOwner || null;
+      if(newOwner !== oldOwner){
+        const m=teamMembers.find(x=>x.id===newOwner);
+        toast('Todo ré-attribuée à '+(m?m.name:'(orpheline)')+' ✓');
+      } else {
+        toast('Todo mise à jour ✓');
+      }
+    } else {
+      toast('Todo mise à jour ✓');
+    }
   } else {
     // Création : owner = créateur (= moi)
     todos.push({id:nextTodoId++,...data,owner:currentUser.id,done:false,createdAt:new Date().toISOString(),completedAt:null});
