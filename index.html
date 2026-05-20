@@ -1116,7 +1116,7 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
     <div class="page-title">🛍️ <span>Services par client</span></div>
     <div style="display:flex;gap:8px">
       <button class="btn-cancel" onclick="openServiceCatalogModal()">⚙️ Catalogue services</button>
-      <button class="btn-primary" onclick="openServicesAddRow()">＋ Ajouter ligne</button>
+      <button class="btn-primary" onclick="openServicesAddRow()">＋ Ajouter une société</button>
     </div>
   </div>
   <div class="toolbar">
@@ -1910,7 +1910,7 @@ const Storage = {
 // ╚══════════════════════════════════════════════════════════════
 const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_todos',
   'influ_avis_clients','influ_avis_days','influ_editorial','influ_contacts',
-  'influ_client_services','influ_client_offers','influ_service_catalog','influ_team',
+  'influ_client_services','influ_client_offers','influ_service_catalog','influ_service_extras','influ_team',
   'influ_quotes','influ_invoices','influ_trips','influ_trips_seeded_v1','influ_agenda',
   'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
   'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note'];
@@ -2245,7 +2245,7 @@ function exportData(){
     todos,
     editorial,
     avisClients,avisDays,
-    serviceCatalog,clientServices,clientOffers,
+    serviceCatalog,clientServices,clientOffers,serviceExtras,
     contactsData,
     teamMembers,
     quotes,invoices,
@@ -2288,6 +2288,7 @@ function importData(event){
       if(data.avisDays){avisDays=data.avisDays;Storage.set('influ_avis_days',avisDays);}
       if(Array.isArray(data.serviceCatalog)){serviceCatalog=data.serviceCatalog;Storage.set('influ_service_catalog',serviceCatalog);}
       if(data.clientServices){clientServices=data.clientServices;Storage.set('influ_client_services',clientServices);}
+      if(Array.isArray(data.serviceExtras)){serviceExtras=data.serviceExtras;Storage.set('influ_service_extras',serviceExtras);}
       if(data.clientOffers){clientOffers=data.clientOffers;Storage.set('influ_client_offers',clientOffers);}
       if(data.contactsData){contactsData=data.contactsData;Storage.set('influ_contacts',contactsData);}
       if(Array.isArray(data.teamMembers)){teamMembers=data.teamMembers;saveTeam();}
@@ -2740,7 +2741,8 @@ function renderDashboard(){
       return `<div class="kpi k-teal" style="cursor:pointer" onclick="goToTrips()"><div class="kpi-icon">🚗</div><div class="kpi-val">${thisMonth}</div><div class="kpi-label">Déplacements ce mois</div><div class="kpi-sub" style="color:var(--muted)">${conf} confirmé(s) · ${upcoming} à venir</div></div>`;
     })()}
     ${(function(){
-      const tk=new Date().toISOString().slice(0,10);
+      // FIX timezone : utilise todayISO() — même clé que celle utilisée par l'agenda
+      const tk=todayISO();
       const office=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='office').length;
       const remote=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='remote').length;
       const off=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='off').length;
@@ -3759,30 +3761,43 @@ let clientServices = Storage.get('influ_client_services', {}); // {clientId: [se
 
 // Stockage offres/cadeaux par client
 let clientOffers = Storage.get('influ_client_offers', {}); // {clientId: 'texte'}
+// Sociétés additionnelles : clients ajoutés UNIQUEMENT dans la page Services,
+// totalement dissociés de "Clients actifs" (un client peut avoir plusieurs sociétés).
+let serviceExtras = Storage.get('influ_service_extras', []); // [{id, name, createdAt}]
 
 function renderServices(){
   const search=(document.getElementById('servicesSearch')?.value||'').toLowerCase();
   const tbl=document.getElementById('servicesTable');
   // Build header — colonne Offres/Cadeaux à droite
   let head=`<thead><tr><th>Client</th>${serviceCatalog.map(s=>`<th title="${s.name}">${s.name}</th>`).join('')}<th style="min-width:200px">🎁 Offres / Cadeaux</th></tr></thead>`;
-  let rows=clients.filter(c=>c.status!=='Fin de contrat');
-  if(search) rows=rows.filter(c=>c.name.toLowerCase().includes(search)||(clientOffers[c.id]||'').toLowerCase().includes(search));
-  if(!rows.length){tbl.innerHTML=head+`<tbody><tr><td colspan="${serviceCatalog.length+2}" class="empty">Aucun client</td></tr></tbody>`;return;}
+  // Clients du CRM (hors fin de contrat)
+  let crmRows=clients.filter(c=>c.status!=='Fin de contrat');
+  if(search) crmRows=crmRows.filter(c=>c.name.toLowerCase().includes(search)||(clientOffers[c.id]||'').toLowerCase().includes(search));
+  // Sociétés additionnelles (dissociées du CRM Clients actifs)
+  let extraRows=serviceExtras.slice();
+  if(search) extraRows=extraRows.filter(c=>(c.name||'').toLowerCase().includes(search)||(clientOffers[c.id]||'').toLowerCase().includes(search));
 
-  let body='<tbody>'+rows.map(c=>{
+  if(!crmRows.length && !extraRows.length){tbl.innerHTML=head+`<tbody><tr><td colspan="${serviceCatalog.length+2}" class="empty">Aucun client</td></tr></tbody>`;return;}
+
+  // Construit une ligne — isExtra = société additionnelle (hors CRM)
+  const buildRow=(c,isExtra)=>{
     const sel=clientServices[c.id]||[];
     const cells=serviceCatalog.map(s=>{
       const on=sel.includes(s.id);
-      return `<td><div class="svc-cell ${on?'on svc-color-'+s.color:''}" onclick="toggleClientService(${c.id},'${s.id}')" title="${s.name}">${on?'✓':''}</div></td>`;
+      return `<td><div class="svc-cell ${on?'on svc-color-'+s.color:''}" onclick="toggleClientService('${c.id}','${s.id}')" title="${s.name}">${on?'✓':''}</div></td>`;
     }).join('');
     const offerVal=(clientOffers[c.id]||'').replace(/"/g,'&quot;');
-    const offerCell=`<td style="text-align:left;padding:6px 10px"><input type="text" value="${offerVal}" placeholder="Ex: -10% jusqu'au 31/12, bouteille offerte..." onblur="setClientOffer(${c.id}, this.value)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:6px;color:var(--cream);padding:6px 8px;font-size:12px;font-family:'Barlow',sans-serif;outline:none" onfocus="this.style.borderColor='rgba(17,103,118,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)'"></td>`;
-    return `<tr>
-      <td><div class="svc-client-name">${c.name}</div><div class="svc-client-status">${c.status}</div></td>
-      ${cells}
-      ${offerCell}
-    </tr>`;
-  }).join('')+'</tbody>';
+    const offerCell=`<td style="text-align:left;padding:6px 10px"><input type="text" value="${offerVal}" placeholder="Ex: -10% jusqu'au 31/12, bouteille offerte..." onblur="setClientOffer('${c.id}', this.value)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:6px;color:var(--cream);padding:6px 8px;font-size:12px;font-family:'Barlow',sans-serif;outline:none" onfocus="this.style.borderColor='rgba(17,103,118,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)'"></td>`;
+    const nameCell=isExtra
+      ? `<td><div class="svc-client-name">${escapeHtml(c.name||'')} <span style="font-size:9px;background:rgba(155,89,182,.2);color:#b07cd0;padding:1px 6px;border-radius:6px;vertical-align:middle;letter-spacing:.3px">SOCIÉTÉ ADD.</span></div><div class="svc-client-status" style="display:flex;align-items:center;gap:7px">Hors CRM <button onclick="deleteServiceExtra('${c.id}')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:10px;padding:0;text-decoration:underline" title="Retirer cette société">✕ retirer</button></div></td>`
+      : `<td><div class="svc-client-name">${escapeHtml(c.name)}</div><div class="svc-client-status">${c.status}</div></td>`;
+    return `<tr>${nameCell}${cells}${offerCell}</tr>`;
+  };
+
+  let body='<tbody>'
+    +crmRows.map(c=>buildRow(c,false)).join('')
+    +extraRows.map(c=>buildRow(c,true)).join('')
+    +'</tbody>';
   tbl.innerHTML=head+body;
 }
 
@@ -3803,10 +3818,34 @@ function toggleClientService(cid,sid){
 }
 
 function openServicesAddRow(){
-  // Pour ajouter un client → renvoyer vers le modal Client existant
-  toast('💡 Ajoute le client depuis "Clients actifs"');
-  const navBtn=document.querySelector(`.nav-btn[data-tab="clients"]`);
-  if(navBtn) showTab('clients',navBtn);
+  // Ajoute une SOCIÉTÉ ADDITIONNELLE — dissociée de "Clients actifs".
+  // Un client peut avoir plusieurs sociétés : celles-ci vivent uniquement
+  // dans la page Services et n'apparaissent jamais dans le CRM Clients actifs.
+  const name=prompt('Nom de la société à ajouter à la page Services :\n\n(Elle n\'apparaîtra PAS dans "Clients actifs" — c\'est volontairement dissocié.)');
+  if(name===null) return;
+  const n=name.trim();
+  if(!n){ return; }
+  serviceExtras.push({
+    id:'sx_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    name:n,
+    createdAt:new Date().toISOString()
+  });
+  Storage.set('influ_service_extras', serviceExtras);
+  renderServices();
+  toast('Société ajoutée ✓ (dissociée du CRM)');
+}
+
+function deleteServiceExtra(id){
+  id=String(id);
+  if(!confirm('Retirer cette société de la page Services ?\nSes services cochés et son offre seront aussi effacés.')) return;
+  serviceExtras=serviceExtras.filter(c=>String(c.id)!==id);
+  delete clientServices[id];
+  delete clientOffers[id];
+  Storage.set('influ_service_extras', serviceExtras);
+  Storage.set('influ_client_services', clientServices);
+  Storage.set('influ_client_offers', clientOffers);
+  renderServices();
+  toast('Société retirée');
 }
 
 function openServiceCatalogModal(){
@@ -4710,7 +4749,8 @@ const WIDGET_CATALOG = {
     }).join('');
   }},
   'agenda-today':{name:"Qui est là aujourd'hui",icon:'📆',desc:'Présence équipe du jour',render(){
-    const tk=new Date().toISOString().slice(0,10);
+    // FIX timezone : utilise todayISO() — même clé de date que celle stockée par l'agenda
+    const tk=todayISO();
     const rows=teamMembers.map(m=>{
       const st=(agenda[m.id]||{})[tk];
       const info=AGENDA_STATUS.find(s=>s.k===st);
@@ -5444,6 +5484,10 @@ function applyExternalUpdate(key){
       break;
     case 'influ_client_offers':
       clientOffers = parsed;
+      if(tab==='services') renderServices();
+      break;
+    case 'influ_service_extras':
+      serviceExtras = parsed;
       if(tab==='services') renderServices();
       break;
     case 'influ_chat_gifs':
