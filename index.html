@@ -503,7 +503,19 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cw-av-wrap{position:relative;flex-shrink:0}
 .cw-messages{flex:1;overflow-y:auto;padding:12px 13px;display:flex;flex-direction:column;gap:2px}
 .cw-day-sep{text-align:center;font-size:9px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px}
-.cw-msg{display:flex;gap:6px;max-width:85%;margin-top:2px}
+.cw-msg{display:flex;gap:6px;max-width:85%;margin-top:2px;position:relative}
+/* Réactions emoji sur les messages */
+.cw-react-btn{align-self:center;width:22px;height:22px;border-radius:50%;background:var(--dark3);border:1px solid var(--border);color:var(--muted);font-size:11px;cursor:pointer;opacity:0;transition:opacity .12s;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0}
+.cw-msg:hover .cw-react-btn{opacity:1}
+.cw-react-btn:hover{background:var(--teal);color:#fff}
+.cw-react-picker{position:fixed;display:none;gap:4px;background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:6px 10px;box-shadow:0 8px 26px rgba(0,0,0,.55);z-index:1000;align-items:center}
+.cw-react-picker span{font-size:21px;cursor:pointer;padding:2px;border-radius:50%;transition:transform .1s;line-height:1}
+.cw-react-picker span:hover{transform:scale(1.32)}
+.cw-reactions{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;padding:0 2px}
+.cw-msg.own .cw-reactions{justify-content:flex-end}
+.cw-react-pill{background:var(--dark3);border:1px solid var(--border);border-radius:11px;padding:1px 7px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:3px;line-height:1.6;user-select:none}
+.cw-react-pill.mine{background:rgba(17,103,118,.32);border-color:var(--teal-light)}
+.cw-react-pill:hover{border-color:var(--teal-light)}
 .cw-msg.own{align-self:flex-end;flex-direction:row-reverse}
 .cw-msg-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;flex-shrink:0;overflow:hidden;align-self:flex-end}
 .cw-msg.grouped .cw-msg-av{visibility:hidden}
@@ -1874,6 +1886,16 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
       <button class="cw-send" onclick="sendCwMessage()" title="Envoyer">➤</button>
     </div>
   </div>
+</div>
+
+<!-- Picker de réactions emoji pour les messages du chat -->
+<div class="cw-react-picker" id="cwReactPicker">
+  <span onclick="pickMsgReaction('❤️')">❤️</span>
+  <span onclick="pickMsgReaction('😆')">😆</span>
+  <span onclick="pickMsgReaction('😮')">😮</span>
+  <span onclick="pickMsgReaction('😢')">😢</span>
+  <span onclick="pickMsgReaction('😡')">😡</span>
+  <span onclick="pickMsgReaction('👍')">👍</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -5081,15 +5103,71 @@ function renderCwConv(){
     } else {
       bubble=`<div class="cw-bubble">${linkify(m.text||'')}</div>`;
     }
+    // Réactions emoji sur ce message
+    const reactions=m.reactions||{};
+    const reactKeys=Object.keys(reactions).filter(e=>reactions[e]&&reactions[e].length);
+    const reactHtml=reactKeys.length?`<div class="cw-reactions">${reactKeys.map(e=>{
+      const users=reactions[e];
+      const mine=users.indexOf(currentUser.id)>=0;
+      const names=users.map(uid=>{const u=teamMembers.find(x=>x.id===uid);return u?(u.name||'').split(' ')[0]:'?';}).join(', ');
+      return `<span class="cw-react-pill ${mine?'mine':''}" onclick="toggleMsgReaction('${m.id}','${e}')" title="${escapeHtml(names)}">${e}${users.length>1?' '+users.length:''}</span>`;
+    }).join('')}</div>`:'';
     html+=`<div class="cw-msg ${isOwn?'own':''} ${grouped?'grouped':''}">
       <div class="cw-msg-av" style="background:${avColor}">${avHtml}</div>
-      <div class="cw-msg-body">${bubble}<div class="cw-msg-time">${timeStr}</div></div>
+      <div class="cw-msg-body">${bubble}<div class="cw-msg-time">${timeStr}</div>${reactHtml}</div>
+      <button class="cw-react-btn" onclick="openMsgReactPicker(event,'${m.id}')" title="Réagir">🙂</button>
     </div>`;
   });
   msgsEl.innerHTML=html;
   msgsEl.scrollTop=msgsEl.scrollHeight;
   markConvRead(currentConv);
 }
+
+// ── RÉACTIONS EMOJI SUR LES MESSAGES (style iMessage) ──
+let reactPickerMsgId=null;
+function openMsgReactPicker(ev,msgId){
+  ev.stopPropagation();
+  reactPickerMsgId=String(msgId);
+  const pk=document.getElementById('cwReactPicker');
+  if(!pk) return;
+  pk.style.display='flex';
+  const pw=pk.offsetWidth||220, ph=pk.offsetHeight||44;
+  let x=ev.clientX-pw/2, y=ev.clientY-ph-10;
+  x=Math.max(8,Math.min(x,window.innerWidth-pw-8));
+  y=Math.max(8,y);
+  pk.style.left=x+'px';
+  pk.style.top=y+'px';
+}
+function hideMsgReactPicker(){
+  const pk=document.getElementById('cwReactPicker');
+  if(pk) pk.style.display='none';
+  reactPickerMsgId=null;
+}
+function pickMsgReaction(emoji){
+  if(reactPickerMsgId!=null) toggleMsgReaction(reactPickerMsgId,emoji);
+  hideMsgReactPicker();
+}
+function toggleMsgReaction(msgId,emoji){
+  msgId=String(msgId);
+  const arr=chatMessages[currentConv]||[];
+  const m=arr.find(x=>String(x.id)===msgId);
+  if(!m) return;
+  if(!m.reactions) m.reactions={};
+  if(!m.reactions[emoji]) m.reactions[emoji]=[];
+  const i=m.reactions[emoji].indexOf(currentUser.id);
+  if(i>=0) m.reactions[emoji].splice(i,1);
+  else m.reactions[emoji].push(currentUser.id);
+  if(!m.reactions[emoji].length) delete m.reactions[emoji];
+  Storage.set('influ_chat_messages',chatMessages);
+  renderCwConv();
+}
+// Ferme le picker si on clique ailleurs
+document.addEventListener('click',function(e){
+  const pk=document.getElementById('cwReactPicker');
+  if(pk&&pk.style.display==='flex'&&!pk.contains(e.target)&&!e.target.classList.contains('cw-react-btn')){
+    hideMsgReactPicker();
+  }
+});
 
 function pushChatMessage(msg){
   if(!chatMessages[currentConv]) chatMessages[currentConv]=[];
@@ -5315,20 +5393,37 @@ function detectNewIncoming(oldMsgs,newMsgs){
 }
 
 // Merge intelligent : union des messages par convId par id (pas de perte possible)
+// Fusionne les réactions de deux versions d'un même message (union par emoji)
+function mergeReactions(ra, rb){
+  ra=ra||{}; rb=rb||{};
+  const all=new Set([...Object.keys(ra),...Object.keys(rb)]);
+  const out={};
+  all.forEach(e=>{
+    const u=Array.from(new Set([...(ra[e]||[]),...(rb[e]||[])]));
+    if(u.length) out[e]=u;
+  });
+  return out;
+}
 function mergeChatMessages(a, b){
   const out = {};
   const allKeys = new Set([...Object.keys(a||{}), ...Object.keys(b||{})]);
   allKeys.forEach(k => {
     const ma = (a||{})[k] || [];
     const mb = (b||{})[k] || [];
-    const seen = new Set();
-    const merged = [];
+    const byId = {};
+    const order = [];
     [...ma, ...mb].forEach(m => {
-      if(m && m.id != null && !seen.has(m.id)){
-        seen.add(m.id);
-        merged.push(m);
+      if(!m || m.id == null) return;
+      const id = String(m.id);
+      if(!byId[id]){
+        byId[id] = {...m};
+        order.push(id);
+      } else {
+        // Même message vu 2 fois : fusionne les réactions pour ne rien perdre
+        byId[id].reactions = mergeReactions(byId[id].reactions, m.reactions);
       }
     });
+    const merged = order.map(id=>byId[id]);
     merged.sort((x,y) => new Date(x.sentAt||0) - new Date(y.sentAt||0));
     out[k] = merged;
   });
