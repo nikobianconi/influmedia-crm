@@ -17,12 +17,17 @@
   try{
     const c=document.createElement('canvas');c.width=c.height=512;
     const g=c.getContext('2d');
-    g.fillStyle='#116776';g.fillRect(0,0,512,512);
+    // Fond sombre (coins) puis cercle teal → icône ronde
+    g.fillStyle='#0d1f24';g.fillRect(0,0,512,512);
+    g.fillStyle='#116776';
+    g.beginPath();g.arc(256,256,254,0,Math.PI*2);g.fill();
+    // Éclair blanc
     g.fillStyle='#F4F2ED';
     g.beginPath();
     g.moveTo(305,58);g.lineTo(150,300);g.lineTo(248,300);
     g.lineTo(205,454);g.lineTo(372,220);g.lineTo(278,220);
     g.closePath();g.fill();
+    // Point coral accent
     g.fillStyle='#FF5F5F';
     g.beginPath();g.arc(404,104,32,0,Math.PI*2);g.fill();
     const icon=c.toDataURL('image/png');
@@ -5005,6 +5010,11 @@ function cwBackToList(){
   renderCwConvList();
 }
 function cwOpenConv(convId){
+  // CONFIDENTIALITÉ : impossible d'ouvrir un DM dont on ne fait pas partie
+  if(typeof dmInvolvesMe==='function' && !dmInvolvesMe(convId)){
+    toast('⛔ Conversation privée — accès réservé aux 2 participants');
+    return;
+  }
   currentConv=convId;
   document.getElementById('cwListView').style.display='none';
   document.getElementById('cwConvView').style.display='flex';
@@ -5397,9 +5407,18 @@ function refreshSoundBtn(){
 }
 
 // Détecte les nouveaux messages entrants (d'un autre auteur) entre 2 états
+// CONFIDENTIALITÉ : true si la conv me concerne (canal d'équipe = oui pour tous ;
+// DM = uniquement si je suis l'un des 2 participants)
+function dmInvolvesMe(convId){
+  if(!isDmConv(convId)) return true;
+  const parts=(convId||'').replace('dm__','').split('__');
+  return parts.indexOf(currentUser.id)>=0;
+}
 function detectNewIncoming(oldMsgs,newMsgs){
   const incoming=[];
   Object.keys(newMsgs||{}).forEach(convId=>{
+    // Ne JAMAIS notifier sur un DM dont je ne fais pas partie
+    if(!dmInvolvesMe(convId)) return;
     const oldIds=new Set((oldMsgs[convId]||[]).map(m=>m.id));
     (newMsgs[convId]||[]).forEach(m=>{
       if(!oldIds.has(m.id) && m.author!==currentUser.id){
@@ -7275,4 +7294,4 @@ renderLockScreen();
 setTimeout(()=>{const lp=document.getElementById('lockPwd');if(lp)lp.focus();},150);
 </script>
 </body>
-</html
+</html>
