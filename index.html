@@ -543,11 +543,11 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cw-emoji-pop span:hover{background:rgba(255,255,255,.12)}
 .cw-gif-bar{position:absolute;bottom:48px;left:8px;right:8px;background:var(--dark3);border:1px solid var(--border);border-radius:12px;padding:8px;display:none;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:5;max-height:420px}
 .cw-gif-bar.open{display:flex}
-.cw-gif-gallery{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding:2px}
-.cw-gif-thumb{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;background:var(--dark);transition:box-shadow .12s;box-shadow:0 1px 5px rgba(0,0,0,.45);display:flex;justify-content:center;align-items:center;min-height:54px}
+.cw-gif-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-height:340px;overflow-y:auto;padding:2px}
+.cw-gif-thumb{position:relative;aspect-ratio:1;border-radius:9px;overflow:hidden;cursor:pointer;background:#0a1418;transition:box-shadow .12s;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
 .cw-gif-thumb:hover{box-shadow:0 0 0 2px var(--teal)}
-.cw-gif-thumb img{max-width:100%;max-height:240px;width:auto;height:auto;display:block}
-.cw-gif-thumb .gt-rm{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.82);color:#fff;border:none;font-size:15px;cursor:pointer;opacity:1;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;z-index:2}
+.cw-gif-thumb img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+.cw-gif-thumb .gt-rm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.82);color:#fff;border:none;font-size:12px;cursor:pointer;opacity:1;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;z-index:2}
 .cw-gif-thumb .gt-rm:hover{background:rgba(231,76,60,.9)}
 .cw-gif-empty{grid-column:1/-1;text-align:center;font-size:11px;color:var(--muted);padding:18px 6px;font-style:italic;line-height:1.5}
 .cw-gif-url-row{display:flex;gap:5px;align-items:center;border-top:1px solid var(--border);padding-top:6px}
