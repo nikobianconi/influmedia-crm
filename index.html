@@ -533,7 +533,14 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cw-conv-name.has-unread{font-weight:800}
 .cw-conv-last.has-unread{color:var(--cream);font-weight:600}
 .cw-conv-badge{background:var(--coral);color:white;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0}
-.cw-presence{width:10px;height:10px;border-radius:50%;border:2px solid var(--dark2);position:absolute;bottom:-1px;right:-1px;background:var(--green)}
+.cw-presence{width:11px;height:11px;border-radius:50%;border:2px solid var(--dark2);position:absolute;bottom:-1px;right:-1px;background:#7f8c8d;z-index:2}
+.cw-presence.on{background:#2ecc71;box-shadow:0 0 0 0 rgba(46,204,113,.7);animation:presPulse 2s ease-out infinite}
+.cw-presence.off{background:#e74c3c}
+@keyframes presPulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,.55)}70%{box-shadow:0 0 0 7px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+.cw-av-wrap{position:relative}
+.cw-conv-av,.cw-msg-av{position:relative}
+.m-row .av{position:relative}
+.m-header-av{position:relative}
 .cw-av-wrap{position:relative;flex-shrink:0}
 .cw-messages{flex:1;overflow-y:auto;padding:12px 13px;display:flex;flex-direction:column;gap:2px}
 .cw-day-sep{text-align:center;font-size:9px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px}
@@ -2100,7 +2107,7 @@ const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_tod
   'influ_client_services','influ_client_offers','influ_service_catalog','influ_service_extras','influ_team',
   'influ_quotes','influ_invoices','influ_trips','influ_trips_seeded_v1','influ_agenda',
   'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
-  'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note'];
+  'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note','influ_presence'];
 
 // ── Firebase config HARDCODÉE (projet saas-influ) ──
 // Permet à n'importe quel appareil/navigateur d'auto-connecter au cloud
@@ -3514,7 +3521,39 @@ function doUnlock(member){
   try{if(!_audioCtx)_audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(_audioCtx.state==='suspended')_audioCtx.resume();}catch(e){}
   // Démarre le heartbeat de confirmation cloud (toutes les 5 min)
   startCloudHeartbeat();
+  // Démarre le heartbeat de présence (pastille verte/rouge)
+  startPresenceHeartbeat();
   toast('👋 Bienvenue '+(member.name||'').split(' ')[0]+' !');
+}
+
+// ╔══════════════════════════════════════════════════════════════
+// ║ PRÉSENCE EN LIGNE — pastille verte (online) / rouge (offline)
+// ║ Heartbeat 45s · seuil "online" = 2 min depuis dernier ping
+// ╚══════════════════════════════════════════════════════════════
+let presence = Storage.get('influ_presence', {});
+function isUserOnline(uid){
+  if(!uid) return false;
+  if(uid===(currentUser&&currentUser.id)) return true; // moi = toujours online
+  return Date.now() - (presence[uid]||0) < 120000;
+}
+function presenceDot(uid){
+  return `<span class="cw-presence ${isUserOnline(uid)?'on':'off'}" title="${isUserOnline(uid)?'En ligne':'Hors ligne'}"></span>`;
+}
+let _presenceTimer=null;
+function startPresenceHeartbeat(){
+  if(_presenceTimer) clearInterval(_presenceTimer);
+  const ping=()=>{
+    try{
+      if(!currentUser||!currentUser.id) return;
+      presence = Storage.get('influ_presence', {}) || {};
+      presence[currentUser.id] = Date.now();
+      Storage.set('influ_presence', presence);
+    }catch(e){}
+  };
+  ping(); // immédiat à la connexion
+  _presenceTimer = setInterval(ping, 45000); // toutes les 45 secondes
+  // Re-ping immédiatement quand on revient sur l'onglet
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) ping(); });
 }
 
 // ── HEARTBEAT : toast de confirmation cloud toutes les 5 min ──
@@ -5211,7 +5250,7 @@ function renderCwConvList(){
     const prev=convLastPreview(cid)||'Démarrer la conversation';
     const av=m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover">`:m.initials;
     return `<div class="cw-conv" onclick="cwOpenConv('${cid}')">
-      <div class="cw-av-wrap"><div class="cw-conv-av" style="background:${m.color||'#116776'}">${av}</div></div>
+      <div class="cw-av-wrap"><div class="cw-conv-av" style="background:${m.color||'#116776'}">${av}${presenceDot(m.id)}</div></div>
       <div class="cw-conv-body">
         <div class="cw-conv-name ${unread?'has-unread':''}">${escapeHtml(m.name)}</div>
         <div class="cw-conv-last ${unread?'has-unread':''}">${escapeHtml(prev)}</div>
@@ -5235,7 +5274,8 @@ function renderCwConv(){
   const avEl=document.getElementById('cwConvAv');
   if(info.isDm){
     avEl.style.background=info.color;
-    avEl.innerHTML=info.avatar?`<img src="${info.avatar}" style="width:100%;height:100%;object-fit:cover">`:info.initials;
+    const avInner=info.avatar?`<img src="${info.avatar}" style="width:100%;height:100%;object-fit:cover">`:info.initials;
+    avEl.innerHTML=avInner+(info.member?presenceDot(info.member.id):'');
   } else {
     avEl.style.background='var(--teal)';
     avEl.innerHTML=info.icon;
@@ -5769,6 +5809,11 @@ function applyExternalUpdate(key){
       // Si la galerie GIF est ouverte, la re-render pour voir les ajouts/retraits des autres
       const gifBar = document.getElementById('cwGifBar');
       if(gifBar && gifBar.classList.contains('open')) renderCwGifGallery();
+      break;
+    case 'influ_presence':
+      presence = parsed || {};
+      // Re-render chat list + chat header pour rafraîchir les pastilles vert/rouge
+      if(chatWidgetOpen){ if(currentConv) renderCwConv(); else renderCwConvList(); }
       break;
   }
   // Rafraîchit l'interface mobile si on est sur téléphone (sync temps réel)
@@ -7437,8 +7482,8 @@ function mRenderHeader(){
   t.textContent=`${greet} ${first} 👋`;
   s.textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'});
   const u=teamMembers.find(m=>m.id===currentUser.id);
-  if(u&&u.avatar){ a.innerHTML=`<img src="${u.avatar}">`; a.style.background='transparent'; }
-  else { a.textContent=(u&&u.initials)||'?'; if(u&&u.color) a.style.background=u.color; }
+  if(u&&u.avatar){ a.innerHTML=`<img src="${u.avatar}">`+presenceDot(currentUser.id); a.style.background='transparent'; }
+  else { a.innerHTML=((u&&u.initials)||'?')+presenceDot(currentUser.id); if(u&&u.color) a.style.background=u.color; }
 }
 function mRenderNav(){
   const nav=document.getElementById('mNav'); if(!nav) return;
@@ -7484,7 +7529,7 @@ function mScreenHome(){
     </div>
     <div class="m-card">
       <div class="m-card-title">📆 Qui est là aujourd'hui</div>
-      ${teamPres.map(({m,info})=>`<div class="m-row"><div class="av" style="background:${m.color||'var(--teal)'}">${m.avatar?`<img src="${m.avatar}">`:m.initials}</div><div class="nm">${escapeHtml(m.name)}</div><div class="meta">${info?info.short:'—'}</div></div>`).join('')}
+      ${teamPres.map(({m,info})=>`<div class="m-row"><div class="av" style="background:${m.color||'var(--teal)'}">${m.avatar?`<img src="${m.avatar}">`:m.initials}${presenceDot(m.id)}</div><div class="nm">${escapeHtml(m.name)}</div><div class="meta">${info?info.short:'—'}</div></div>`).join('')}
     </div>
     <div class="m-card">
       <div class="m-card-title">✅ Mes tâches urgentes (${myTodos.length})</div>
@@ -7540,7 +7585,7 @@ function mScreenAgenda(){
     </div>
     <div class="m-card">
       <div class="m-card-title">👥 L'équipe aujourd'hui</div>
-      ${teamToday.map(({m,info})=>`<div class="m-row"><div class="av" style="background:${m.color||'var(--teal)'}">${m.avatar?`<img src="${m.avatar}">`:m.initials}</div><div class="nm">${escapeHtml(m.name)}</div><div class="meta">${info?info.short:'—'}</div></div>`).join('')}
+      ${teamToday.map(({m,info})=>`<div class="m-row"><div class="av" style="background:${m.color||'var(--teal)'}">${m.avatar?`<img src="${m.avatar}">`:m.initials}${presenceDot(m.id)}</div><div class="nm">${escapeHtml(m.name)}</div><div class="meta">${info?info.short:'—'}</div></div>`).join('')}
     </div>`;
 }
 function mCycleAgendaDay(dk){if(!agenda[currentUser.id]) agenda[currentUser.id]={};const cur=agenda[currentUser.id][dk];const idx=AGENDA_STATUS.findIndex(s=>s.k===cur);const next=idx===-1?AGENDA_STATUS[0]:AGENDA_STATUS[(idx+1)%AGENDA_STATUS.length];agenda[currentUser.id][dk]=next.k;Storage.set('influ_agenda',agenda);mRenderScreen();}
