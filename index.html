@@ -556,7 +556,16 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cw-day-sep{text-align:center;font-size:9px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px}
 .cw-msg{display:flex;gap:6px;max-width:85%;margin-top:2px;position:relative}
 /* Réactions emoji sur les messages */
-.cw-react-btn{align-self:center;width:26px;height:26px;border-radius:50%;background:var(--dark3);border:1px solid var(--border);color:var(--muted);font-size:13px;cursor:pointer;opacity:.55;transition:opacity .12s,transform .1s;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0}
+.cw-react-btn,.cw-msg-menu-btn{align-self:center;width:26px;height:26px;border-radius:50%;background:var(--dark3);border:1px solid var(--border);color:var(--muted);font-size:13px;cursor:pointer;opacity:.55;transition:opacity .12s,transform .1s,background .15s,color .15s;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;font-weight:700}
+.cw-msg:hover .cw-msg-menu-btn{opacity:1}
+.cw-msg-menu-btn:hover,.cw-msg-menu-btn:active{background:var(--coral);color:#fff;opacity:1;transform:scale(1.12)}
+.cw-msg-menu{position:fixed;display:none;flex-direction:column;background:var(--dark2);border:1px solid var(--border);border-radius:13px;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,.6);z-index:1001;min-width:170px;gap:2px}
+.cw-msg-menu button{background:none;border:none;color:var(--cream);padding:11px 14px;text-align:left;border-radius:9px;cursor:pointer;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;transition:background .12s}
+.cw-msg-menu button:hover{background:var(--dark3)}
+.cw-msg-menu button.danger{color:#e74c3c}
+.cw-msg-menu button.danger:hover{background:rgba(231,76,60,.15)}
+.cw-edited-label{font-size:9px;color:var(--muted);font-style:italic;margin-left:4px}
+.cw-bubble.deleted{font-style:italic;color:var(--muted);background:rgba(255,255,255,.04)!important;border:1px dashed rgba(255,255,255,.1)}
 .cw-msg:hover .cw-react-btn{opacity:1}
 .cw-react-btn:hover,.cw-react-btn:active{background:var(--teal);color:#fff;opacity:1;transform:scale(1.12)}
 .cw-react-picker{position:fixed;display:none;gap:4px;background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:6px 10px;box-shadow:0 8px 26px rgba(0,0,0,.55);z-index:1000;align-items:center}
@@ -2068,6 +2077,12 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
   </div>
   <div class="m-screen" id="mScreen"></div>
   <div class="m-nav" id="mNav"></div>
+</div>
+
+<!-- Menu contextuel d'un message du chat (modifier / supprimer) -->
+<div class="cw-msg-menu" id="cwMsgMenu">
+  <button onclick="startEditMsg()">✏️ Modifier</button>
+  <button class="danger" onclick="deleteMsgMenu()">🗑 Supprimer</button>
 </div>
 
 <!-- Picker de réactions emoji pour les messages du chat -->
@@ -5318,11 +5333,15 @@ function renderCwConv(){
     const avColor=author?author.color:'var(--teal)';
     const timeStr=dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
     let bubble;
-    if(m.gif){
+    if(m.deleted){
+      bubble=`<div class="cw-bubble deleted">🚫 Message supprimé</div>`;
+    } else if(m.gif){
       bubble=`<div class="cw-bubble-gif" style="${isOwn?'background:var(--teal)':'background:var(--dark3)'}"><img src="${escapeHtml(m.gif)}" alt="gif" onerror="this.parentElement.innerHTML='<span style=\\'font-size:10px;color:var(--muted);padding:6px;display:block\\'>⚠️ Image inaccessible</span>'"></div>`;
     } else {
       bubble=`<div class="cw-bubble">${linkify(m.text||'')}</div>`;
     }
+    const editedLbl=(m.editedAt&&!m.deleted)?`<span class="cw-edited-label" title="Modifié le ${new Date(m.editedAt).toLocaleString('fr-FR')}">· modifié</span>`:'';
+    const ownMenuBtn=(isOwn&&!m.deleted)?`<button class="cw-msg-menu-btn" onclick="openMsgMenu(event,'${m.id}')" title="Modifier / Supprimer">⋯</button>`:'';
     // Réactions emoji sur ce message
     const reactions=m.reactions||{};
     const reactKeys=Object.keys(reactions).filter(e=>reactions[e]&&reactions[e].length);
@@ -5334,8 +5353,9 @@ function renderCwConv(){
     }).join('')}</div>`:'';
     html+=`<div class="cw-msg ${isOwn?'own':''} ${grouped?'grouped':''}">
       <div class="cw-msg-av" style="background:${avColor}">${avHtml}</div>
-      <div class="cw-msg-body">${bubble}<div class="cw-msg-time">${timeStr}</div>${reactHtml}</div>
-      <button class="cw-react-btn" onclick="openMsgReactPicker(event,'${m.id}')" title="Réagir">🙂</button>
+      <div class="cw-msg-body">${bubble}<div class="cw-msg-time">${timeStr}${editedLbl}</div>${reactHtml}</div>
+      ${!m.deleted?`<button class="cw-react-btn" onclick="openMsgReactPicker(event,'${m.id}')" title="Réagir">🙂</button>`:''}
+      ${ownMenuBtn}
     </div>`;
   });
   msgsEl.innerHTML=html;
@@ -5387,7 +5407,67 @@ document.addEventListener('click',function(e){
   if(pk&&pk.style.display==='flex'&&!pk.contains(e.target)&&!e.target.classList.contains('cw-react-btn')){
     hideMsgReactPicker();
   }
+  const mn=document.getElementById('cwMsgMenu');
+  if(mn&&mn.style.display==='flex'&&!mn.contains(e.target)&&!e.target.classList.contains('cw-msg-menu-btn')){
+    hideMsgMenu();
+  }
 });
+
+// ── MENU MESSAGE (Modifier / Supprimer) — uniquement pour ses propres messages ──
+let msgMenuId=null;
+function openMsgMenu(ev,msgId){
+  ev.stopPropagation();
+  msgMenuId=String(msgId);
+  const m=document.getElementById('cwMsgMenu'); if(!m) return;
+  m.style.display='flex';
+  const mw=m.offsetWidth||170, mh=m.offsetHeight||100;
+  let x=ev.clientX-mw/2, y=ev.clientY-mh-10;
+  x=Math.max(8,Math.min(x,window.innerWidth-mw-8));
+  y=Math.max(8,y);
+  m.style.left=x+'px';
+  m.style.top=y+'px';
+}
+function hideMsgMenu(){
+  const m=document.getElementById('cwMsgMenu');
+  if(m) m.style.display='none';
+  msgMenuId=null;
+}
+function startEditMsg(){
+  if(!msgMenuId) return;
+  const arr=chatMessages[currentConv]||[];
+  const m=arr.find(x=>String(x.id)===msgMenuId);
+  hideMsgMenu();
+  if(!m) return;
+  if(m.author!==currentUser.id){ toast('⛔ Tu ne peux modifier que tes propres messages'); return; }
+  if(m.gif){ toast('Les images/GIF ne peuvent pas être édités — supprime et renvoie.'); return; }
+  const newText=prompt('Modifier le message :', m.text||'');
+  if(newText===null) return;
+  const t=newText.trim();
+  if(!t) return;
+  m.text=t;
+  m.editedAt=new Date().toISOString();
+  Storage.set('influ_chat_messages',chatMessages);
+  renderCwConv();
+  toast('Message modifié ✓');
+}
+function deleteMsgMenu(){
+  if(!msgMenuId) return;
+  const arr=chatMessages[currentConv]||[];
+  const i=arr.findIndex(x=>String(x.id)===msgMenuId);
+  hideMsgMenu();
+  if(i<0) return;
+  if(arr[i].author!==currentUser.id){ toast('⛔ Tu ne peux supprimer que tes propres messages'); return; }
+  if(!confirm('Supprimer ce message ? Cette action est irréversible.')) return;
+  // Tombstone : on garde l'id mais on marque comme supprimé (pour que le cloud
+  // ne le ressuscite pas via le merge anti-perte)
+  arr[i].deleted=true;
+  arr[i].text='';
+  arr[i].gif='';
+  arr[i].deletedAt=new Date().toISOString();
+  Storage.set('influ_chat_messages',chatMessages);
+  renderCwConv();
+  toast('Message supprimé');
+}
 
 function pushChatMessage(msg){
   if(!chatMessages[currentConv]) chatMessages[currentConv]=[];
@@ -5638,8 +5718,21 @@ function mergeChatMessages(a, b){
         byId[id] = {...m};
         order.push(id);
       } else {
-        // Même message vu 2 fois : fusionne les réactions pour ne rien perdre
+        // Même message vu 2 fois : fusion intelligente
+        // 1) Réactions : union
         byId[id].reactions = mergeReactions(byId[id].reactions, m.reactions);
+        // 2) Tombstone : si l'une des versions est supprimée → garde la suppression
+        if(m.deleted || byId[id].deleted){
+          byId[id].deleted = true;
+          byId[id].text = '';
+          byId[id].gif = '';
+          if(m.deletedAt && (!byId[id].deletedAt || m.deletedAt > byId[id].deletedAt)) byId[id].deletedAt = m.deletedAt;
+        }
+        // 3) Édition : garde la version la plus récente (par editedAt)
+        if(!byId[id].deleted && m.editedAt && (!byId[id].editedAt || m.editedAt > byId[id].editedAt)){
+          byId[id].text = m.text;
+          byId[id].editedAt = m.editedAt;
+        }
       }
     });
     const merged = order.map(id=>byId[id]);
