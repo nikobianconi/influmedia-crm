@@ -533,14 +533,24 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cw-conv-name.has-unread{font-weight:800}
 .cw-conv-last.has-unread{color:var(--cream);font-weight:600}
 .cw-conv-badge{background:var(--coral);color:white;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0}
-.cw-presence{width:11px;height:11px;border-radius:50%;border:2px solid var(--dark2);position:absolute;bottom:-1px;right:-1px;background:#7f8c8d;z-index:2}
-.cw-presence.on{background:#2ecc71;box-shadow:0 0 0 0 rgba(46,204,113,.7);animation:presPulse 2s ease-out infinite}
-.cw-presence.off{background:#e74c3c}
-@keyframes presPulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,.55)}70%{box-shadow:0 0 0 7px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+/* Présence : ANNEAU coloré autour de l'avatar (style Instagram / Discord) */
+.cw-presence{display:none} /* la pastille devient un marqueur invisible, le ring se fait via :has() */
 .cw-av-wrap{position:relative}
-.cw-conv-av,.cw-msg-av{position:relative}
-.m-row .av{position:relative}
-.m-header-av{position:relative}
+.cw-conv-av,.cw-msg-av,.m-row .av,.m-header-av{position:relative}
+/* Anneau VERT = online (séparateur sombre + ring de 3px) */
+.cw-conv-av:has(.cw-presence.on),
+.m-row .av:has(.cw-presence.on),
+.m-header-av:has(.cw-presence.on){box-shadow:0 0 0 2.5px var(--dark2),0 0 0 5.5px #2ecc71;animation:presRingPulse 2.4s ease-out infinite}
+/* Anneau ROUGE = offline */
+.cw-conv-av:has(.cw-presence.off),
+.m-row .av:has(.cw-presence.off),
+.m-header-av:has(.cw-presence.off){box-shadow:0 0 0 2.5px var(--dark2),0 0 0 5.5px #e74c3c}
+/* Légère pulsation pour le ring vert */
+@keyframes presRingPulse{
+  0%{box-shadow:0 0 0 2.5px var(--dark2),0 0 0 5.5px #2ecc71,0 0 0 5.5px rgba(46,204,113,.55)}
+  70%{box-shadow:0 0 0 2.5px var(--dark2),0 0 0 5.5px #2ecc71,0 0 0 11px rgba(46,204,113,0)}
+  100%{box-shadow:0 0 0 2.5px var(--dark2),0 0 0 5.5px #2ecc71,0 0 0 5.5px rgba(46,204,113,0)}
+}
 .cw-av-wrap{position:relative;flex-shrink:0}
 .cw-messages{flex:1;overflow-y:auto;padding:12px 13px;display:flex;flex-direction:column;gap:2px}
 .cw-day-sep{text-align:center;font-size:9px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px}
