@@ -980,6 +980,64 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 
 @media(max-width:768px){.sidebar{width:56px}.sidebar .logo-text,.sidebar .logo-sub,.sidebar .nav-btn .nav-text,.sidebar-footer,.user-info,.nav-group-header .grp-label,.nav-group-header .chev,.nav-group-header .lock{display:none}.main{margin-left:56px;padding:16px}.dash-grid{grid-template-columns:1fr}.table-wrap{overflow-x:auto}.task-card{grid-template-columns:auto 1fr;gap:10px}.task-actions{grid-column:1/-1;justify-content:flex-end}.ed-grid{grid-template-columns:1fr}}
 
+/* ════════ CALENDRIER ÉDITORIAL v2 — style Asana (par client, 4 vues) ════════ */
+.ed-topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ed-client-sel{background:var(--dark2);border:1px solid var(--border);border-radius:9px;color:var(--cream);padding:9px 14px;font-size:13px;font-family:'Barlow',sans-serif;min-width:220px;outline:none;cursor:pointer}
+.ed-views{display:flex;gap:3px;background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:3px}
+.ed-view-btn{border:none;background:none;color:var(--muted);padding:8px 13px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .12s,color .12s}
+.ed-view-btn.active{background:var(--teal);color:#fff;box-shadow:0 1px 4px rgba(17,103,118,.4)}
+.ed-cal{background:var(--dark2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.ed-cal-nav{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--dark3);border-bottom:1px solid var(--border)}
+.ed-cal-nav-btn{background:rgba(255,255,255,.06);border:none;color:var(--cream);font-size:16px;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .12s}
+.ed-cal-nav-btn:hover{background:rgba(255,255,255,.14)}
+.ed-cal-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:capitalize;letter-spacing:.3px}
+.ed-cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.ed-cal-dayhead{padding:9px 6px;text-align:center;background:var(--dark3);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.ed-cal-dayhead:last-child{border-right:none}
+.ed-cal-cell{min-height:115px;border-right:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);padding:6px;position:relative;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.ed-cal-cell:nth-child(7n){border-right:none}
+.ed-cal-cell.other{background:rgba(0,0,0,.18);opacity:.55}
+.ed-cal-cell.today{background:rgba(17,103,118,.12)}
+.ed-cal-cell .dn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11.5px;color:var(--muted);margin-bottom:2px}
+.ed-cal-cell.today .dn{color:var(--teal-light);font-weight:800}
+.ed-card-mini{background:var(--dark);border-left:3px solid var(--teal);padding:4px 6px;border-radius:5px;font-size:10.5px;cursor:pointer;line-height:1.3;display:flex;align-items:center;gap:5px;overflow:hidden;transition:transform .08s}
+.ed-card-mini:hover{transform:scale(1.03)}
+.ed-card-mini .thumb{width:18px;height:18px;border-radius:3px;flex-shrink:0;background:var(--dark3);overflow:hidden}
+.ed-card-mini .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ed-card-mini .tt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ed-card-mini.pf-Instagram{border-left-color:#E4405F}
+.ed-card-mini.pf-TikTok{border-left-color:#69C9D0}
+.ed-card-mini.pf-LinkedIn{border-left-color:#0077B5}
+.ed-card-mini.pf-Facebook{border-left-color:#1877F2}
+.ed-card-mini.pf-YouTube{border-left-color:#FF0000}
+.ed-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:12px}
+.ed-week-col{background:var(--dark3);border-radius:10px;padding:10px;min-height:320px;display:flex;flex-direction:column;gap:7px}
+.ed-week-col.today{background:rgba(17,103,118,.18);border:1px solid var(--teal-light)}
+.ed-week-col h4{margin:0 0 5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;color:var(--muted);text-align:center;letter-spacing:.5px}
+.ed-week-col.today h4{color:var(--teal-light)}
+.ed-card-week{background:var(--dark);border-left:3px solid var(--teal);border-radius:8px;padding:7px;cursor:pointer;display:flex;flex-direction:column;gap:5px;transition:transform .08s}
+.ed-card-week:hover{transform:scale(1.02)}
+.ed-card-week .thumb{width:100%;aspect-ratio:1;border-radius:5px;overflow:hidden;background:var(--dark3)}
+.ed-card-week .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ed-card-week .tt{font-size:11px;font-weight:600;line-height:1.3;color:var(--cream)}
+.ed-card-week .meta{font-size:9.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.ed-card-week.pf-Instagram{border-left-color:#E4405F}
+.ed-card-week.pf-TikTok{border-left-color:#69C9D0}
+.ed-card-week.pf-LinkedIn{border-left-color:#0077B5}
+.ed-card-week.pf-Facebook{border-left-color:#1877F2}
+.ed-card-week.pf-YouTube{border-left-color:#FF0000}
+.ed-list-item{display:flex;align-items:center;gap:12px;background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:transform .08s,border-color .12s}
+.ed-list-item:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.16)}
+.ed-list-item .thumb-l{width:48px;height:48px;border-radius:7px;overflow:hidden;background:var(--dark3);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px}
+.ed-list-item .thumb-l img{width:100%;height:100%;object-fit:cover;display:block}
+.ed-list-body{flex:1;min-width:0}
+.ed-list-body .tt{font-weight:600;font-size:14px;color:var(--cream)}
+.ed-list-body .mt{font-size:11.5px;color:var(--muted);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.ed-list-list{display:flex;flex-direction:column;gap:8px}
+.ed-modal-preview{width:100%;max-height:220px;min-height:90px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.ed-modal-preview img,.ed-modal-preview video{max-width:100%;max-height:220px;object-fit:contain}
+.ed-modal-preview .ph{color:var(--muted);font-size:12px;text-align:center;padding:24px;font-style:italic}
+
 /* ════════ INTERFACE MOBILE — appli dédiée téléphone (polish v2) ════════ */
 #mApp{display:none;position:fixed;inset:0;background:var(--dark);z-index:200;flex-direction:column;font-family:'Barlow',sans-serif;color:var(--cream);overflow:hidden}
 @media(max-width:760px){
@@ -1352,17 +1410,18 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
     <div class="page-title">🗓️ <span>Calendrier éditorial</span></div>
     <button class="btn-primary" onclick="openEditorialModal()">＋ Nouveau contenu</button>
   </div>
-  <div class="toolbar">
-    <div class="search-box">
+  <div class="ed-topbar">
+    <select class="ed-client-sel" id="edClientFilter" onchange="setEdClientFilter(this.value)"></select>
+    <div class="ed-views">
+      <button class="ed-view-btn active" data-view="cal" onclick="setEdView('cal')">📅 Mois</button>
+      <button class="ed-view-btn" data-view="week" onclick="setEdView('week')">📆 Semaine</button>
+      <button class="ed-view-btn" data-view="list" onclick="setEdView('list')">☰ Liste</button>
+      <button class="ed-view-btn" data-view="kanban" onclick="setEdView('kanban')">📋 Kanban</button>
+    </div>
+    <div class="search-box" style="margin-left:auto">
       <span style="color:var(--muted)">🔍</span>
       <input type="text" id="edSearch" placeholder="Rechercher..." oninput="renderEditorial()">
     </div>
-    <div class="filter-pills" id="edFilters"></div>
-    <select class="sort-sel" id="edSortSel" onchange="renderEditorial()">
-      <option value="date">Par date</option>
-      <option value="client">Par client</option>
-      <option value="status">Par statut</option>
-    </select>
   </div>
   <div id="editorialBody"></div>
 </div>
@@ -1737,7 +1796,12 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
         <option value="published">🚀 Publié</option>
       </select></div>
     </div>
-    <div class="fg"><label>Notes / Brief</label><input id="ed_notes" placeholder="Brief, hashtags, lien..."></div>
+    <div class="fg">
+      <label>🖼 URL du visuel <span style="font-size:10px;color:var(--muted);font-weight:400">(Drive, Dropbox, iCloud, Cloudinary, etc. — image OU vidéo)</span></label>
+      <input id="ed_visual" placeholder="https://drive.google.com/... ou https://media.giphy.com/...gif" oninput="edPreviewVisual()">
+    </div>
+    <div class="ed-modal-preview" id="edPreviewBox"><div class="ph">Colle une URL d'image/vidéo pour voir l'aperçu</div></div>
+    <div class="fg"><label>📝 Notes / Brief / Description</label><textarea id="ed_notes" rows="7" placeholder="Description complète du post, brief créatif, hashtags, mentions, liens, idées de visuels, angles éditoriaux..." style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:13px;padding:11px 14px;outline:none;line-height:1.5;resize:vertical;min-height:140px"></textarea></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('edOverlay')">Annuler</button>
       <button class="btn-save" onclick="saveEditorial()"><span id="edSaveLabel">Enregistrer</span></button>
@@ -4331,93 +4395,217 @@ function deleteAvisClient(id){
 // ╚══════════════════════════════════════════════════════════════
 let editorial = Storage.get('influ_editorial', []);
 let nextEdId = editorial.length?Math.max(...editorial.map(e=>e.id))+1:1;
-let edFilter='all', editEdId=null;
+let editEdId=null;
+// Nouvelles vars : sélecteur de client + vue active + date courante calendrier
+let edClientFilter = Storage.get('influ_ed_client_filter', 'all'); // 'all' ou clientId
+let edView = Storage.get('influ_ed_view', 'cal'); // 'cal'|'week'|'list'|'kanban'
+let edCalCurrentMonth = (function(){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);return d;})();
+let edWeekCurrentMonday = mondayOf(new Date());
+
+function isVideoUrl(u){
+  return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(u||'') || /youtube\.com|youtu\.be|vimeo\.com/.test(u||'');
+}
+function edThumbHtml(url, size){
+  if(!url) return '';
+  if(isVideoUrl(url)){
+    return `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#222,#444);font-size:${(size||18)*0.55}px">▶</div>`;
+  }
+  return `<div class="thumb"><img src="${escapeHtml(url)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`;
+}
+function edThumbLargeHtml(url){
+  if(!url) return '<div class="thumb-l">📄</div>';
+  if(isVideoUrl(url)){
+    return `<div class="thumb-l" style="background:linear-gradient(135deg,#222,#444);color:#fff;font-size:20px">▶</div>`;
+  }
+  return `<div class="thumb-l"><img src="${escapeHtml(url)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`;
+}
+
+function setEdView(v){
+  edView=v;
+  Storage.set('influ_ed_view',v);
+  document.querySelectorAll('.ed-view-btn').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===v));
+  renderEditorial();
+}
+function setEdClientFilter(v){
+  edClientFilter=v;
+  Storage.set('influ_ed_client_filter',v);
+  renderEditorial();
+}
+
+function fillEdClientFilterSelect(){
+  const sel=document.getElementById('edClientFilter'); if(!sel) return;
+  const cur=edClientFilter;
+  const all=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+  sel.innerHTML=`<option value="all"${cur==='all'?' selected':''}>👥 Tous les clients</option>`
+    + all.map(c=>`<option value="${c.id}"${String(cur)===String(c.id)?' selected':''}>${escapeHtml(c.name)}</option>`).join('');
+}
+
+function getFilteredEd(){
+  const search=(document.getElementById('edSearch')?.value||'').toLowerCase();
+  let list=[...editorial];
+  if(edClientFilter!=='all') list=list.filter(e=>String(e.clientId||'')===String(edClientFilter));
+  if(search) list=list.filter(e=>(e.title||'').toLowerCase().includes(search)||(e.notes||'').toLowerCase().includes(search)||(clients.find(c=>String(c.id)===String(e.clientId))?.name||'').toLowerCase().includes(search));
+  return list;
+}
 
 function renderEditorial(){
-  const search=(document.getElementById('edSearch')?.value||'').toLowerCase();
-  const sort=document.getElementById('edSortSel')?.value||'date';
-
-  // Filters: par client (top 5) + tous
-  const filters=[
-    {k:'all',l:'Tous',cnt:editorial.length,cls:''},
-    {k:'todo',l:'📝 À produire',cnt:editorial.filter(e=>e.status==='todo').length,cls:'f-blue'},
-    {k:'review',l:'👀 En validation',cnt:editorial.filter(e=>e.status==='review').length,cls:'f-orange'},
-    {k:'ready',l:'✅ Prêt',cnt:editorial.filter(e=>e.status==='ready').length,cls:'f-teal'},
-    {k:'published',l:'🚀 Publié',cnt:editorial.filter(e=>e.status==='published').length,cls:'f-green'}
-  ];
-  document.getElementById('edFilters').innerHTML=filters.map(f=>{
-    const act=edFilter===f.k?'active '+(f.cls||''):'';
-    return `<button class="pill ${act}" onclick="setEdFilter('${f.k}')">${f.l} (${f.cnt})</button>`;
-  }).join('');
-
-  let filtered=[...editorial];
-  if(edFilter!=='all') filtered=filtered.filter(e=>e.status===edFilter);
-  if(search) filtered=filtered.filter(e=>(e.title||'').toLowerCase().includes(search)||(e.notes||'').toLowerCase().includes(search));
-
-  if(sort==='date') filtered.sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
-  if(sort==='client') filtered.sort((a,b)=>{const ca=clients.find(c=>c.id===a.clientId)?.name||'';const cb=clients.find(c=>c.id===b.clientId)?.name||'';return ca.localeCompare(cb,'fr');});
-  if(sort==='status') filtered.sort((a,b)=>(a.status||'').localeCompare(b.status||''));
-
-  // Default view = Kanban
+  fillEdClientFilterSelect();
+  // active la bonne vue dans le switch (au cas où changé en JS)
+  document.querySelectorAll('.ed-view-btn').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===edView));
   const body=document.getElementById('editorialBody');
-  if(edFilter!=='all'){
-    // List view when filtered
-    if(!filtered.length){body.innerHTML='<div class="empty">Aucun contenu</div>';return;}
-    body.innerHTML='<div class="tasks-list">'+filtered.map(edCardListHtml).join('')+'</div>';
-    return;
-  }
-  // Kanban
+  if(!body) return;
+  const list=getFilteredEd();
+  if(edView==='kanban'){ body.innerHTML=renderEdKanban(list); return; }
+  if(edView==='list'){ body.innerHTML=renderEdList(list); return; }
+  if(edView==='week'){ body.innerHTML=renderEdWeek(list); return; }
+  body.innerHTML=renderEdMonth(list); // 'cal' = mois par défaut
+}
+
+// ── Vue Kanban (4 colonnes : à produire / validation / prêt / publié)
+function renderEdKanban(list){
   const cols=[{k:'todo',l:'📝 À produire'},{k:'review',l:'👀 En validation'},{k:'ready',l:'✅ Prêt à publier'},{k:'published',l:'🚀 Publié'}];
-  body.innerHTML='<div class="ed-grid">'+cols.map(col=>{
-    const items=filtered.filter(e=>e.status===col.k);
+  return '<div class="ed-grid">'+cols.map(col=>{
+    const items=list.filter(e=>e.status===col.k).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
     return `<div class="ed-col ${col.k}">
       <div class="ed-col-h"><span>${col.l}</span><span class="cnt">${items.length}</span></div>
-      ${items.length?items.map(edCardKanbanHtml).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Vide</div>'}
+      ${items.length?items.map(edCardKanbanHtml).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;font-style:italic">Vide</div>'}
+    </div>`;
+  }).join('')+'</div>';
+}
+function edCardKanbanHtml(e){
+  const c=clients.find(c=>String(c.id)===String(e.clientId));
+  const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
+  const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'—';
+  const thumb=e.visualUrl?edThumbLargeHtml(e.visualUrl):'';
+  return `<div class="ed-card ${e.status}" onclick="editEditorial(${e.id})">
+    ${thumb?'<div style="margin:-4px -4px 6px;border-radius:6px;overflow:hidden">'+thumb.replace('thumb-l','').replace('class="" ','style="width:100%;aspect-ratio:16/9;background:var(--dark3)" ')+'</div>':''}
+    <div class="ed-card-title">${escapeHtml(e.title||'')}</div>
+    <div class="ed-card-meta">
+      <span class="ed-card-pf">${escapeHtml(e.platform||'?')}</span>
+      <span class="ed-card-date">${dueLabel}</span>
+      ${c?`<span style="color:var(--teal-light)">${escapeHtml(c.name)}</span>`:''}
+    </div>
+  </div>`;
+}
+
+// ── Vue Liste (chronologique)
+function renderEdList(list){
+  const sorted=list.slice().sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
+  if(!sorted.length) return '<div class="empty" style="padding:30px;color:var(--muted);font-style:italic;text-align:center">Aucun contenu pour ce filtre.</div>';
+  return '<div class="ed-list-list">'+sorted.map(e=>{
+    const c=clients.find(c=>String(c.id)===String(e.clientId));
+    const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
+    const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}):'—';
+    const stLbl={todo:'📝 À produire',review:'👀 En validation',ready:'✅ Prêt',published:'🚀 Publié'}[e.status]||e.status;
+    return `<div class="ed-list-item" onclick="editEditorial(${e.id})">
+      ${edThumbLargeHtml(e.visualUrl)}
+      <div class="ed-list-body">
+        <div class="tt">${escapeHtml(e.title||'')}</div>
+        <div class="mt">
+          <span>📅 ${dueLabel}</span>
+          <span>${escapeHtml(e.platform||'?')}</span>
+          ${c?`<span style="color:var(--teal-light)">${escapeHtml(c.name)}</span>`:''}
+          <span>${stLbl}</span>
+        </div>
+      </div>
     </div>`;
   }).join('')+'</div>';
 }
 
-function edCardKanbanHtml(e){
-  const c=clients.find(c=>c.id===e.clientId);
-  const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
-  const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'—';
-  return `<div class="ed-card ${e.status}" onclick="editEditorial(${e.id})">
-    <div class="ed-card-title">${(e.title||'').replace(/</g,'&lt;')}</div>
-    <div class="ed-card-meta">
-      <span class="ed-card-pf">${e.platform||'?'}</span>
-      <span class="ed-card-date">${dueLabel}</span>
-      ${c?`<span style="color:var(--teal-light)">${c.name}</span>`:''}
+// ── Vue Semaine (7 colonnes lun → dim)
+function renderEdWeek(list){
+  const monday=new Date(edWeekCurrentMonday);
+  const sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
+  const today=todayISO();
+  const fmtRange=(d1,d2)=>{
+    const a=d1.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const b=d2.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+    return a+' → '+b;
+  };
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    const dk=dayKey(d);
+    const items=list.filter(e=>e.date===dk).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+    const dayName=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'][i];
+    days.push({d,dk,items,dayName,isToday:dk===today});
+  }
+  return `<div class="ed-cal-nav" style="border-radius:14px 14px 0 0;border:1px solid var(--border);border-bottom:none;background:var(--dark2)">
+    <button class="ed-cal-nav-btn" onclick="edWeekPrev()">‹</button>
+    <span class="ed-cal-title">Semaine du ${fmtRange(monday,sunday)}</span>
+    <button class="ed-cal-nav-btn" onclick="edWeekNext()">›</button>
+  </div>
+  <div class="ed-week" style="border-top:none;border-radius:0 0 14px 14px">
+    ${days.map(({d,dk,items,dayName,isToday})=>`<div class="ed-week-col ${isToday?'today':''}">
+      <h4>${dayName} ${d.getDate()}</h4>
+      ${items.length?items.map(e=>{
+        const stLbl={todo:'À produire',review:'Validation',ready:'Prêt',published:'Publié'}[e.status]||'';
+        return `<div class="ed-card-week pf-${escapeHtml(e.platform||'?')}" onclick="editEditorial(${e.id})">
+          ${e.visualUrl?(isVideoUrl(e.visualUrl)?`<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#222,#444);font-size:18px">▶</div>`:`<div class="thumb"><img src="${escapeHtml(e.visualUrl)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`):''}
+          <div class="tt">${escapeHtml(e.title||'')}</div>
+          <div class="meta"><span>${escapeHtml(e.platform||'?')}</span><span>${stLbl}</span></div>
+        </div>`;
+      }).join(''):'<div style="text-align:center;color:var(--muted);font-size:10.5px;font-style:italic;padding:14px 0">—</div>'}
+    </div>`).join('')}
+  </div>`;
+}
+function edWeekPrev(){const d=new Date(edWeekCurrentMonday);d.setDate(d.getDate()-7);edWeekCurrentMonday=d;renderEditorial();}
+function edWeekNext(){const d=new Date(edWeekCurrentMonday);d.setDate(d.getDate()+7);edWeekCurrentMonday=d;renderEditorial();}
+
+// ── Vue Calendrier mois
+function renderEdMonth(list){
+  const monthStart=new Date(edCalCurrentMonth);
+  const monthLabel=monthStart.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  // Premier lundi avant ou égal au 1er du mois
+  const firstDay=new Date(monthStart);
+  const dow=(firstDay.getDay()+6)%7; // 0=lun
+  const gridStart=new Date(firstDay); gridStart.setDate(firstDay.getDate()-dow);
+  const today=todayISO();
+  const cells=[];
+  for(let i=0;i<42;i++){
+    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
+    const dk=dayKey(d);
+    const inMonth=d.getMonth()===monthStart.getMonth();
+    const items=list.filter(e=>e.date===dk).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+    cells.push({d,dk,inMonth,items,isToday:dk===today});
+  }
+  return `<div class="ed-cal">
+    <div class="ed-cal-nav">
+      <button class="ed-cal-nav-btn" onclick="edMonthPrev()">‹</button>
+      <span class="ed-cal-title">${monthLabel}</span>
+      <button class="ed-cal-nav-btn" onclick="edMonthNext()">›</button>
+    </div>
+    <div class="ed-cal-grid">
+      ${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(d=>`<div class="ed-cal-dayhead">${d}</div>`).join('')}
+      ${cells.map(({d,dk,inMonth,items,isToday})=>`<div class="ed-cal-cell ${inMonth?'':'other'} ${isToday?'today':''}">
+        <div class="dn">${d.getDate()}</div>
+        ${items.map(e=>`<div class="ed-card-mini pf-${escapeHtml(e.platform||'?')}" onclick="event.stopPropagation();editEditorial(${e.id})" title="${escapeHtml(e.title||'')}">
+          ${e.visualUrl?(isVideoUrl(e.visualUrl)?`<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:#222;font-size:9px">▶</div>`:`<div class="thumb"><img src="${escapeHtml(e.visualUrl)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`):''}
+          <span class="tt">${escapeHtml(e.title||'')}</span>
+        </div>`).join('')}
+      </div>`).join('')}
     </div>
   </div>`;
 }
+function edMonthPrev(){const d=new Date(edCalCurrentMonth);d.setMonth(d.getMonth()-1);edCalCurrentMonth=d;renderEditorial();}
+function edMonthNext(){const d=new Date(edCalCurrentMonth);d.setMonth(d.getMonth()+1);edCalCurrentMonth=d;renderEditorial();}
 
-function edCardListHtml(e){
-  const c=clients.find(c=>c.id===e.clientId);
-  const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
-  const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
-  const stCls={todo:'b-blue',review:'b-orange',ready:'b-teal',published:'b-green'}[e.status]||'b-grey';
-  const stLbl={todo:'À produire',review:'En validation',ready:'Prêt',published:'Publié'}[e.status]||e.status;
-  return `<div class="task-card" onclick="editEditorial(${e.id})">
-    <div></div>
-    <div class="task-body">
-      <div class="task-line1">
-        <span class="task-title">${(e.title||'').replace(/</g,'&lt;')}</span>
-        <span class="badge ${stCls}"><span class="badge-dot"></span>${stLbl}</span>
-      </div>
-      <div class="task-line2">
-        <span class="ed-card-pf">${e.platform||'?'}</span>
-        <span style="color:var(--muted)">📅 ${dueLabel}</span>
-        ${c?`<span style="color:var(--teal-light)">${c.name}</span>`:''}
-      </div>
-      ${e.notes?`<div class="task-notes">${(e.notes||'').replace(/</g,'&lt;')}</div>`:''}
-    </div>
-    <div class="task-actions">
-      <button class="act-btn act-del" onclick="event.stopPropagation();deleteEditorial(${e.id})" title="Supprimer">✕</button>
-    </div>
-  </div>`;
+// Preview du visuel dans le modal
+function edPreviewVisual(){
+  const box=document.getElementById('edPreviewBox');
+  const url=(document.getElementById('ed_visual')?.value||'').trim();
+  if(!box) return;
+  if(!url){ box.innerHTML='<div class="ph">Colle une URL d\'image/vidéo pour voir l\'aperçu</div>'; return; }
+  if(isVideoUrl(url)){
+    if(/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)){
+      box.innerHTML=`<video src="${escapeHtml(url)}" controls preload="metadata"></video>`;
+    } else {
+      box.innerHTML=`<div class="ph">🎬 Lien vidéo détecté (YouTube/Vimeo)<br><a href="${escapeHtml(url)}" target="_blank" style="color:var(--teal-light)">Ouvrir dans un nouvel onglet</a></div>`;
+    }
+  } else {
+    box.innerHTML=`<img src="${escapeHtml(url)}" onerror="this.parentElement.innerHTML='<div class=\\'ph\\'>⚠️ Image inaccessible (URL invalide ou non publique)</div>'">`;
+  }
 }
-
-function setEdFilter(f){edFilter=f;renderEditorial();}
 
 function fillEdClientSelect(selected){
   const sel=document.getElementById('ed_client');
@@ -4433,14 +4621,18 @@ function openEditorialModal(){
   document.getElementById('ed_date').value=todayISO();
   document.getElementById('ed_status').value='todo';
   document.getElementById('ed_notes').value='';
-  fillEdClientSelect('');
+  if(document.getElementById('ed_visual')) document.getElementById('ed_visual').value='';
+  // Pré-sélectionne le client filtré si applicable
+  const preset=(edClientFilter && edClientFilter!=='all')?edClientFilter:'';
+  fillEdClientSelect(preset);
+  edPreviewVisual();
   document.getElementById('edOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('ed_title').focus(),50);
 }
 
 function editEditorial(id){
-  const e=editorial.find(x=>x.id===id);if(!e) return;
-  editEdId=id;
+  const e=editorial.find(x=>String(x.id)===String(id));if(!e) return;
+  editEdId=e.id;
   document.getElementById('edModalTitle').textContent='✏️ Modifier le contenu';
   document.getElementById('edSaveLabel').textContent='Mettre à jour';
   document.getElementById('ed_title').value=e.title||'';
@@ -4448,7 +4640,9 @@ function editEditorial(id){
   document.getElementById('ed_date').value=e.date||'';
   document.getElementById('ed_status').value=e.status||'todo';
   document.getElementById('ed_notes').value=e.notes||'';
+  if(document.getElementById('ed_visual')) document.getElementById('ed_visual').value=e.visualUrl||'';
   fillEdClientSelect(e.clientId||'');
+  edPreviewVisual();
   document.getElementById('edOverlay').classList.add('open');
 }
 
@@ -4461,12 +4655,15 @@ function saveEditorial(){
     platform:document.getElementById('ed_platform').value,
     date:document.getElementById('ed_date').value||'',
     status:document.getElementById('ed_status').value,
-    notes:document.getElementById('ed_notes').value.trim()
+    notes:document.getElementById('ed_notes').value.trim(),
+    visualUrl:(document.getElementById('ed_visual')?.value||'').trim()
   };
   if(editEdId!==null){
-    const i=editorial.findIndex(e=>e.id===editEdId);
-    editorial[i]={...editorial[i],...data};
-    toast('Contenu mis à jour ✓');
+    const i=editorial.findIndex(e=>String(e.id)===String(editEdId));
+    if(i>=0){
+      editorial[i]={...editorial[i],...data};
+      toast('Contenu mis à jour ✓');
+    }
   } else {
     editorial.push({id:nextEdId++,...data,createdAt:new Date().toISOString()});
     toast('Contenu ajouté ✓');
