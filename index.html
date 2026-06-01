@@ -1815,19 +1815,71 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 
 <!-- CONTACT FICHE MODAL -->
 <div class="overlay" id="contactOverlay" onclick="closeBg(event,'contactOverlay')">
-  <div class="modal" style="max-width:600px">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto">
     <h2 id="contactModalTitle">📞 Fiche contact</h2>
     <div class="fg"><label>Client</label><div id="ct_clientName" style="color:var(--cream);font-weight:600;font-size:15px"></div></div>
-    <div class="fg-row">
-      <div class="fg"><label>Interlocuteur principal</label><input id="ct_person" placeholder="Prénom Nom"></div>
-      <div class="fg"><label>Fonction</label><input id="ct_role" placeholder="Ex: Gérant, Resp. com..."></div>
+
+    <!-- Interlocuteur 1 (principal, toujours affiché) -->
+    <div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;background:rgba(17,103,118,.05)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--teal-light);margin-bottom:9px;letter-spacing:.5px">👤 INTERLOCUTEUR 1 (PRINCIPAL)</div>
+      <div class="fg-row">
+        <div class="fg"><label>Nom</label><input id="ct_person" placeholder="Prénom Nom"></div>
+        <div class="fg"><label>Fonction</label><input id="ct_role" placeholder="Ex: Gérant"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Email</label><input id="ct_email" type="email" placeholder="contact@example.com"></div>
+        <div class="fg"><label>Téléphone</label><input id="ct_phone" placeholder="06 XX XX XX XX"></div>
+      </div>
     </div>
-    <div class="fg-row">
-      <div class="fg"><label>Email</label><input id="ct_email" type="email" placeholder="contact@example.com"></div>
-      <div class="fg"><label>Téléphone</label><input id="ct_phone" placeholder="06 XX XX XX XX"></div>
+
+    <!-- Interlocuteur 2 (caché par défaut) -->
+    <div id="ct_p2_block" style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--teal-light);letter-spacing:.5px">👤 INTERLOCUTEUR 2</span>
+        <button class="btn-mini" onclick="ct_removePerson(2)" style="background:rgba(231,76,60,.15);color:var(--coral);border-color:rgba(231,76,60,.3)">✕ Retirer</button>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Nom</label><input id="ct_person2" placeholder="Prénom Nom"></div>
+        <div class="fg"><label>Fonction</label><input id="ct_role2" placeholder="Ex: Compta"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Email</label><input id="ct_email2" type="email"></div>
+        <div class="fg"><label>Téléphone</label><input id="ct_phone2"></div>
+      </div>
     </div>
+
+    <!-- Interlocuteur 3 (caché par défaut) -->
+    <div id="ct_p3_block" style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--teal-light);letter-spacing:.5px">👤 INTERLOCUTEUR 3</span>
+        <button class="btn-mini" onclick="ct_removePerson(3)" style="background:rgba(231,76,60,.15);color:var(--coral);border-color:rgba(231,76,60,.3)">✕ Retirer</button>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Nom</label><input id="ct_person3" placeholder="Prénom Nom"></div>
+        <div class="fg"><label>Fonction</label><input id="ct_role3" placeholder="Ex: Technique"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Email</label><input id="ct_email3" type="email"></div>
+        <div class="fg"><label>Téléphone</label><input id="ct_phone3"></div>
+      </div>
+    </div>
+
+    <button id="ct_addPersonBtn" class="btn-mini" onclick="ct_addPerson()" style="margin-bottom:14px;width:100%">＋ Ajouter un interlocuteur</button>
+
     <div class="fg"><label>Adresse</label><input id="ct_address" placeholder="Adresse complète"></div>
     <div class="fg"><label>Site web</label><input id="ct_web" placeholder="https://..."></div>
+
+    <!-- Documents (URLs : KBIS, RIB, pièce d'identité, contrats...) -->
+    <div class="fg">
+      <label>📎 Documents <span style="font-size:10px;color:var(--muted);font-weight:400">(URL Drive/Dropbox/iCloud : KBIS, RIB, pièce d'identité, contrats...)</span></label>
+      <div id="ct_docs" style="display:flex;flex-direction:column;gap:5px;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:6px;min-height:46px;max-height:170px;overflow-y:auto"></div>
+      <div style="display:flex;gap:6px">
+        <input id="ct_newDocLabel" placeholder="Nom (ex: KBIS, RIB)" style="width:150px;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;outline:none;font-size:12.5px;font-family:'Barlow',sans-serif">
+        <input id="ct_newDocUrl" placeholder="https://drive.google.com/..." style="flex:1;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;outline:none;font-size:12.5px;font-family:'Barlow',sans-serif">
+        <button class="btn-save" onclick="addContactDoc()" style="padding:0 14px">＋</button>
+      </div>
+    </div>
+
     <div class="fg"><label>📝 Historique des échanges</label>
       <div style="display:flex;gap:8px;margin-bottom:8px">
         <input id="ct_newLog" placeholder="Ajouter une note datée..." style="flex:1;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:8px 12px;outline:none;font-size:13px;font-family:'Barlow',sans-serif">
@@ -4794,15 +4846,95 @@ function openContactModal(clientId){
   const c=clients.find(x=>x.id===clientId);if(!c) return;
   const ct=contactsData[clientId]||{logs:[]};
   document.getElementById('ct_clientName').textContent=c.name;
+  // Interlocuteur 1
   document.getElementById('ct_person').value=ct.person||'';
   document.getElementById('ct_role').value=ct.role||'';
   document.getElementById('ct_email').value=ct.email||'';
   document.getElementById('ct_phone').value=ct.phone||'';
+  // Interlocuteur 2
+  document.getElementById('ct_person2').value=ct.person2||'';
+  document.getElementById('ct_role2').value=ct.role2||'';
+  document.getElementById('ct_email2').value=ct.email2||'';
+  document.getElementById('ct_phone2').value=ct.phone2||'';
+  // Interlocuteur 3
+  document.getElementById('ct_person3').value=ct.person3||'';
+  document.getElementById('ct_role3').value=ct.role3||'';
+  document.getElementById('ct_email3').value=ct.email3||'';
+  document.getElementById('ct_phone3').value=ct.phone3||'';
+  // Affiche bloc 2/3 si on a des données
+  const has2 = !!(ct.person2||ct.role2||ct.email2||ct.phone2);
+  const has3 = !!(ct.person3||ct.role3||ct.email3||ct.phone3);
+  document.getElementById('ct_p2_block').style.display = has2?'block':'none';
+  document.getElementById('ct_p3_block').style.display = has3?'block':'none';
+  ct_updateAddBtn();
   document.getElementById('ct_address').value=ct.address||'';
   document.getElementById('ct_web').value=ct.web||'';
   document.getElementById('ct_newLog').value='';
+  document.getElementById('ct_newDocLabel').value='';
+  document.getElementById('ct_newDocUrl').value='';
+  renderContactDocs(clientId);
   renderContactLogs(clientId);
   document.getElementById('contactOverlay').classList.add('open');
+}
+
+// Affichage / masquage des interlocuteurs 2 et 3
+function ct_addPerson(){
+  const p2=document.getElementById('ct_p2_block');
+  const p3=document.getElementById('ct_p3_block');
+  if(p2.style.display==='none'){ p2.style.display='block'; }
+  else if(p3.style.display==='none'){ p3.style.display='block'; }
+  ct_updateAddBtn();
+}
+function ct_removePerson(n){
+  if(!confirm('Retirer cet interlocuteur ? Ses données seront effacées.')) return;
+  document.getElementById('ct_person'+n).value='';
+  document.getElementById('ct_role'+n).value='';
+  document.getElementById('ct_email'+n).value='';
+  document.getElementById('ct_phone'+n).value='';
+  document.getElementById('ct_p'+n+'_block').style.display='none';
+  ct_updateAddBtn();
+}
+function ct_updateAddBtn(){
+  const p2v=document.getElementById('ct_p2_block').style.display!=='none';
+  const p3v=document.getElementById('ct_p3_block').style.display!=='none';
+  const btn=document.getElementById('ct_addPersonBtn');
+  if(p2v && p3v){ btn.style.display='none'; }
+  else { btn.style.display='block'; btn.textContent=p2v?'＋ Ajouter un 3e interlocuteur':'＋ Ajouter un interlocuteur'; }
+}
+
+// Documents (URLs externes : Drive, Dropbox, etc.)
+function renderContactDocs(clientId){
+  const ct=contactsData[clientId]||{};
+  const docs=ct.docs||[];
+  const el=document.getElementById('ct_docs');
+  if(!docs.length){ el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:11.5px;font-style:italic;padding:8px">Aucun document. Ajoute-en un ci-dessous.</div>'; return; }
+  el.innerHTML=docs.map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 7px;background:var(--dark2);border-radius:6px">
+    <span style="font-size:14px">📎</span>
+    <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" style="flex:1;color:var(--teal-light);font-size:12.5px;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(d.url)}">${escapeHtml(d.label||'Document')}</a>
+    <button class="btn-mini" style="background:rgba(231,76,60,.15);color:var(--coral);border-color:rgba(231,76,60,.3);padding:3px 8px;font-size:11px" onclick="removeContactDoc(${i})" title="Retirer">✕</button>
+  </div>`).join('');
+}
+function addContactDoc(){
+  const label=document.getElementById('ct_newDocLabel').value.trim();
+  const url=document.getElementById('ct_newDocUrl').value.trim();
+  if(!url){ alert('Colle l\'URL du document (Drive, Dropbox, iCloud…)'); return; }
+  if(!/^https?:\/\//.test(url)){ alert('L\'URL doit commencer par http:// ou https://'); return; }
+  if(!contactsData[editContactId]) contactsData[editContactId]={logs:[]};
+  if(!contactsData[editContactId].docs) contactsData[editContactId].docs=[];
+  contactsData[editContactId].docs.push({label: label||'Document', url, addedAt:new Date().toISOString()});
+  Storage.set('influ_contacts',contactsData);
+  document.getElementById('ct_newDocLabel').value='';
+  document.getElementById('ct_newDocUrl').value='';
+  renderContactDocs(editContactId);
+  toast('Document ajouté ✓');
+}
+function removeContactDoc(i){
+  if(!confirm('Retirer ce document de la fiche ?')) return;
+  if(!contactsData[editContactId]?.docs) return;
+  contactsData[editContactId].docs.splice(i,1);
+  Storage.set('influ_contacts',contactsData);
+  renderContactDocs(editContactId);
+  toast('Document retiré');
 }
 
 function renderContactLogs(clientId){
@@ -4832,12 +4964,25 @@ function addContactLog(){
 
 function saveContact(){
   if(!contactsData[editContactId]) contactsData[editContactId]={logs:[]};
-  contactsData[editContactId].person=document.getElementById('ct_person').value.trim();
-  contactsData[editContactId].role=document.getElementById('ct_role').value.trim();
-  contactsData[editContactId].email=document.getElementById('ct_email').value.trim();
-  contactsData[editContactId].phone=document.getElementById('ct_phone').value.trim();
-  contactsData[editContactId].address=document.getElementById('ct_address').value.trim();
-  contactsData[editContactId].web=document.getElementById('ct_web').value.trim();
+  const d=contactsData[editContactId];
+  // Interlocuteur 1 (principal)
+  d.person=document.getElementById('ct_person').value.trim();
+  d.role=document.getElementById('ct_role').value.trim();
+  d.email=document.getElementById('ct_email').value.trim();
+  d.phone=document.getElementById('ct_phone').value.trim();
+  // Interlocuteurs 2 et 3 (seulement si bloc affiché)
+  const p2v=document.getElementById('ct_p2_block').style.display!=='none';
+  const p3v=document.getElementById('ct_p3_block').style.display!=='none';
+  d.person2=p2v?document.getElementById('ct_person2').value.trim():'';
+  d.role2  =p2v?document.getElementById('ct_role2').value.trim():'';
+  d.email2 =p2v?document.getElementById('ct_email2').value.trim():'';
+  d.phone2 =p2v?document.getElementById('ct_phone2').value.trim():'';
+  d.person3=p3v?document.getElementById('ct_person3').value.trim():'';
+  d.role3  =p3v?document.getElementById('ct_role3').value.trim():'';
+  d.email3 =p3v?document.getElementById('ct_email3').value.trim():'';
+  d.phone3 =p3v?document.getElementById('ct_phone3').value.trim():'';
+  d.address=document.getElementById('ct_address').value.trim();
+  d.web=document.getElementById('ct_web').value.trim();
   Storage.set('influ_contacts',contactsData);
   closeModal('contactOverlay');
   renderContacts();
