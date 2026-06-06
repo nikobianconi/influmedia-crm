@@ -153,9 +153,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
 .act-conv{color:var(--green)}.act-conv:hover{background:rgba(46,204,113,.15)}
 .act-note{color:var(--muted)}.act-note:hover{background:rgba(255,255,255,.08)}
 .actions-cell{display:flex;gap:3px;align-items:center}
-.drag-handle{color:var(--muted);cursor:grab;font-size:15px;padding:0 4px;user-select:none;touch-action:none}
+.drag-handle{color:var(--muted);cursor:grab;font-size:16px;padding:0 4px;user-select:none;touch-action:none;transition:color .15s,transform .15s;display:inline-block;letter-spacing:.5px}
 .drag-handle:hover{color:var(--cream)}
 .drag-handle:active{cursor:grabbing}
+tr[draggable]:hover .drag-handle{color:var(--teal-light);transform:scale(1.15)}
 tr.dragging{opacity:.4;background:rgba(17,103,118,.15)!important}
 tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17,103,118,.08)!important}
 .client-name{font-weight:600;color:var(--cream)}
@@ -776,10 +777,11 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 /* ===== SERVICES TABLE ===== */
 #servicesTable{width:100%;border-collapse:collapse;font-size:13px}
 #servicesTable th{padding:9px 8px;background:rgba(0,0,0,.15);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;white-space:nowrap}
-#servicesTable th:first-child,#servicesTable td:first-child{text-align:left;padding-left:14px;background:var(--dark2);position:sticky;left:0;z-index:1;min-width:200px;border-right:1px solid var(--border)}
+#servicesTable th:first-child,#servicesTable td:first-child{width:32px;min-width:32px;max-width:32px;padding:6px 2px 6px 6px;text-align:center;background:var(--dark2);position:sticky;left:0;z-index:1;border-right:none}
+#servicesTable th:nth-child(2),#servicesTable td:nth-child(2){text-align:left;padding-left:6px;background:var(--dark2);position:sticky;left:32px;z-index:1;min-width:200px;border-right:1px solid var(--border)}
 #servicesTable td{padding:6px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
 #servicesTable tbody tr:hover{background:rgba(255,255,255,.02)}
-#servicesTable tbody tr:hover td:first-child{background:#173740}
+#servicesTable tbody tr:hover td:first-child,#servicesTable tbody tr:hover td:nth-child(2){background:#173740}
 .svc-cell{display:inline-block;width:26px;height:26px;border-radius:6px;border:1.5px solid rgba(255,255,255,.12);cursor:pointer;transition:all .15s}
 .svc-cell:hover{border-color:var(--teal-light);transform:scale(1.08)}
 .svc-cell.on{border-color:transparent;color:white;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
@@ -793,7 +795,8 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 /* ===== AVIS GOOGLE ===== */
 #avisTable{width:100%;border-collapse:collapse}
 #avisTable th{padding:10px 6px;background:rgba(0,0,0,.15);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
-#avisTable th:first-child,#avisTable td:first-child{text-align:left;padding-left:14px;min-width:240px}
+#avisTable th:first-child,#avisTable td:first-child{width:32px;min-width:32px;max-width:32px;padding:6px 2px 6px 6px;text-align:center}
+#avisTable th:nth-child(2),#avisTable td:nth-child(2){text-align:left;padding-left:6px;min-width:240px}
 #avisTable td{padding:8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
 #avisTable tbody tr:hover{background:rgba(255,255,255,.02)}
 .av-cell{display:inline-block;width:30px;height:30px;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);cursor:pointer;transition:all .15s;color:transparent;font-size:14px;font-weight:700}
@@ -4161,7 +4164,7 @@ function renderServices(){
   const search=(document.getElementById('servicesSearch')?.value||'').toLowerCase();
   const tbl=document.getElementById('servicesTable');
   // Build header — colonne Offres/Cadeaux à droite + petite colonne drag à gauche
-  let head=`<thead><tr><th style="width:28px"></th><th>Client</th>${serviceCatalog.map(s=>`<th title="${s.name}">${s.name}</th>`).join('')}<th style="min-width:200px">🎁 Offres / Cadeaux</th></tr></thead>`;
+  let head=`<thead><tr><th></th><th>Client</th>${serviceCatalog.map(s=>`<th title="${s.name}">${s.name}</th>`).join('')}<th style="min-width:200px">🎁 Offres / Cadeaux</th></tr></thead>`;
   // Clients du CRM (hors fin de contrat)
   let crmRows=clients.filter(c=>c.status!=='Fin de contrat');
   if(search) crmRows=crmRows.filter(c=>c.name.toLowerCase().includes(search)||(clientOffers[c.id]||'').toLowerCase().includes(search));
@@ -4183,7 +4186,7 @@ function renderServices(){
     const nameCell=isExtra
       ? `<td><div class="svc-client-name">${escapeHtml(c.name||'')} <span style="font-size:9px;background:rgba(155,89,182,.2);color:#b07cd0;padding:1px 6px;border-radius:6px;vertical-align:middle;letter-spacing:.3px">SOCIÉTÉ ADD.</span></div><div class="svc-client-status" style="display:flex;align-items:center;gap:7px">Hors CRM <button onclick="deleteServiceExtra('${c.id}')" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:10px;padding:0;text-decoration:underline" title="Retirer cette société">✕ retirer</button></div></td>`
       : `<td><div class="svc-client-name">${escapeHtml(c.name)}</div><div class="svc-client-status">${c.status}</div></td>`;
-    const dragCell=`<td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>`;
+    const dragCell=`<td><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>`;
     return `<tr draggable="true" data-svid="${c.id}" data-svextra="${isExtra?1:0}"
       ondragstart="svDragStart(event,'${c.id}',${isExtra?1:0})"
       ondragover="svDragOver(event)"
@@ -4349,7 +4352,7 @@ function renderAvis(){
   const todayObj=new Date();todayObj.setHours(0,0,0,0);
   const dayDates=days.map((_,i)=>{const d=new Date(avisCurrentMonday);d.setDate(d.getDate()+i);return d;});
 
-  let head='<thead><tr><th style="width:28px"></th><th>Client</th>'+days.map((d,i)=>{
+  let head='<thead><tr><th></th><th>Client</th>'+days.map((d,i)=>{
     const isTodayCol=dayDates[i].getTime()===todayObj.getTime();
     return `<th class="${isTodayCol?'th-current':''}" style="text-align:center">${d}<br><span style="font-weight:400;color:var(--muted);font-size:10px">${fmtDayLabel(dayDates[i])}</span></th>`;
   }).join('')+'<th>Note</th><th></th></tr></thead>';
@@ -4374,7 +4377,7 @@ function renderAvis(){
       ondragleave="avDragLeave(event)"
       ondrop="avDragDrop(event,${c.id})"
       ondragend="avDragEnd(event)">
-      <td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
+      <td><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
       <td><div class="svc-client-name">${c.name}</div><div style="margin-top:3px"><span class="av-status-badge ${stCls}">${stLabel}</span></div></td>
       ${cells}
       <td style="font-size:11px;color:var(--muted);max-width:180px">${c.note||'—'}</td>
