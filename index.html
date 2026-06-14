@@ -1734,6 +1734,304 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 [data-theme="day"] #servicesTable input[type="text"]{
   background:#FFFFFF!important;border:1px solid rgba(15,23,42,.12)!important;color:#0F172A!important;
 }
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  COMMERCE — Présentations & Leads                            ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Grille de présentations */
+.pres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.pres-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .25s var(--ease-out,cubic-bezier(.16,1,.3,1)),box-shadow .25s var(--ease-out,cubic-bezier(.16,1,.3,1));
+  cursor:pointer;position:relative;
+}
+.pres-card:hover{transform:translateY(-4px);box-shadow:0 14px 32px -10px rgba(0,0,0,.5)}
+.pres-cover{
+  aspect-ratio:16/10;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);
+  background-size:cover;background-position:center;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:64px;color:rgba(255,255,255,.85);
+}
+.pres-card.pc-coral .pres-cover{background:linear-gradient(135deg,#e04848,#FF7A5A)}
+.pres-card.pc-blue  .pres-cover{background:linear-gradient(135deg,#1e5680,#3498db)}
+.pres-card.pc-purple .pres-cover{background:linear-gradient(135deg,#6b3f8a,#9b59b6)}
+.pres-card.pc-green .pres-cover{background:linear-gradient(135deg,#1b6f3f,#2ecc71)}
+.pres-cover-overlay{
+  position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55) 100%);
+  display:flex;align-items:flex-end;padding:12px;
+}
+.pres-launch-btn{
+  background:#fff;color:#0F172A;border:none;border-radius:24px;padding:10px 18px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.5px;
+  cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  transition:all .2s;
+}
+.pres-launch-btn:hover{transform:scale(1.05);background:var(--teal);color:#fff}
+.pres-edit-btn{
+  position:absolute;top:10px;right:10px;
+  background:rgba(0,0,0,.55);color:#fff;border:none;width:32px;height:32px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;
+  opacity:0;transition:opacity .2s,background .2s;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.pres-card:hover .pres-edit-btn{opacity:1}
+.pres-edit-btn:hover{background:var(--teal)}
+.pres-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column;gap:6px}
+.pres-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;color:var(--cream);line-height:1.25}
+.pres-desc{font-size:12px;color:var(--muted);line-height:1.45;flex:1}
+.pres-add{
+  border:2px dashed rgba(255,255,255,.18);border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  cursor:pointer;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  text-transform:uppercase;letter-spacing:1.2px;font-size:13px;
+  min-height:240px;transition:all .25s;
+}
+.pres-add:hover{border-color:var(--teal-light);color:var(--teal-light);background:rgba(17,103,118,.05)}
+.pres-add .ic{font-size:38px}
+
+/* Day mode adapt */
+[data-theme="day"] .pres-card{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 1px 3px rgba(15,23,42,.05)}
+[data-theme="day"] .pres-title{color:#0F172A}
+[data-theme="day"] .pres-add{border:2px dashed rgba(15,23,42,.22);color:#475569;background:#FAFCFE}
+[data-theme="day"] .pres-add:hover{border-color:var(--teal);color:var(--teal);background:rgba(17,103,118,.05)}
+
+/* Leads — statuts pills */
+.lead-st{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;white-space:nowrap}
+.lead-st-nouveau {background:rgba(52,152,219,.18);color:#3498db}
+.lead-st-contacte{background:rgba(243,156,18,.18);color:#f39c12}
+.lead-st-rdv     {background:rgba(155,89,182,.18);color:#9b59b6}
+.lead-st-devis   {background:rgba(26,143,163,.18);color:var(--teal-light)}
+.lead-st-signe   {background:rgba(46,204,113,.22);color:#2ecc71}
+.lead-st-perdu   {background:rgba(127,140,141,.18);color:#7f8c8d}
+[data-theme="day"] .lead-st-nouveau {background:rgba(37,99,235,.12);color:#2563EB}
+[data-theme="day"] .lead-st-contacte{background:rgba(217,119,6,.14);color:#D97706}
+[data-theme="day"] .lead-st-rdv     {background:rgba(124,58,237,.12);color:#7C3AED}
+[data-theme="day"] .lead-st-devis   {background:rgba(14,90,107,.12);color:#0E5A6B}
+[data-theme="day"] .lead-st-signe   {background:rgba(22,163,74,.14);color:#16A34A}
+[data-theme="day"] .lead-st-perdu   {background:rgba(100,116,139,.14);color:#64748B}
+
+/* Leads KPI cards */
+.lead-kpi{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.lead-kpi .lbl{font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.lead-kpi .val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--cream)}
+[data-theme="day"] .lead-kpi{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 1px 3px rgba(15,23,42,.05)}
+[data-theme="day"] .lead-kpi .val{color:#0F172A}
+
+.lead-next-soon{color:var(--orange);font-weight:700}
+.lead-next-late{color:var(--coral);font-weight:800}
+
+/* Notes / Historique du lead — grande zone esthétique */
+.lead-notes-fg{margin-top:6px}
+.lead-notes-fg label{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.lead-notes-area{
+  width:100%;
+  min-height:220px;max-height:340px;
+  background:linear-gradient(180deg, rgba(17,103,118,.04) 0%, var(--dark) 100%)!important;
+  border:1.5px solid rgba(17,103,118,.25)!important;
+  border-radius:12px!important;
+  color:var(--cream)!important;
+  font-family:'Barlow', sans-serif;
+  font-size:14px;line-height:1.7;
+  padding:16px 18px!important;
+  outline:none;resize:vertical;
+  letter-spacing:.1px;
+  /* Lignes de cahier subtiles */
+  background-image:
+    linear-gradient(180deg, rgba(17,103,118,.04) 0%, transparent 60px),
+    repeating-linear-gradient(180deg, transparent 0px, transparent 27px, rgba(255,255,255,.04) 27px, rgba(255,255,255,.04) 28px);
+  background-attachment:local;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.25);
+  transition:border-color .25s, box-shadow .25s;
+}
+.lead-notes-area::placeholder{
+  color:var(--muted);font-style:italic;line-height:1.7;
+}
+.lead-notes-area:focus{
+  border-color:var(--teal-light)!important;
+  box-shadow:0 0 0 4px rgba(17,103,118,.20),inset 0 1px 3px rgba(0,0,0,.15)!important;
+}
+
+/* ─── CLASSEMENT ÉQUIPE COMMERCIALE ─── */
+.team-leaderboard-card{
+  background:linear-gradient(135deg, rgba(17,103,118,.18) 0%, rgba(212,175,55,.10) 60%, rgba(255,95,95,.10) 100%);
+  border:1px solid var(--border);
+  border-radius:18px;padding:22px 24px;margin-bottom:22px;
+  position:relative;overflow:hidden;
+}
+.team-leaderboard-card::before{
+  content:'';position:absolute;top:-30%;right:-15%;width:340px;height:340px;
+  background:radial-gradient(circle,rgba(212,175,55,.18),transparent 70%);pointer-events:none;
+}
+.tl-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;position:relative;z-index:1}
+.tl-header h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--cream);text-transform:capitalize;margin:0}
+.tl-team-total{font-size:12px;color:var(--muted);background:rgba(0,0,0,.18);padding:6px 12px;border-radius:99px;border:1px solid var(--border)}
+.tl-team-total strong{color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px}
+.tl-banner{
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(212,175,55,.30);
+  border-radius:12px;padding:12px 16px;
+  font-size:14px;color:var(--cream);margin-bottom:18px;line-height:1.5;
+  position:relative;z-index:1;
+}
+.tl-banner strong{color:#d4af37;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px}
+.tl-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;position:relative;z-index:1}
+.team-com-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;
+  position:relative;display:flex;flex-direction:column;gap:14px;
+  transition:transform .25s var(--ease-out,cubic-bezier(.16,1,.3,1));
+}
+.team-com-card:hover{transform:translateY(-3px)}
+.team-com-card.is-me{background:linear-gradient(135deg, rgba(17,103,118,.16) 0%, var(--dark2) 100%);}
+.rank-badge{
+  position:absolute;top:10px;right:12px;
+  font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:var(--muted);
+}
+.team-com-card .tc-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--cream);line-height:1.2}
+.me-tag{display:inline-block;font-size:9px;background:var(--teal);color:#fff;padding:2px 7px;border-radius:99px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;vertical-align:middle;margin-left:6px}
+.tc-level{font-size:12px;color:var(--muted);margin-top:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.4px}
+.tc-level .emoji{font-size:14px;margin-right:2px}
+.tc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:12px;border-top:1px solid var(--border)}
+.tc-stat{text-align:center}
+.tc-stat .v{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:var(--cream);line-height:1}
+.tc-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-top:3px}
+.tl-foot{font-size:12px;color:var(--muted);font-style:italic;text-align:center;margin-top:14px;position:relative;z-index:1}
+
+/* Mode jour */
+[data-theme="day"] .team-leaderboard-card{background:linear-gradient(135deg, rgba(17,103,118,.08) 0%, rgba(212,175,55,.06) 60%, rgba(220,72,72,.04) 100%);border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .tl-header h3{color:#0F172A}
+[data-theme="day"] .tl-team-total{background:#FFFFFF;border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .tl-banner{background:#FFFFFF;color:#0F172A;border-color:rgba(212,175,55,.40)}
+[data-theme="day"] .tl-banner strong{color:#a8841d}
+[data-theme="day"] .team-com-card{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 1px 3px rgba(15,23,42,.05)}
+[data-theme="day"] .team-com-card.is-me{background:linear-gradient(135deg, rgba(17,103,118,.08) 0%, #FFFFFF 100%)}
+[data-theme="day"] .team-com-card .tc-name,
+[data-theme="day"] .tc-stat .v{color:#0F172A}
+[data-theme="day"] .tc-stats{border-top-color:rgba(15,23,42,.08)}
+
+/* ─── PAGE STATS / TROPHÉES COMMERCIAL ─── */
+.stats-hero{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px;
+}
+.stat-hero-card{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--dark2) 0%,var(--mid) 100%);
+  border:1px solid var(--border);
+  border-radius:18px;padding:18px 20px;
+  transition:transform .25s var(--ease-out,cubic-bezier(.16,1,.3,1)),box-shadow .25s;
+}
+.stat-hero-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md,0 8px 22px rgba(0,0,0,.3))}
+.stat-hero-card .icon{font-size:30px;margin-bottom:8px;display:block}
+.stat-hero-card .label{font-size:10.5px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px}
+.stat-hero-card .value{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;line-height:1;color:var(--cream)}
+.stat-hero-card .sub{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.3}
+.stat-hero-card.gold{background:linear-gradient(135deg,#7d6014 0%,#d4af37 100%);color:#fff;border-color:#d4af37}
+.stat-hero-card.gold .label,.stat-hero-card.gold .value,.stat-hero-card.gold .sub{color:#fff}
+.stat-hero-card.fire{background:linear-gradient(135deg,#7a2418 0%,#e74c3c 100%);color:#fff;border-color:#e74c3c}
+.stat-hero-card.fire .label,.stat-hero-card.fire .value,.stat-hero-card.fire .sub{color:#fff}
+.stat-hero-card.green{background:linear-gradient(135deg,#155f33 0%,#27ae60 100%);color:#fff;border-color:#27ae60}
+.stat-hero-card.green .label,.stat-hero-card.green .value,.stat-hero-card.green .sub{color:#fff}
+.stat-hero-card.teal{background:linear-gradient(135deg,#0b3f4c 0%,var(--teal-light) 100%);color:#fff;border-color:var(--teal-light)}
+.stat-hero-card.teal .label,.stat-hero-card.teal .value,.stat-hero-card.teal .sub{color:#fff}
+
+/* Niveau / rang */
+.level-card{
+  background:linear-gradient(135deg, rgba(17,103,118,.12) 0%, rgba(212,175,55,.10) 100%);
+  border:1px solid var(--border);border-radius:18px;padding:22px 24px;margin-bottom:22px;
+  position:relative;overflow:hidden;
+}
+.level-card::before{
+  content:'';position:absolute;top:-40%;right:-10%;width:280px;height:280px;
+  background:radial-gradient(circle,rgba(212,175,55,.20),transparent 70%);pointer-events:none;
+}
+.level-row{display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.level-emoji{font-size:62px;line-height:1;filter:drop-shadow(0 4px 14px rgba(0,0,0,.4))}
+.level-info{flex:1;min-width:0}
+.level-rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--cream);letter-spacing:1px;line-height:1.1}
+.level-sub{color:var(--muted);font-size:13px;margin-top:3px}
+.level-bar{margin-top:14px;height:14px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.level-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal) 0%,#d4af37 100%);transition:width 1.2s var(--ease-out,cubic-bezier(.16,1,.3,1));border-radius:99px;box-shadow:0 0 12px rgba(212,175,55,.5)}
+.level-progress-text{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+
+/* Graphique 12 mois */
+.stat-chart-card{background:var(--dark2);border:1px solid var(--border);border-radius:18px;padding:22px 24px;margin-bottom:22px}
+.stat-chart-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--cream);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.stat-bars{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:200px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:6px}
+.stat-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;cursor:default}
+.stat-bar{
+  width:100%;max-width:42px;background:linear-gradient(180deg,var(--teal-light) 0%,var(--teal) 100%);
+  border-radius:6px 6px 0 0;position:relative;min-height:3px;
+  transition:transform .2s var(--ease,cubic-bezier(.4,0,.2,1));
+}
+.stat-bar:hover{transform:scaleY(1.05);filter:brightness(1.18)}
+.stat-bar.current{background:linear-gradient(180deg,#FF7A5A 0%,var(--coral) 100%);box-shadow:0 0 18px rgba(255,95,95,.45)}
+.stat-bar.best{background:linear-gradient(180deg,#fce181 0%,#d4af37 100%);box-shadow:0 0 18px rgba(212,175,55,.55)}
+.stat-bar.best::after{content:'⭐';position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:14px}
+.stat-bar-count{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:var(--cream);position:absolute;top:-22px;left:0;right:0;text-align:center}
+.stat-bar.empty{background:rgba(255,255,255,.06);min-height:3px}
+.stat-bar.empty:hover{filter:none;transform:none}
+.stat-month-labels{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:center}
+.stat-month-labels .lbl{padding-top:4px}
+.stat-month-labels .lbl.cur{color:var(--coral);font-weight:900}
+
+/* Trophées */
+.trophy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:22px}
+.trophy{
+  background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:16px 12px;
+  text-align:center;transition:transform .25s var(--ease-out,cubic-bezier(.16,1,.3,1)),box-shadow .25s;
+  opacity:.4;filter:grayscale(.7);
+}
+.trophy.unlocked{opacity:1;filter:none;background:linear-gradient(135deg,var(--dark2) 0%,var(--mid) 100%);border-color:rgba(212,175,55,.35);box-shadow:0 6px 20px -6px rgba(212,175,55,.25)}
+.trophy.unlocked:hover{transform:translateY(-4px) scale(1.03)}
+.trophy .ic{font-size:38px;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4))}
+.trophy .name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12.5px;color:var(--cream);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;line-height:1.2}
+.trophy .desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+.trophy.unlocked .name{color:#d4af37}
+
+/* Derniers signés */
+.recent-signed{background:var(--dark2);border:1px solid var(--border);border-radius:18px;padding:22px 24px}
+.recent-signed h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--cream);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.recent-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+.recent-row:last-child{border-bottom:none}
+.recent-row .co{font-weight:700;color:var(--cream);font-size:14px}
+.recent-row .date{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--green);font-size:13px;white-space:nowrap}
+.recent-empty{text-align:center;color:var(--muted);padding:28px;font-style:italic}
+
+/* Mode jour adaptations */
+[data-theme="day"] .stat-hero-card{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 1px 3px rgba(15,23,42,.05)}
+[data-theme="day"] .stat-hero-card .value{color:#0F172A}
+[data-theme="day"] .level-card{background:linear-gradient(135deg,rgba(17,103,118,.06) 0%,rgba(212,175,55,.06) 100%);border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .level-rank{color:#0F172A}
+[data-theme="day"] .level-bar{background:rgba(15,23,42,.06)}
+[data-theme="day"] .stat-chart-card,
+[data-theme="day"] .recent-signed{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 1px 3px rgba(15,23,42,.05)}
+[data-theme="day"] .stat-chart-title,
+[data-theme="day"] .recent-signed h3,
+[data-theme="day"] .recent-row .co,
+[data-theme="day"] .stat-bar-count{color:#0F172A}
+[data-theme="day"] .stat-bars{border-bottom:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .stat-bar.empty{background:rgba(15,23,42,.06)}
+[data-theme="day"] .trophy{background:#FFFFFF;border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .trophy.unlocked{background:linear-gradient(135deg,#FFFFFF 0%,#FAF8E8 100%)}
+[data-theme="day"] .trophy .name{color:#0F172A}
+[data-theme="day"] .trophy.unlocked .name{color:#a8841d}
+
+/* Mode jour : papier blanc avec lignes très douces */
+[data-theme="day"] .lead-notes-area{
+  background:#FFFFFF!important;
+  border-color:rgba(15,23,42,.18)!important;
+  color:#0F172A!important;
+  background-image:
+    linear-gradient(180deg, rgba(17,103,118,.04) 0%, transparent 60px),
+    repeating-linear-gradient(180deg, transparent 0px, transparent 27px, rgba(15,23,42,.06) 27px, rgba(15,23,42,.06) 28px)!important;
+  box-shadow:0 2px 6px rgba(15,23,42,.06),inset 0 1px 0 rgba(15,23,42,.02);
+}
+[data-theme="day"] .lead-notes-area::placeholder{color:#94A3B8}
+[data-theme="day"] .lead-notes-area:focus{
+  border-color:var(--teal)!important;
+  box-shadow:0 0 0 4px rgba(17,103,118,.15),0 2px 6px rgba(15,23,42,.08)!important;
+}
 </style>
 </head>
 <body>
@@ -1781,6 +2079,43 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   <span id="themeIcon">🌙</span>
 </button>
 
+<!-- Modal Mentions légales & RGPD -->
+<div class="overlay" id="legalOverlay" onclick="closeBg(event,'legalOverlay')">
+  <div class="modal" style="max-width:720px;max-height:88vh;overflow-y:auto">
+    <h2>🛡️ Mentions légales & RGPD</h2>
+    <div style="font-size:13px;line-height:1.6;color:var(--cream)">
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Éditeur</h3>
+      <p>Influmedia · Agence de communication · CRM interne v2.0 — usage strictement professionnel.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Hébergement & données</h3>
+      <p>L'application est hébergée sur <strong>GitHub Pages</strong> (Microsoft Corp., USA). Les données sont synchronisées via <strong>Google Firebase / Firestore</strong> en région <strong>europe-west1 (Belgique)</strong>. Aucune donnée n'est transférée en dehors de l'Union Européenne pour son stockage opérationnel.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Données traitées</h3>
+      <p>Le SaaS traite : données de l'équipe (nom, rôle, photo, présence, messages, agenda), données clients & prospects (raison sociale, contacts, prélèvements, prestations), documents commerciaux (devis, factures, présentations), notes internes et fichiers attachés.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Base légale (RGPD art. 6)</h3>
+      <p>• <strong>Équipe</strong> : exécution du contrat de travail<br>• <strong>Clients</strong> : exécution du contrat de prestation<br>• <strong>Prospects / Leads</strong> : intérêt légitime de l'agence (prospection commerciale B2B)</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Durées de conservation</h3>
+      <p>• Données opérationnelles client : pendant la durée du contrat + 5 ans (obligation comptable)<br>• Données prospect : 3 ans à compter du dernier contact<br>• Données équipe : durée du contrat de travail + 5 ans (bulletins, etc.)<br>• Messages internes : 2 ans glissants</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Vos droits</h3>
+      <p>Tout collaborateur peut, à tout moment, demander l'accès, la rectification, l'effacement ou la portabilité de ses données via la page <strong>Paramètres &gt; 🛡 Mes données &amp; RGPD</strong>. Les clients et prospects peuvent exercer ces droits en écrivant à <strong>rgpd@influmedia.com</strong>.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Sécurité</h3>
+      <p>Les mots de passe sont stockés hashés (SHA-256 + sel). L'application est accessible par identifiant et mot de passe. Les données sensibles (RIB, KBIS, pièces d'identité) devraient être hébergées sur Google Drive / Dropbox plutôt qu'embarquées en clair dans le CRM.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Cookies & stockage local</h3>
+      <p>Seul le <code>localStorage</code> du navigateur est utilisé pour les préférences personnelles (thème jour/nuit, dispositions, état de sidebar). Aucun cookie tiers, aucun traceur publicitaire, aucun analytics externe.</p>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Contact DPO</h3>
+      <p>Pour toute question : <strong>rgpd@influmedia.com</strong> · Réclamation possible auprès de la CNIL (cnil.fr).</p>
+      <p style="margin-top:18px;font-style:italic;color:var(--muted);font-size:11px">Document interne · à jour juin 2026 · version 1.0</p>
+    </div>
+    <div class="modal-actions"><button class="btn-primary" onclick="closeModal('legalOverlay')" style="background:var(--teal)">J'ai lu</button></div>
+  </div>
+</div>
+
+<!-- Modal RGPD : Mes données -->
+<div class="overlay" id="rgpdOverlay" onclick="closeBg(event,'rgpdOverlay')">
+  <div class="modal" style="max-width:580px">
+    <h2>🛡️ Mes données &amp; RGPD</h2>
+    <div id="rgpdBody"></div>
+  </div>
+</div>
+
 <!-- Confirmation suppression post-it To-Do -->
 <div class="overlay" id="todoConfirmOverlay" onclick="closeBg(event,'todoConfirmOverlay')">
   <div class="modal" style="max-width:420px;text-align:center">
@@ -1818,6 +2153,10 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
     <button class="save-btn s-export" onclick="exportData()" style="margin-bottom:6px"><span>💾</span><span>Exporter données</span></button>
     <button class="save-btn s-import" onclick="document.getElementById('importFile').click()"><span>📂</span><span>Importer</span></button>
     <div id="lastSaveInfo" class="last-save"></div>
+    <div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+      <button onclick="openRgpd()" style="background:rgba(17,103,118,.15);color:var(--teal-light);border:1px solid rgba(17,103,118,.3);border-radius:6px;padding:5px 10px;font-size:10.5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;letter-spacing:.5px" title="Mes données & RGPD">🛡️ RGPD</button>
+      <button onclick="openLegal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:10.5px;font-family:'Barlow Condensed',sans-serif;font-weight:600;cursor:pointer;letter-spacing:.5px" title="Mentions légales">📜 Mentions</button>
+    </div>
     <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--teal-light);line-height:1.5;font-style:italic;text-align:center">
       "Chaque client satisfait est une vitrine pour les dix suivants."
     </div>
@@ -1942,6 +2281,140 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   </div>
   <div class="table-wrap">
     <table><thead><tr id="prospHead"></tr></thead><tbody id="prospectsBody"></tbody></table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COMMERCE — Documents de présentation
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-presentations" class="tab-content">
+  <div class="page-header">
+    <div class="page-title">🎬 <span>Documents de présentation</span></div>
+    <button class="btn-primary" onclick="openPresEdit(null)">＋ Nouvelle présentation</button>
+  </div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">
+    Bibliothèque commune des présentations à montrer aux clients. Cliquer sur <strong>▶ Lancer</strong> pour ouvrir la présentation en plein écran ou dans un nouvel onglet.
+  </div>
+  <div class="pres-grid" id="presGrid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COMMERCE — Leads prospects (pipeline commercial perso)
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-leads" class="tab-content">
+  <div class="page-header">
+    <div class="page-title">🚀 <span>Mes leads</span></div>
+    <button class="btn-primary" onclick="openLeadEdit(null)">＋ Nouveau lead</button>
+  </div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+    Ton pipeline commercial perso — invisible aux autres profils. (≠ Prospection qui est admin uniquement)
+  </div>
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted)">🔍</span>
+      <input type="text" id="leadSearch" placeholder="Rechercher entreprise, contact, note..." oninput="renderLeads()">
+    </div>
+    <div class="filter-pills" id="leadFilters"></div>
+  </div>
+  <div id="leadKPIs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
+  <div class="table-wrap">
+    <table><thead><tr id="leadHead"></tr></thead><tbody id="leadBody"></tbody></table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COMMERCE — Stats & trophées du commercial (motivation)
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-leadstats" class="tab-content">
+  <div class="page-header">
+    <div class="page-title">🏆 <span>Mes stats & trophées</span></div>
+  </div>
+  <div id="leadStatsBody"></div>
+</div>
+
+<!-- Modal édition présentation -->
+<div class="overlay" id="presEditOverlay" onclick="closeBg(event,'presEditOverlay')">
+  <div class="modal" style="max-width:560px">
+    <h2 id="presEditTitle">🎬 Nouvelle présentation</h2>
+    <div class="fg"><label>Titre *</label><input id="pe_title" placeholder="Ex: Présentation Agence Influmedia 2026"></div>
+    <div class="fg"><label>Description (optionnel)</label><textarea id="pe_desc" rows="2" placeholder="Pitch complet 15 min pour nouveaux clients"></textarea></div>
+    <div class="fg"><label>URL du document * <span style="color:var(--muted);font-weight:400;font-size:11px">(PDF, Google Slides, Canva, lien direct…)</span></label><input id="pe_url" placeholder="https://..." type="url"></div>
+    <div class="fg"><label>Image de couverture (optionnel) <span style="color:var(--muted);font-weight:400;font-size:11px">URL ou data:image</span></label><input id="pe_cover" placeholder="https://… ou data:image/..."></div>
+    <div class="fg"><label>Couleur de fond</label>
+      <select id="pe_color" style="width:100%">
+        <option value="teal">🟢 Teal (défaut)</option>
+        <option value="coral">🟠 Corail</option>
+        <option value="blue">🔵 Bleu</option>
+        <option value="purple">🟣 Violet</option>
+        <option value="green">💚 Vert</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('presEditOverlay')">Annuler</button>
+      <button class="btn-cancel" id="pe_delBtn" onclick="deletePres()" style="background:rgba(231,76,60,.15);color:var(--coral);display:none">✕ Supprimer</button>
+      <button class="btn-primary" onclick="savePres()" style="background:var(--teal)">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal édition lead -->
+<div class="overlay" id="leadEditOverlay" onclick="closeBg(event,'leadEditOverlay')">
+  <div class="modal" style="max-width:600px">
+    <h2 id="leadEditTitle">🚀 Nouveau lead</h2>
+    <div class="fg-row">
+      <div class="fg"><label>Entreprise *</label><input id="le_company" placeholder="Nom de la société"></div>
+      <div class="fg"><label>Contact</label><input id="le_contact" placeholder="Prénom Nom"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Téléphone</label><input id="le_phone" placeholder="06 …" type="tel"></div>
+      <div class="fg"><label>Email</label><input id="le_email" placeholder="contact@..." type="email"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Statut</label>
+        <select id="le_status" style="width:100%">
+          <option value="nouveau">🆕 Nouveau</option>
+          <option value="contacte">📞 Contacté</option>
+          <option value="rdv">📅 RDV pris</option>
+          <option value="devis">📄 Devis envoyé</option>
+          <option value="signe">✅ Signé</option>
+          <option value="perdu">❌ Perdu</option>
+        </select>
+      </div>
+      <div class="fg"><label>Source</label>
+        <select id="le_source" style="width:100%">
+          <option value="">—</option>
+          <option>LinkedIn</option>
+          <option>Bouche-à-oreille</option>
+          <option>Salon / Événement</option>
+          <option>Recommandation client</option>
+          <option>Cold call</option>
+          <option>Site web</option>
+          <option>Réseau perso</option>
+          <option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>🏷️ Prestation *</label>
+        <select id="le_presta" style="width:100%">
+          <option value="">— Choisir —</option>
+          <option value="Ouiglass">🚗 Ouiglass</option>
+          <option value="Influmedia">⚡ Influmedia</option>
+          <option value="Autre">📦 Autre</option>
+        </select>
+      </div>
+      <div class="fg"><label>Prochaine action (date)</label><input id="le_next" type="date"></div>
+    </div>
+    <div class="fg"><label>📅 Date de finalisation (signature &amp; paiement) <span style="color:var(--muted);font-weight:400;font-size:11px">à remplir quand le contrat est signé</span></label><input id="le_signDate" type="date"></div>
+    <div class="fg lead-notes-fg">
+      <label>📒 Notes / Historique <span style="color:var(--muted);font-weight:400;font-size:11px">compte-rendus d'appels, prochaines étapes…</span></label>
+      <textarea id="le_notes" class="lead-notes-area" placeholder="• 14/06 — Premier appel, le contact est intéressé&#10;• 18/06 — RDV téléphonique prévu à 14h&#10;• 22/06 — Devis envoyé&#10;..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('leadEditOverlay')">Annuler</button>
+      <button class="btn-cancel" id="le_delBtn" onclick="deleteLead()" style="background:rgba(231,76,60,.15);color:var(--coral);display:none">✕ Supprimer</button>
+      <button class="btn-primary" onclick="saveLead()" style="background:var(--teal)">💾 Enregistrer</button>
+    </div>
   </div>
 </div>
 
@@ -2859,7 +3332,8 @@ const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_tod
   'influ_client_services','influ_client_offers','influ_service_catalog','influ_service_extras','influ_team',
   'influ_quotes','influ_invoices','influ_trips','influ_trips_seeded_v1','influ_agenda',
   'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
-  'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note','influ_presence'];
+  'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note','influ_presence',
+  'influ_presentations','influ_leads'];
 
 // ── Firebase config HARDCODÉE (projet saas-influ) ──
 // Permet à n'importe quel appareil/navigateur d'auto-connecter au cloud
@@ -3305,6 +3779,11 @@ const NAV_GROUPS = [
     {tab:'services', icon:'🛍️', label:'Services par client'},
     {tab:'avis',     icon:'⭐', label:'Avis Google'}
   ]},
+  {id:'commerce', label:'Commerce', lock:false, adminOnly:false, items:[
+    {tab:'presentations', icon:'🎬', label:'Documents de présentation'},
+    {tab:'leads',         icon:'🚀', label:'Leads prospects'},
+    {tab:'leadstats',     icon:'🏆', label:'Mes stats & trophées'}
+  ]},
   {id:'finance', label:'Finance & Admin', lock:true, adminOnly:true, items:[
     {tab:'quotes',   icon:'📄', label:'Devis'},
     {tab:'invoices', icon:'🧾', label:'Factures', badge:'navInvBadge'}
@@ -3390,6 +3869,9 @@ function showTab(name,btn){
   if(name==='agenda') renderAgenda();
   if(name==='articles') renderArticles();
   if(name==='cnotes') renderClientNotes();
+  if(name==='presentations') renderPresentations();
+  if(name==='leads') renderLeads();
+  if(name==='leadstats') renderLeadStats();
 }
 
 function renderClients(){
@@ -4093,10 +4575,36 @@ function saveTeam(){Storage.set('influ_team', teamMembers);}
 // ╔══════════════════════════════════════════════════════════════
 // ║ SÉCURITÉ — mots de passe (hashés, défaut "0000")
 // ╚══════════════════════════════════════════════════════════════
+// ── HASH MOT DE PASSE ──
+// Ancien hash (DJB2) gardé pour migration uniquement.
+// Tout nouveau mot de passe est hashé en SHA-256 via Web Crypto (préfixe "s:").
 function hashPwd(str){
   let h=5381;
   for(let i=0;i<(str||'').length;i++){h=((h<<5)+h)+str.charCodeAt(i);h=h&h;}
   return 'h'+(h>>>0).toString(36);
+}
+async function hashPwdSecure(str){
+  // SHA-256 + sel statique pour ralentir un bruteforce ciblé
+  const salt='influmedia-saas-v1::';
+  const buf=new TextEncoder().encode(salt+(str||''));
+  const h=await crypto.subtle.digest('SHA-256', buf);
+  return 's:'+Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+// Vérifie un mot de passe contre le hash stocké (formats nouveau et ancien)
+// Si l'ancien hash matche, on migre automatiquement vers SHA-256.
+async function verifyPwd(member, entered){
+  const stored=member.pwd||'';
+  if(stored.startsWith('s:')){
+    return (await hashPwdSecure(entered))===stored;
+  }
+  // Format ancien (h…) ou défaut
+  if(hashPwd(entered)===stored){
+    // Migration silencieuse vers SHA-256 sur login réussi
+    member.pwd=await hashPwdSecure(entered);
+    try{ saveTeam(); }catch(e){}
+    return true;
+  }
+  return false;
 }
 const DEFAULT_PWD_HASH=hashPwd('0000');
 // Migration : chaque membre a un mot de passe (défaut 0000)
@@ -4142,19 +4650,22 @@ function switchLockUser(id){
   setTimeout(()=>document.getElementById('lockPwd').focus(),50);
 }
 
+function _attemptLoginFail(){
+  const inp=document.getElementById('lockPwd');
+  inp.classList.add('shake');
+  setTimeout(()=>inp.classList.remove('shake'),400);
+  document.getElementById('lockError').textContent='Mot de passe incorrect';
+  inp.value='';inp.focus();
+}
 function attemptLogin(){
   const m=teamMembers.find(x=>x.id===lockUserId);
   if(!m) return;
   const entered=document.getElementById('lockPwd').value;
-  if(hashPwd(entered)===m.pwd || (entered===''&&m.pwd===DEFAULT_PWD_HASH&&false)){
-    doUnlock(m);
-  } else {
-    const inp=document.getElementById('lockPwd');
-    inp.classList.add('shake');
-    setTimeout(()=>inp.classList.remove('shake'),400);
-    document.getElementById('lockError').textContent='Mot de passe incorrect';
-    inp.value='';inp.focus();
-  }
+  // Vérification async (gère SHA-256 + migration depuis ancien hash)
+  verifyPwd(m, entered).then(ok=>{
+    if(ok) doUnlock(m);
+    else _attemptLoginFail();
+  });
 }
 
 // ── MOT DE PASSE OUBLIÉ — question secrète personnelle par membre ──
@@ -4256,15 +4767,17 @@ function attemptForgotAnswer(){
 function saveNewPwdFromLock(){
   const p1=document.getElementById('lockPwd').value;
   const p2=document.getElementById('lockPwd2').value;
-  if(p1.length<4){document.getElementById('lockError').textContent='4 caractères minimum';return;}
+  if(p1.length<6){document.getElementById('lockError').textContent='6 caractères minimum (RGPD)';return;}
   if(p1!==p2){document.getElementById('lockError').textContent='Les mots de passe ne correspondent pas';document.getElementById('lockPwd2').focus();return;}
   const m=teamMembers.find(x=>x.id===lockUserId);
   if(!m){lockBackToLogin();return;}
-  m.pwd=hashPwd(p1);
-  saveTeam(); // sync auto au cloud → tous les autres appareils reçoivent
-  toast('🔑 Mot de passe réinitialisé !');
-  lockBackToLogin();
-  doUnlock(m); // auto-login
+  hashPwdSecure(p1).then(h=>{
+    m.pwd=h;
+    saveTeam();
+    toast('🔑 Mot de passe réinitialisé (chiffrement renforcé) !');
+    lockBackToLogin();
+    doUnlock(m);
+  });
 }
 
 function doUnlock(member){
@@ -7741,6 +8254,575 @@ function previewArticle(){
 }
 
 // ╔══════════════════════════════════════════════════════════════
+// ║ COMMERCE — Documents de présentation (bibliothèque équipe)
+// ╚══════════════════════════════════════════════════════════════
+let presentations = Storage.get('influ_presentations', null);
+if(!presentations){
+  // Seed avec 4 cases placeholder à éditer
+  presentations = [
+    {id:'pres_1', title:'Présentation Agence Influmedia', description:'Pitch complet 15 min pour nouveaux clients', url:'', cover:'', color:'teal'},
+    {id:'pres_2', title:'Offre Social Media', description:'Pack Facebook / Instagram / TikTok', url:'', cover:'', color:'coral'},
+    {id:'pres_3', title:'Offre Google Ads', description:'Campagnes SEA — étude de cas', url:'', cover:'', color:'blue'},
+    {id:'pres_4', title:'Avis Google & e-Réputation', description:'Comment booster son SEO local', url:'', cover:'', color:'purple'}
+  ];
+  Storage.set('influ_presentations', presentations);
+}
+
+let _presEditingId=null;
+
+function renderPresentations(){
+  const grid=document.getElementById('presGrid');
+  if(!grid) return;
+  let html=presentations.map(p=>{
+    const cover=p.cover ? `style="background-image:url('${p.cover.replace(/'/g,"\\'")}');"` : '';
+    const icon=!p.cover ? '🎬' : '';
+    const hasUrl=!!p.url;
+    return `<div class="pres-card pc-${p.color||'teal'}" onclick="${hasUrl?`launchPres('${p.id}')`:`openPresEdit('${p.id}')`}">
+      <button class="pres-edit-btn" onclick="event.stopPropagation();openPresEdit('${p.id}')" title="Modifier">✏️</button>
+      <div class="pres-cover" ${cover}>
+        ${icon}
+        <div class="pres-cover-overlay">
+          ${hasUrl?`<button class="pres-launch-btn" onclick="event.stopPropagation();launchPres('${p.id}')">▶ Lancer</button>`:`<span style="color:rgba(255,255,255,.7);font-size:11px;font-style:italic">Cliquer pour configurer</span>`}
+        </div>
+      </div>
+      <div class="pres-body">
+        <div class="pres-title">${escapeHtml(p.title||'Sans titre')}</div>
+        <div class="pres-desc">${escapeHtml(p.description||'')}</div>
+      </div>
+    </div>`;
+  }).join('');
+  html+=`<div class="pres-add" onclick="openPresEdit(null)"><div class="ic">＋</div><div>Nouvelle présentation</div></div>`;
+  grid.innerHTML=html;
+}
+
+function launchPres(id){
+  const p=presentations.find(x=>x.id===id); if(!p) return;
+  if(!p.url){ openPresEdit(id); return; }
+  window.open(p.url, '_blank', 'noopener,noreferrer');
+  toast('▶ '+(p.title||'Présentation')+' ouverte');
+}
+
+function openPresEdit(id){
+  _presEditingId=id;
+  const p = id ? presentations.find(x=>x.id===id) : null;
+  document.getElementById('presEditTitle').textContent = p ? '✏️ Modifier la présentation' : '🎬 Nouvelle présentation';
+  document.getElementById('pe_title').value = p?.title || '';
+  document.getElementById('pe_desc').value = p?.description || '';
+  document.getElementById('pe_url').value = p?.url || '';
+  document.getElementById('pe_cover').value = p?.cover || '';
+  document.getElementById('pe_color').value = p?.color || 'teal';
+  document.getElementById('pe_delBtn').style.display = id ? 'inline-flex' : 'none';
+  document.getElementById('presEditOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pe_title').focus(),60);
+}
+
+function savePres(){
+  const title=document.getElementById('pe_title').value.trim();
+  if(!title){ alert('Titre requis'); return; }
+  const data={
+    title,
+    description:document.getElementById('pe_desc').value.trim(),
+    url:document.getElementById('pe_url').value.trim(),
+    cover:document.getElementById('pe_cover').value.trim(),
+    color:document.getElementById('pe_color').value||'teal'
+  };
+  if(_presEditingId){
+    const p=presentations.find(x=>x.id===_presEditingId);
+    if(p) Object.assign(p, data);
+  } else {
+    presentations.push({id:'pres_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), ...data});
+  }
+  Storage.set('influ_presentations', presentations);
+  closeModal('presEditOverlay');
+  renderPresentations();
+  toast('Présentation enregistrée ✓');
+}
+
+function deletePres(){
+  if(!_presEditingId) return;
+  if(!confirm('Supprimer cette présentation ?')) return;
+  presentations = presentations.filter(p=>p.id!==_presEditingId);
+  Storage.set('influ_presentations', presentations);
+  closeModal('presEditOverlay');
+  renderPresentations();
+  toast('Présentation supprimée');
+}
+
+// ╔══════════════════════════════════════════════════════════════
+// ║ COMMERCE — Leads prospects (pipeline perso par profil)
+// ╚══════════════════════════════════════════════════════════════
+let leads = Storage.get('influ_leads', []);
+let leadFilter = 'all';
+let _leadEditingId=null;
+
+const LEAD_STATUSES = [
+  {k:'nouveau',  l:'🆕 Nouveau',     cls:'lead-st-nouveau'},
+  {k:'contacte', l:'📞 Contacté',    cls:'lead-st-contacte'},
+  {k:'rdv',      l:'📅 RDV pris',    cls:'lead-st-rdv'},
+  {k:'devis',    l:'📄 Devis envoyé',cls:'lead-st-devis'},
+  {k:'signe',    l:'✅ Signé',       cls:'lead-st-signe'},
+  {k:'perdu',    l:'❌ Perdu',       cls:'lead-st-perdu'}
+];
+
+function myLeads(){
+  // Un lead n'est visible que par son créateur (privé par profil)
+  return leads.filter(l => l.owner === currentUser.id);
+}
+
+function renderLeads(){
+  const search=(document.getElementById('leadSearch')?.value||'').toLowerCase();
+  const my = myLeads();
+
+  // Filtres
+  const filters = [{k:'all', l:'Tous', cnt:my.length, cls:''}].concat(
+    LEAD_STATUSES.map(s=>({k:s.k, l:s.l, cnt:my.filter(l=>l.status===s.k).length, cls:''}))
+  );
+  document.getElementById('leadFilters').innerHTML = filters.map(f=>{
+    const act = leadFilter===f.k ? 'active' : '';
+    return `<button class="pill ${act}" onclick="setLeadFilter('${f.k}')">${f.l} (${f.cnt})</button>`;
+  }).join('');
+
+  // KPIs (count-based, plus de €)
+  const today = new Date();
+  const curMonth = today.getMonth(), curYear = today.getFullYear();
+  const contratsPotentiels = my.filter(l=>l.status!=='perdu' && l.status!=='signe').length;
+  const totalSignes = my.filter(l=>l.status==='signe').length;
+  const signesMois = my.filter(l=>{
+    if(l.status!=='signe' || !l.signDate) return false;
+    const d=new Date(l.signDate+'T00:00:00');
+    return d.getMonth()===curMonth && d.getFullYear()===curYear;
+  }).length;
+  const monthLabel = today.toLocaleDateString('fr-FR',{month:'long'});
+  document.getElementById('leadKPIs').innerHTML = `
+    <div class="lead-kpi"><span class="lbl">Pipeline actif</span><span class="val">${my.filter(l=>l.status!=='perdu'&&l.status!=='signe').length}</span></div>
+    <div class="lead-kpi"><span class="lbl">🚀 Contrats potentiels</span><span class="val" style="color:var(--teal-light)">${contratsPotentiels}</span></div>
+    <div class="lead-kpi"><span class="lbl">✅ Total signés</span><span class="val" style="color:var(--green)">${totalSignes}</span></div>
+    <div class="lead-kpi"><span class="lbl">🗓 Signés en ${monthLabel}</span><span class="val" style="color:var(--green)">${signesMois}</span></div>
+  `;
+
+  // Filtre + recherche
+  let list = my;
+  if(leadFilter!=='all') list = list.filter(l=>l.status===leadFilter);
+  if(search) list = list.filter(l=>
+    (l.company||'').toLowerCase().includes(search) ||
+    (l.contact||'').toLowerCase().includes(search) ||
+    (l.notes||'').toLowerCase().includes(search) ||
+    (l.email||'').toLowerCase().includes(search)
+  );
+  // Tri : prochaine action ↑ puis création ↓
+  list.sort((a,b)=>{
+    if(a.nextAction && b.nextAction) return a.nextAction.localeCompare(b.nextAction);
+    if(a.nextAction) return -1; if(b.nextAction) return 1;
+    return (b.createdAt||'').localeCompare(a.createdAt||'');
+  });
+
+  document.getElementById('leadHead').innerHTML = `
+    <th>Entreprise</th><th>Contact</th><th>Statut</th><th>Source</th><th>📅 Finalisé le</th><th>Prochaine action</th><th>Note</th><th></th>
+  `;
+  const body=document.getElementById('leadBody');
+  if(!list.length){
+    body.innerHTML = `<tr><td colspan="8" class="empty" style="text-align:center;padding:30px;color:var(--muted)">Aucun lead pour l'instant. <br><br><button class="btn-primary" onclick="openLeadEdit(null)" style="margin-top:10px">＋ Créer mon premier lead</button></td></tr>`;
+    return;
+  }
+  body.innerHTML = list.map(l=>{
+    const st = LEAD_STATUSES.find(s=>s.k===l.status) || LEAD_STATUSES[0];
+    let nextHtml = '—';
+    if(l.nextAction){
+      const d = new Date(l.nextAction+'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const diff = Math.round((d-today)/86400000);
+      const dateStr = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+      let cls = ''; let prefix = '';
+      if(diff<0){cls='lead-next-late';prefix='⚠ Retard '+(-diff)+'j · ';}
+      else if(diff===0){cls='lead-next-soon';prefix="📌 Aujourd'hui · ";}
+      else if(diff<=3){cls='lead-next-soon';prefix='Dans '+diff+'j · ';}
+      nextHtml = `<span class="${cls}">${prefix}${dateStr}</span>`;
+    }
+    const contactInfo = [l.contact, l.phone].filter(Boolean).join(' · ');
+    let signHtml='<span style="color:var(--muted)">—</span>';
+    if(l.signDate){
+      const sd=new Date(l.signDate+'T00:00:00');
+      const sdStr=sd.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'});
+      signHtml=`<span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--green)">✓ ${sdStr}</span>`;
+    } else if(l.status==='signe'){
+      signHtml=`<span style="color:var(--orange);font-style:italic;font-size:11px">à renseigner</span>`;
+    }
+    const notePreview = l.notes ? `<span title="${(l.notes||'').replace(/"/g,'&quot;')}">${escapeHtml((l.notes||'').slice(0,60))}${l.notes.length>60?'…':''}</span>` : '<span style="color:var(--muted)">—</span>';
+    let prestaBadge='';
+    if(l.prestation){
+      const pIcon={'Ouiglass':'🚗','Influmedia':'⚡','Autre':'📦'}[l.prestation]||'🏷️';
+      const pColor={'Ouiglass':'rgba(243,156,18,.18);color:#f39c12','Influmedia':'rgba(17,103,118,.22);color:var(--teal-light)','Autre':'rgba(127,140,141,.18);color:#7f8c8d'}[l.prestation]||'rgba(155,89,182,.18);color:#9b59b6';
+      prestaBadge=`<div style="margin-top:3px"><span style="display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;padding:2px 8px;border-radius:8px;background:${pColor}">${pIcon} ${escapeHtml(l.prestation)}</span></div>`;
+    }
+    return `<tr ondblclick="openLeadEdit('${l.id}')" style="cursor:pointer">
+      <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}</td>
+      <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${l.email}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
+      <td><span class="lead-st ${st.cls}">${st.l}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${escapeHtml(l.source||'—')}</td>
+      <td style="font-size:12px">${signHtml}</td>
+      <td style="font-size:12px">${nextHtml}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:200px">${notePreview}</td>
+      <td><div class="actions-cell">
+        <button class="act-btn act-edit" onclick="event.stopPropagation();openLeadEdit('${l.id}')" title="Modifier">✏️</button>
+        <button class="act-btn act-del" onclick="event.stopPropagation();deleteLeadById('${l.id}')" title="Supprimer">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function setLeadFilter(k){ leadFilter=k; renderLeads(); }
+
+function openLeadEdit(id){
+  _leadEditingId=id;
+  const l = id ? leads.find(x=>x.id===id) : null;
+  document.getElementById('leadEditTitle').textContent = l ? '✏️ Modifier le lead' : '🚀 Nouveau lead';
+  document.getElementById('le_company').value = l?.company || '';
+  document.getElementById('le_contact').value = l?.contact || '';
+  document.getElementById('le_phone').value = l?.phone || '';
+  document.getElementById('le_email').value = l?.email || '';
+  document.getElementById('le_status').value = l?.status || 'nouveau';
+  document.getElementById('le_source').value = l?.source || '';
+  document.getElementById('le_presta').value = l?.prestation || '';
+  document.getElementById('le_next').value = l?.nextAction || '';
+  document.getElementById('le_signDate').value = l?.signDate || '';
+  document.getElementById('le_notes').value = l?.notes || '';
+  document.getElementById('le_delBtn').style.display = id ? 'inline-flex' : 'none';
+  document.getElementById('leadEditOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('le_company').focus(),60);
+}
+
+function saveLead(){
+  const company=document.getElementById('le_company').value.trim();
+  if(!company){ alert("Nom de l'entreprise requis"); return; }
+  const data={
+    company,
+    contact:document.getElementById('le_contact').value.trim(),
+    phone:document.getElementById('le_phone').value.trim(),
+    email:document.getElementById('le_email').value.trim(),
+    status:document.getElementById('le_status').value,
+    source:document.getElementById('le_source').value,
+    prestation:document.getElementById('le_presta').value||'',
+    nextAction:document.getElementById('le_next').value||'',
+    signDate:document.getElementById('le_signDate').value||'',
+    notes:document.getElementById('le_notes').value.trim()
+  };
+  if(_leadEditingId){
+    const l=leads.find(x=>x.id===_leadEditingId);
+    if(l) Object.assign(l, data, {updatedAt:new Date().toISOString()});
+  } else {
+    leads.push({
+      id:'lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+      owner:currentUser.id,
+      createdAt:new Date().toISOString(),
+      ...data
+    });
+  }
+  Storage.set('influ_leads', leads);
+  closeModal('leadEditOverlay');
+  renderLeads();
+  toast('Lead enregistré ✓');
+}
+
+function deleteLead(){ if(_leadEditingId) deleteLeadById(_leadEditingId); }
+
+function deleteLeadById(id){
+  const l=leads.find(x=>x.id===id);
+  if(!l) return;
+  if(!confirm('Supprimer le lead « '+(l.company||'')+' » ?')) return;
+  leads=leads.filter(x=>x.id!==id);
+  Storage.set('influ_leads', leads);
+  closeModal('leadEditOverlay');
+  renderLeads();
+  toast('Lead supprimé');
+}
+
+// ╔══════════════════════════════════════════════════════════════
+// ║ COMMERCE — Stats motivantes & trophées (page perso)
+// ╚══════════════════════════════════════════════════════════════
+
+// Liste des commerciaux : explicite (m.commercial=true) sinon auto Niko/Nicolas
+function getCommercialMembers(){
+  const explicit = teamMembers.filter(m=>m.commercial);
+  if(explicit.length) return explicit;
+  return teamMembers.filter(m=>{
+    const n=(m.name||'').toLowerCase();
+    return n.includes('niko') || n.includes('nicolas');
+  });
+}
+
+// Stats agrégées pour un commercial donné
+function leadStatsFor(memberId){
+  const mine = leads.filter(l=>l.owner===memberId && l.status==='signe' && l.signDate);
+  const total = mine.length;
+  const now=new Date(); const curM=now.getMonth(), curY=now.getFullYear();
+  const thisMonth = mine.filter(l=>{const d=new Date(l.signDate+'T00:00:00');return d.getMonth()===curM&&d.getFullYear()===curY;}).length;
+  // Série en cours (mois consécutifs avec ≥1 signé en remontant depuis ce mois)
+  const monthCounts={};
+  mine.forEach(l=>{const d=new Date(l.signDate+'T00:00:00');const k=d.getFullYear()+'-'+d.getMonth();monthCounts[k]=(monthCounts[k]||0)+1;});
+  let streak=0;
+  for(let i=0;i<24;i++){
+    const d=new Date(curY,curM-i,1);
+    const k=d.getFullYear()+'-'+d.getMonth();
+    if(monthCounts[k]) streak++;
+    else if(i===0) continue; // ce mois sans rien → on autorise pour compter à partir de mois passés? Non, on stoppe direct
+    else break;
+  }
+  return {total, thisMonth, streak};
+}
+
+function renderTeamLeaderboard(){
+  const coms = getCommercialMembers();
+  if(coms.length<2) return ''; // pas de classement si <2 commerciaux
+  const data = coms.map(m=>({m, ...leadStatsFor(m.id)}));
+  const now=new Date();
+  const monthLbl=now.toLocaleDateString('fr-FR',{month:'long'});
+
+  // Tri : par this month DESC, puis total DESC
+  const byMonth = [...data].sort((a,b)=>b.thisMonth-a.thisMonth || b.total-a.total);
+  const leader = byMonth[0];
+  const maxMonth = leader.thisMonth;
+
+  // Bannière équipe
+  let banner='';
+  if(maxMonth===0){
+    banner=`🎯 <strong>${monthLbl.charAt(0).toUpperCase()+monthLbl.slice(1)}</strong> commence — à vous de poser les premiers signés !`;
+  } else if(byMonth.every(d=>d.thisMonth===maxMonth)){
+    const allNames = byMonth.map(d=>d.m.name.split(' ')[0]).join(' et ');
+    banner=`🤝 <strong>Égalité parfaite</strong> ce mois entre ${allNames} (${maxMonth} chacun) — qui va faire la différence ?`;
+  } else {
+    const winnerName=leader.m.name.split(' ')[0];
+    const second=byMonth[1];
+    const gap=leader.thisMonth-second.thisMonth;
+    banner=`🥇 <strong>${winnerName}</strong> mène ${monthLbl} avec ${leader.thisMonth} signé${leader.thisMonth>1?'s':''} — ${gap===1?'1 d\'écart':gap+' d\'écart'}, ${second.m.name.split(' ')[0]} peut renverser !`;
+  }
+
+  // Cards (toutes affichées, ordre = classement)
+  const cardsHtml = byMonth.map((d,idx)=>{
+    const isMe = d.m.id===currentUser.id;
+    const lvl = currentLevel(d.total).cur;
+    const medal = idx===0?'🥇':(idx===1?'🥈':(idx===2?'🥉':''));
+    const avatar = d.m.avatar
+      ? `<img src="${d.m.avatar}" style="width:54px;height:54px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+      : `<div style="width:54px;height:54px;border-radius:50%;background:${d.m.color||'#116776'};display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;flex-shrink:0">${d.m.initials||(d.m.name||'?').slice(0,2).toUpperCase()}</div>`;
+    const meRing = isMe ? 'box-shadow:0 0 0 3px var(--teal),0 8px 22px -8px rgba(0,0,0,.45);' : '';
+    return `<div class="team-com-card ${isMe?'is-me':''}" style="${meRing}">
+      <div class="rank-badge">${medal||'#'+(idx+1)}</div>
+      <div style="display:flex;gap:14px;align-items:center">
+        ${avatar}
+        <div style="flex:1;min-width:0">
+          <div class="tc-name">${escapeHtml(d.m.name||'')}${isMe?' <span class="me-tag">moi</span>':''}</div>
+          <div class="tc-level"><span class="emoji">${lvl.emoji}</span> ${lvl.name}</div>
+        </div>
+      </div>
+      <div class="tc-stats">
+        <div class="tc-stat"><div class="v">${d.thisMonth}</div><div class="l">Ce mois</div></div>
+        <div class="tc-stat"><div class="v">${d.total}</div><div class="l">Total</div></div>
+        <div class="tc-stat"><div class="v">${d.streak}</div><div class="l">Série 🔥</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Total équipe ce mois
+  const teamMonthTotal = data.reduce((s,d)=>s+d.thisMonth,0);
+  const teamAllTotal = data.reduce((s,d)=>s+d.total,0);
+
+  return `
+    <div class="team-leaderboard-card">
+      <div class="tl-header">
+        <h3>🏁 Classement équipe commerciale — ${monthLbl}</h3>
+        <div class="tl-team-total">
+          <span>👥 Ensemble : <strong>${teamMonthTotal}</strong> ce mois · <strong>${teamAllTotal}</strong> au total</span>
+        </div>
+      </div>
+      <div class="tl-banner">${banner}</div>
+      <div class="tl-cards">${cardsHtml}</div>
+      <div class="tl-foot">💪 Plus on signe ensemble, plus l'agence avance — on se tire vers le haut</div>
+    </div>
+  `;
+}
+
+const LEVEL_LADDER = [
+  {min:0,   emoji:'🥉', name:'Débutant',     sub:'Le premier pas vers le sommet'},
+  {min:1,   emoji:'🥉', name:'Apprenti',     sub:'Premier contrat — bravo, ça commence !'},
+  {min:3,   emoji:'🎯', name:'Closer',       sub:'On commence à voir le talent'},
+  {min:6,   emoji:'🥈', name:'Argent',       sub:'Un commercial qui s’affirme'},
+  {min:12,  emoji:'🥇', name:'Or',           sub:'Tu deviens incontournable'},
+  {min:20,  emoji:'💎', name:'Platine',      sub:'Performance haut niveau'},
+  {min:35,  emoji:'🔥', name:'Diamant',      sub:'Tu domines le pipeline'},
+  {min:60,  emoji:'👑', name:'Maître',       sub:'Tu inspires toute l’équipe'},
+  {min:100, emoji:'🏆', name:'Légende',      sub:'Tu écris l’histoire d’Influmedia'}
+];
+function currentLevel(total){
+  let cur=LEVEL_LADDER[0], next=null;
+  for(let i=0;i<LEVEL_LADDER.length;i++){
+    if(total>=LEVEL_LADDER[i].min){ cur=LEVEL_LADDER[i]; next=LEVEL_LADDER[i+1]||null; }
+  }
+  return {cur, next};
+}
+
+function renderLeadStats(){
+  const my = myLeads();
+  const signed = my.filter(l=>l.status==='signe' && l.signDate);
+  const total = signed.length;
+  const now = new Date();
+  const curM = now.getMonth(), curY = now.getFullYear();
+
+  // Comptes par mois (12 derniers mois)
+  const monthsBack=12;
+  const buckets=[];
+  for(let i=monthsBack-1;i>=0;i--){
+    const d=new Date(curY,curM-i,1);
+    buckets.push({key:`${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`, y:d.getFullYear(), m:d.getMonth(), count:0, label:d.toLocaleDateString('fr-FR',{month:'short'}).replace('.','')});
+  }
+  signed.forEach(l=>{
+    const d=new Date(l.signDate+'T00:00:00');
+    const b=buckets.find(b=>b.y===d.getFullYear()&&b.m===d.getMonth());
+    if(b) b.count++;
+  });
+  const maxCount = Math.max(1, ...buckets.map(b=>b.count));
+  const bestBucket = buckets.reduce((best,b)=>b.count>best.count?b:best, buckets[0]);
+
+  // KPIs
+  const curMonthCount = buckets[buckets.length-1].count;
+  const prevMonthCount = buckets[buckets.length-2]?.count || 0;
+  const allTimeBest = signed.length ? (function(){
+    // Agrège par mois TOUT historique (pas seulement 12 derniers)
+    const map={};
+    signed.forEach(l=>{const d=new Date(l.signDate+'T00:00:00');const k=`${d.getFullYear()}-${d.getMonth()}`;map[k]=(map[k]||0)+1;});
+    return Math.max(...Object.values(map));
+  })() : 0;
+
+  // Série en cours : nombre de mois consécutifs en remontant depuis ce mois avec ≥1 signature
+  let streak = 0;
+  for(let i=buckets.length-1;i>=0;i--){
+    if(buckets[i].count>0) streak++;
+    else if(streak>0) break; // arrêt à la première interruption après début
+  }
+
+  // Trend vs mois précédent
+  const trend = curMonthCount - prevMonthCount;
+  const trendHtml = trend>0 ? `<span style="color:#fff;font-weight:700">↑ +${trend} vs mois dernier</span>`
+                   : trend<0 ? `<span style="color:#fff;font-weight:700">↓ ${trend} vs mois dernier</span>`
+                   : `<span style="color:#fff;font-weight:700">= idem mois dernier</span>`;
+
+  // Niveau
+  const {cur:lvl, next} = currentLevel(total);
+  let progressTxt='Niveau max atteint 🌟', progressPct=100;
+  if(next){
+    const span=next.min-lvl.min || 1;
+    const done=total-lvl.min;
+    progressPct=Math.min(100, Math.round((done/span)*100));
+    progressTxt=`${total} / ${next.min} signés — encore ${next.min-total} pour devenir <strong style="color:#d4af37">${next.name} ${next.emoji}</strong>`;
+  }
+
+  // Trophées
+  const trophies = [
+    {key:'first', ic:'🎯', name:'Premier sang', desc:'Décrocher 1ᵉʳ contrat', unlocked: total>=1},
+    {key:'three', ic:'🔥', name:'Hat-trick',    desc:'3 contrats sur un mois', unlocked: buckets.some(b=>b.count>=3)},
+    {key:'ten',   ic:'💪', name:'Marathonien',  desc:'10 contrats au total',   unlocked: total>=10},
+    {key:'streak',ic:'🚀', name:'Régularité',   desc:'3 mois consécutifs',     unlocked: streak>=3},
+    {key:'streak6',ic:'⚡', name:'Inarrêtable',  desc:'6 mois consécutifs',     unlocked: streak>=6},
+    {key:'five',  ic:'🌟', name:'Mois de feu',  desc:'5 contrats dans un mois',unlocked: buckets.some(b=>b.count>=5)},
+    {key:'25',    ic:'🥇', name:'Médaille d’or',desc:'25 contrats au total', unlocked: total>=25},
+    {key:'50',    ic:'💎', name:'Diamant brut', desc:'50 contrats au total',  unlocked: total>=50}
+  ];
+
+  // Derniers signés (10)
+  const recent = [...signed].sort((a,b)=>(b.signDate||'').localeCompare(a.signDate||'')).slice(0,10);
+
+  // HTML
+  const heroHtml = `
+    <div class="stats-hero">
+      <div class="stat-hero-card gold">
+        <span class="icon">🏆</span>
+        <div class="label">Total signés</div>
+        <div class="value">${total}</div>
+        <div class="sub">depuis le début</div>
+      </div>
+      <div class="stat-hero-card fire">
+        <span class="icon">🔥</span>
+        <div class="label">Série en cours</div>
+        <div class="value">${streak}</div>
+        <div class="sub">${streak>1?'mois consécutifs':'mois — continue !'}</div>
+      </div>
+      <div class="stat-hero-card teal">
+        <span class="icon">📈</span>
+        <div class="label">Ce mois-ci</div>
+        <div class="value">${curMonthCount}</div>
+        <div class="sub">${trendHtml}</div>
+      </div>
+      <div class="stat-hero-card green">
+        <span class="icon">⭐</span>
+        <div class="label">Meilleur mois</div>
+        <div class="value">${allTimeBest}</div>
+        <div class="sub">${allTimeBest>0?'record à battre !':'à toi de poser le 1ᵉʳ jalon'}</div>
+      </div>
+    </div>
+  `;
+
+  const levelHtml = `
+    <div class="level-card">
+      <div class="level-row">
+        <div class="level-emoji">${lvl.emoji}</div>
+        <div class="level-info">
+          <div class="level-rank">${lvl.name.toUpperCase()}</div>
+          <div class="level-sub">${lvl.sub}</div>
+          <div class="level-bar"><div class="level-bar-fill" style="width:${progressPct}%"></div></div>
+          <div class="level-progress-text"><span>${progressTxt}</span><span>${progressPct}%</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const barsHtml = `
+    <div class="stat-chart-card">
+      <div class="stat-chart-title">📊 Mes signatures sur 12 mois</div>
+      <div class="stat-bars">
+        ${buckets.map(b=>{
+          const h = b.count===0 ? 3 : Math.max(8, Math.round((b.count/maxCount)*180));
+          const isCur = b.y===curY && b.m===curM;
+          const isBest = b===bestBucket && b.count>0;
+          const cls = b.count===0?'empty':(isBest?'best':(isCur?'current':''));
+          const countLbl = b.count>0?`<div class="stat-bar-count">${b.count}</div>`:'';
+          return `<div class="stat-bar-col"><div class="stat-bar ${cls}" style="height:${h}px" title="${b.label} ${b.y}: ${b.count} signé${b.count>1?'s':''}">${countLbl}</div></div>`;
+        }).join('')}
+      </div>
+      <div class="stat-month-labels">
+        ${buckets.map(b=>`<div class="lbl ${(b.y===curY&&b.m===curM)?'cur':''}">${b.label}</div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  const trophyHtml = `
+    <div class="stat-chart-card">
+      <div class="stat-chart-title">🎖️ Mes trophées (${trophies.filter(t=>t.unlocked).length}/${trophies.length})</div>
+      <div class="trophy-grid">
+        ${trophies.map(t=>`<div class="trophy ${t.unlocked?'unlocked':''}" title="${t.unlocked?'Débloqué ✓':'À débloquer'}">
+          <span class="ic">${t.ic}</span>
+          <div class="name">${t.name}</div>
+          <div class="desc">${t.desc}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  const recentHtml = `
+    <div class="recent-signed">
+      <h3>🤝 Mes derniers signés</h3>
+      ${recent.length ? recent.map(l=>{
+        const d=new Date(l.signDate+'T00:00:00');
+        const dStr=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+        const presta=l.prestation?` · ${l.prestation}`:'';
+        return `<div class="recent-row"><div><span class="co">${escapeHtml(l.company||'?')}</span><span style="color:var(--muted);font-size:12px">${escapeHtml(presta)}</span></div><span class="date">✓ ${dStr}</span></div>`;
+      }).join('') : `<div class="recent-empty">Aucun contrat signé pour l'instant.<br><br>Mets <strong>"✅ Signé"</strong> + une date de finalisation sur un lead → il apparaîtra ici 🚀</div>`}
+    </div>
+  `;
+
+  const teamHtml = renderTeamLeaderboard();
+  document.getElementById('leadStatsBody').innerHTML = teamHtml + heroHtml + levelHtml + barsHtml + trophyHtml + recentHtml;
+}
+
+// ╔══════════════════════════════════════════════════════════════
 // ║ AGENDA COMMUN ÉQUIPE
 // ║ data: {memberId: {YYYY-MM-DD: 'office'|'remote'|'off'|'ext'|'busy'}}
 // ╚══════════════════════════════════════════════════════════════
@@ -8667,18 +9749,122 @@ function openPwdModal(memberId){
   setTimeout(()=>document.getElementById('pwd_new').focus(),50);
 }
 
+// ╔══════════════════════════════════════════════════════════════
+// ║ RGPD — Mes données : ouvrir panneau, exporter, supprimer
+// ╚══════════════════════════════════════════════════════════════
+function openLegal(){
+  document.getElementById('legalOverlay').classList.add('open');
+}
+function openRgpd(){
+  const me=teamMembers.find(m=>m.id===currentUser.id)||currentUser;
+  // Recense tout ce qui est lié à moi
+  const myLeadsCount = leads.filter(l=>l.owner===currentUser.id).length;
+  const myTodosCount = todos.filter(t=>t.owner===currentUser.id || t.assignee===currentUser.id).length;
+  const myChatsCount = (typeof chatMessages!=='undefined') ? (function(){
+    let c=0; Object.values(chatMessages||{}).forEach(arr=>{(arr||[]).forEach(m=>{if(m.author===currentUser.id) c++;});}); return c;
+  })() : 0;
+  const isPwdStrong = (me.pwd||'').startsWith('s:');
+  const isPwdDefault = me.pwd===DEFAULT_PWD_HASH;
+  let pwdStatus;
+  if(isPwdDefault) pwdStatus='<span style="color:var(--coral);font-weight:700">⚠ Mot de passe par défaut (0000)</span> — à changer immédiatement';
+  else if(isPwdStrong) pwdStatus='<span style="color:var(--green);font-weight:700">✓ Chiffré SHA-256</span> (sécurité forte)';
+  else pwdStatus='<span style="color:var(--orange);font-weight:700">⚠ Hash ancien</span> — sera mis à jour à ta prochaine connexion';
+
+  document.getElementById('rgpdBody').innerHTML = `
+    <div style="font-size:13px;line-height:1.6;color:var(--cream)">
+      <p>Voici ce que le SaaS conserve sur toi (<strong>${escapeHtml(me.name||'')}</strong>) :</p>
+      <ul style="margin:10px 0 14px;padding-left:18px;line-height:1.8">
+        <li><strong>Profil</strong> : nom, rôle, initiales, couleur, photo (avatar)</li>
+        <li><strong>${myLeadsCount}</strong> lead${myLeadsCount>1?'s':''} prospect dans ton pipeline perso</li>
+        <li><strong>${myTodosCount}</strong> tâche${myTodosCount>1?'s':''} (assignées ou créées)</li>
+        <li><strong>${myChatsCount}</strong> message${myChatsCount>1?'s':''} envoyé${myChatsCount>1?'s':''} sur le chat équipe</li>
+        <li>Statut de présence, disponibilités agenda, préférences (thème, sidebar)</li>
+        <li>Sécurité : ${pwdStatus}</li>
+      </ul>
+      <div style="background:rgba(17,103,118,.08);border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0">
+        <strong>📥 Droit à la portabilité (RGPD art. 20)</strong><br>
+        <span style="color:var(--muted);font-size:12px">Télécharge un fichier JSON contenant toutes les données te concernant.</span>
+        <div style="margin-top:8px"><button class="btn-primary" onclick="exportMyData()" style="background:var(--teal)">📥 Télécharger mes données (JSON)</button></div>
+      </div>
+      <div style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:10px;padding:12px;margin:10px 0">
+        <strong>🗑 Droit à l'effacement (RGPD art. 17)</strong><br>
+        <span style="color:var(--muted);font-size:12px">Supprime définitivement tes leads, tes todos perso et tes messages. <em>Ton profil et tes traces sur les données partagées (clients, agenda équipe) ne sont pas effacés automatiquement — demande à l'admin.</em></span>
+        <div style="margin-top:8px"><button class="btn-cancel" onclick="deleteMyPersonalData()" style="background:rgba(231,76,60,.18);color:var(--coral)">🗑 Effacer mes données perso</button></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:14px">
+        Pour les autres droits (rectification, opposition, limitation), contacte l'admin ou écris à <strong>rgpd@influmedia.com</strong>.<br>
+        <a href="#" onclick="event.preventDefault();closeModal('rgpdOverlay');openLegal()" style="color:var(--teal-light)">📜 Lire les mentions légales complètes →</a>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('rgpdOverlay')">Fermer</button>
+    </div>
+  `;
+  document.getElementById('rgpdOverlay').classList.add('open');
+}
+function exportMyData(){
+  const uid=currentUser.id;
+  const me=teamMembers.find(m=>m.id===uid)||currentUser;
+  const data = {
+    exportedAt: new Date().toISOString(),
+    rgpdRequest: 'Portabilité des données (RGPD art. 20)',
+    profile: {
+      id: me.id, name: me.name, role: me.role, initials: me.initials, color: me.color,
+      hasAvatar: !!me.avatar, hasSecretAnswer: !!me.secretAns,
+      pwdAlgo: (me.pwd||'').startsWith('s:') ? 'SHA-256' : 'legacy DJB2'
+    },
+    leads: leads.filter(l=>l.owner===uid),
+    todos: todos.filter(t=>t.owner===uid || t.assignee===uid),
+    presence: (typeof presence!=='undefined') ? (presence[uid]||null) : null,
+    themePreference: (typeof getUserTheme==='function') ? getUserTheme() : 'night',
+    chatMessages: (typeof chatMessages!=='undefined') ? Object.entries(chatMessages||{}).reduce((acc,[k,arr])=>{
+      const mine = (arr||[]).filter(m=>m.author===uid);
+      if(mine.length) acc[k]=mine;
+      return acc;
+    },{}) : {}
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`mes-donnees-${(me.name||'export').replace(/\s+/g,'-').toLowerCase()}-${(new Date()).toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  toast('📥 Export JSON téléchargé');
+}
+function deleteMyPersonalData(){
+  if(!confirm("⚠️ EFFACEMENT DÉFINITIF\\n\\nCela va supprimer :\\n• Tous tes leads prospects\\n• Toutes tes todos perso\\n• Tous tes messages envoyés\\n\\nTon profil reste actif. Données partagées (clients, agenda équipe) NON affectées.\\n\\nContinuer ?")) return;
+  const uid=currentUser.id;
+  leads = leads.filter(l=>l.owner!==uid);
+  todos = todos.filter(t=>!(t.owner===uid && t.bucket==='perso'));
+  Storage.set('influ_leads', leads);
+  Storage.set('influ_todos', todos);
+  // Marque les messages comme supprimés (tombstone — anti-resurrection cross-device)
+  try{
+    if(typeof chatMessages!=='undefined'){
+      Object.keys(chatMessages).forEach(k=>{
+        (chatMessages[k]||[]).forEach(m=>{ if(m.author===uid){ m.deleted=true; m.text=''; }});
+      });
+      if(typeof Storage!=='undefined') Storage.set('influ_chat_messages', chatMessages);
+    }
+  }catch(e){}
+  closeModal('rgpdOverlay');
+  toast('🗑 Tes données perso ont été effacées');
+}
+
 function savePwd(){
   const np=document.getElementById('pwd_new').value;
   const cp=document.getElementById('pwd_confirm').value;
-  if(np.length<4){alert('Le mot de passe doit faire au moins 4 caractères.');return;}
+  if(np.length<6){alert('Le mot de passe doit faire au moins 6 caractères (RGPD).');return;}
   if(np!==cp){alert('Les deux mots de passe ne correspondent pas.');return;}
   const m=teamMembers.find(x=>x.id===pwdEditMemberId);
   if(!m){alert('Membre introuvable');return;}
-  m.pwd=hashPwd(np);
-  saveTeam();
-  closeModal('pwdOverlay');
-  renderSettings();
-  toast('🔑 Mot de passe mis à jour ✓');
+  hashPwdSecure(np).then(h=>{
+    m.pwd=h;
+    saveTeam();
+    closeModal('pwdOverlay');
+    renderSettings();
+    toast('🔑 Mot de passe mis à jour (SHA-256) ✓');
+  });
 }
 
 function closeModal(id){document.getElementById(id).classList.remove('open');}
