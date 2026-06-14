@@ -1163,12 +1163,270 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .m-toggle{display:flex;background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .m-toggle button{flex:1;border:none;background:none;color:var(--muted);padding:12px 8px;border-radius:9px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;transition:background .18s,color .18s}
 .m-toggle button.active{background:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(17,103,118,.4)}
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  MODERN DESIGN PASS — micro-interactions + polish (no UX chg) ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Tokens additionnels */
+:root{
+  --shadow-sm:0 1px 3px rgba(0,0,0,.25),0 1px 2px rgba(0,0,0,.15);
+  --shadow-md:0 4px 12px -2px rgba(0,0,0,.35),0 2px 5px rgba(0,0,0,.18);
+  --shadow-lg:0 12px 32px -8px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.22);
+  --shadow-glow:0 0 0 1px rgba(17,103,118,.45),0 6px 22px -6px rgba(17,103,118,.5);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* Scrollbar plus moderne */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:10px;border:2px solid transparent;background-clip:padding-box;transition:background .2s}
+*::-webkit-scrollbar-thumb:hover{background:rgba(17,103,118,.45);background-clip:padding-box;border:2px solid transparent}
+
+/* Smooth selection */
+::selection{background:rgba(17,103,118,.5);color:#fff}
+
+/* Boutons : effet press doux */
+button{transition:transform .12s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+button:active{transform:translateY(1px)}
+
+/* Cards & table : élévation au hover */
+.dash-card,.task-card,.note-card,.art-card{transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out),border-color .25s var(--ease-out)}
+.dash-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+
+/* Sidebar nav : indicateur plus net */
+.nav-btn{transition:background .18s var(--ease),color .18s var(--ease),padding-left .18s var(--ease)}
+.nav-btn:hover{padding-left:14px}
+.nav-btn.active{box-shadow:inset 3px 0 0 var(--teal-light)}
+
+/* Inputs : focus ring soft */
+input:focus,textarea:focus,select:focus{outline:none}
+input:not(.lock-pwd-input):not([type=checkbox]):focus,
+textarea:focus,
+select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:var(--teal-light)!important}
+
+/* Pills filtres : transition fluide */
+.pill{transition:all .2s var(--ease)}
+.pill:hover{transform:translateY(-1px)}
+
+/* Modals : entrée plus douce + backdrop blur */
+.overlay{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(0,0,0,.55)}
+.overlay.open .modal{animation:modalIn .35s var(--ease-out)}
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(12px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Toast : design plus moderne */
+.toast{box-shadow:var(--shadow-lg)!important;border:1px solid rgba(255,255,255,.08)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* FAB chat : pulse subtil au repos */
+.chat-fab{box-shadow:var(--shadow-lg),0 0 0 0 rgba(17,103,118,.5);animation:fabPulse 3.4s ease-in-out infinite}
+@keyframes fabPulse{
+  0%,100%{box-shadow:var(--shadow-lg),0 0 0 0 rgba(17,103,118,.45)}
+  50%{box-shadow:var(--shadow-lg),0 0 0 14px rgba(17,103,118,0)}
+}
+
+/* ╔══════════════════════════════════════╗
+   ║  LOCK SCREEN — ANIMATED BACKGROUND   ║
+   ╚══════════════════════════════════════╝ */
+
+.lock-screen{
+  overflow:hidden;
+  background:radial-gradient(ellipse at top,#15323b 0%,#0a1518 60%,#050b0e 100%)!important;
+}
+
+/* Mesh gradient layer */
+.lock-bg-mesh{
+  position:absolute;inset:-20%;
+  background:
+    radial-gradient(circle at 20% 30%,rgba(17,103,118,.35) 0%,transparent 38%),
+    radial-gradient(circle at 80% 70%,rgba(255,95,95,.18) 0%,transparent 42%),
+    radial-gradient(circle at 60% 20%,rgba(52,152,219,.18) 0%,transparent 40%),
+    radial-gradient(circle at 30% 85%,rgba(155,89,182,.14) 0%,transparent 42%);
+  filter:blur(40px);
+  animation:meshDrift 22s ease-in-out infinite alternate;
+  pointer-events:none;z-index:0;
+}
+@keyframes meshDrift{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  50%{transform:translate(-3%,2%) rotate(3deg) scale(1.08)}
+  100%{transform:translate(2%,-3%) rotate(-2deg) scale(.96)}
+}
+
+/* Grid pattern overlay */
+.lock-bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:54px 54px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,#000 30%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,#000 30%,transparent 80%);
+  pointer-events:none;z-index:0;
+  animation:gridPan 60s linear infinite;
+}
+@keyframes gridPan{
+  from{background-position:0 0,0 0}
+  to{background-position:54px 54px,54px 54px}
+}
+
+/* Orbs flottants */
+.lock-orb{
+  position:absolute;border-radius:50%;
+  filter:blur(60px);
+  pointer-events:none;z-index:0;
+  opacity:.55;
+}
+.lock-orb-1{width:340px;height:340px;background:radial-gradient(circle,var(--teal-light) 0%,transparent 70%);top:8%;left:-6%;animation:orbFloat1 18s ease-in-out infinite}
+.lock-orb-2{width:280px;height:280px;background:radial-gradient(circle,var(--coral) 0%,transparent 70%);bottom:10%;right:-4%;animation:orbFloat2 22s ease-in-out infinite}
+.lock-orb-3{width:420px;height:420px;background:radial-gradient(circle,#3498db 0%,transparent 70%);top:55%;left:60%;animation:orbFloat3 26s ease-in-out infinite}
+.lock-orb-4{width:240px;height:240px;background:radial-gradient(circle,#9b59b6 0%,transparent 70%);top:-3%;right:18%;animation:orbFloat4 30s ease-in-out infinite}
+@keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,40px) scale(1.15)}66%{transform:translate(-30px,90px) scale(.92)}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-100px,-60px) scale(1.2)}}
+@keyframes orbFloat3{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-120px,-40px) scale(.85)}80%{transform:translate(60px,80px) scale(1.1)}}
+@keyframes orbFloat4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,80px) scale(1.18)}}
+
+/* Particules qui scintillent */
+.lock-particles{position:absolute;inset:0;pointer-events:none;z-index:0}
+.lock-particles span{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:rgba(255,255,255,.6);
+  box-shadow:0 0 6px rgba(255,255,255,.8);
+  animation:particleFloat linear infinite;
+}
+.lock-particles span:nth-child(1){left:8%;top:20%;animation-duration:14s;animation-delay:0s}
+.lock-particles span:nth-child(2){left:88%;top:30%;animation-duration:18s;animation-delay:-3s}
+.lock-particles span:nth-child(3){left:24%;top:75%;animation-duration:16s;animation-delay:-6s}
+.lock-particles span:nth-child(4){left:65%;top:88%;animation-duration:20s;animation-delay:-2s}
+.lock-particles span:nth-child(5){left:42%;top:12%;animation-duration:13s;animation-delay:-9s}
+.lock-particles span:nth-child(6){left:78%;top:62%;animation-duration:17s;animation-delay:-5s}
+.lock-particles span:nth-child(7){left:15%;top:55%;animation-duration:19s;animation-delay:-12s}
+.lock-particles span:nth-child(8){left:55%;top:48%;animation-duration:15s;animation-delay:-7s}
+.lock-particles span:nth-child(9){left:33%;top:90%;animation-duration:21s;animation-delay:-1s}
+.lock-particles span:nth-child(10){left:92%;top:78%;animation-duration:14s;animation-delay:-10s}
+@keyframes particleFloat{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:.7}
+  50%{transform:translateY(-40px) translateX(20px);opacity:1}
+  90%{opacity:.4}
+  100%{transform:translateY(-80px) translateX(-10px);opacity:0}
+}
+
+/* Brand au-dessus du card */
+.lock-brand{
+  position:relative;z-index:2;text-align:center;
+  animation:brandIn .9s var(--ease-out) both;
+  margin-bottom:6px;
+}
+@keyframes brandIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+.lock-brand-logo{
+  font-size:36px;
+  background:linear-gradient(135deg,var(--teal-light) 0%,var(--coral) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 14px rgba(17,103,118,.55));
+  animation:logoSpin 6s ease-in-out infinite;
+  display:inline-block;
+}
+@keyframes logoSpin{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.08)}}
+.lock-brand-name{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:22px;letter-spacing:8px;color:var(--cream);
+  margin-top:-4px;
+  background:linear-gradient(120deg,#fff 30%,#a8d8e3 50%,#fff 70%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.lock-brand-tag{font-size:9px;color:var(--teal-light);font-weight:700;letter-spacing:4px;margin-top:2px;text-transform:uppercase}
+
+/* Lock card refondu : glass morphism */
+.lock-card{
+  position:relative;z-index:2;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:24px;
+  padding:34px 38px 28px;
+  backdrop-filter:blur(20px) saturate(1.3);
+  -webkit-backdrop-filter:blur(20px) saturate(1.3);
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04) inset;
+  animation:lockIn .6s var(--ease-out)!important;
+  min-width:340px;
+}
+
+/* Avatar : breathe + halo */
+.lock-avatar{
+  position:relative;
+  box-shadow:0 12px 40px rgba(17,103,118,.55),0 0 0 4px rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.18)!important;
+  animation:avatarBreathe 4s ease-in-out infinite;
+}
+.lock-avatar::before{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--teal-light),var(--coral),var(--teal-light));
+  filter:blur(8px);opacity:.45;z-index:-1;
+  animation:avatarHalo 8s linear infinite;
+}
+@keyframes avatarBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+@keyframes avatarHalo{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* Input pwd : glow doux au focus */
+.lock-pwd-input{
+  background:rgba(0,0,0,.32)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:14px!important;
+  transition:all .25s var(--ease)!important;
+}
+.lock-pwd-input:focus{
+  background:rgba(0,0,0,.42)!important;
+  border-color:var(--teal-light)!important;
+  box-shadow:0 0 0 4px rgba(17,103,118,.22),0 0 22px -4px rgba(26,143,163,.4)!important;
+}
+
+/* Bouton submit : gradient + hover lift */
+.lock-btn{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%)!important;
+  border-radius:14px!important;
+  box-shadow:0 6px 18px -4px rgba(17,103,118,.6);
+  transition:all .2s var(--ease)!important;
+}
+.lock-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 24px -4px rgba(26,143,163,.65)!important;
+  background:linear-gradient(135deg,var(--teal-light) 0%,#22a8c0 100%)!important;
+}
+
+/* Footer : positionnement et fade */
+.lock-footer{animation:brandIn 1.2s var(--ease-out) .3s both}
+
+/* Désactive certaines animations sur prefers-reduced-motion */
+@media (prefers-reduced-motion:reduce){
+  .lock-bg-mesh,.lock-bg-grid,.lock-orb,.lock-particles span,
+  .lock-brand-logo,.lock-brand-name,.lock-avatar,.lock-avatar::before,
+  .chat-fab{animation:none!important}
+}
 </style>
 </head>
 <body>
 
 <!-- LOCK SCREEN / PAGE DE CONNEXION -->
 <div id="lockScreen" class="lock-screen">
+  <div class="lock-bg-mesh" aria-hidden="true"></div>
+  <div class="lock-bg-grid" aria-hidden="true"></div>
+  <div class="lock-orb lock-orb-1" aria-hidden="true"></div>
+  <div class="lock-orb lock-orb-2" aria-hidden="true"></div>
+  <div class="lock-orb lock-orb-3" aria-hidden="true"></div>
+  <div class="lock-orb lock-orb-4" aria-hidden="true"></div>
+  <div class="lock-particles" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="lock-brand">
+    <div class="lock-brand-logo">⚡</div>
+    <div class="lock-brand-name">INFLUMEDIA</div>
+    <div class="lock-brand-tag">CRM · v2.0</div>
+  </div>
   <div class="lock-card">
     <div class="lock-avatar" id="lockAvatar">NB</div>
     <div class="lock-name" id="lockName">Nicolas Bianconi</div>
