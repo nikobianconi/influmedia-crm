@@ -1781,6 +1781,19 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   <span id="themeIcon">🌙</span>
 </button>
 
+<!-- Confirmation suppression post-it To-Do -->
+<div class="overlay" id="todoConfirmOverlay" onclick="closeBg(event,'todoConfirmOverlay')">
+  <div class="modal" style="max-width:420px;text-align:center">
+    <div style="font-size:42px;margin-bottom:8px">🗑️</div>
+    <h2 style="margin-bottom:6px">Êtes-vous sûr de vouloir supprimer cette note ?</h2>
+    <div id="todoConfirmTitle" style="color:var(--muted);font-style:italic;margin-bottom:18px;word-break:break-word"></div>
+    <div class="modal-actions" style="justify-content:center;gap:14px">
+      <button class="btn-cancel" onclick="todoConfirmNo()" style="min-width:110px">Non</button>
+      <button class="btn-primary" onclick="todoConfirmYes()" style="min-width:110px;background:var(--green)">Oui, supprimer</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
 <aside class="sidebar">
   <div class="sidebar-logo">
@@ -4719,12 +4732,37 @@ function cycleTodoState(id){
     renderTodo();
     toast('⏱ Tâche mise en cours');
   } else {
-    // En cours (ou done legacy) → Fini = suppression automatique
-    todos=todos.filter(x=>String(x.id)!==id);
-    Storage.set('influ_todos',todos);
-    renderTodo();
-    toast('🎉 Tâche terminée — bien joué !');
+    // En cours (ou done legacy) → Fini = confirmation puis suppression
+    confirmTodoDelete(t);
   }
+}
+
+// Modal de confirmation avant suppression d'un post-it
+function confirmTodoDelete(t){
+  const overlay=document.getElementById('todoConfirmOverlay');
+  if(!overlay){ // fallback si modal absente
+    if(confirm('Êtes-vous sûr de vouloir supprimer cette note ?')) _doDeleteTodo(t.id);
+    return;
+  }
+  document.getElementById('todoConfirmTitle').textContent=t.title||'Sans titre';
+  overlay.dataset.tid=String(t.id);
+  overlay.classList.add('open');
+}
+function todoConfirmYes(){
+  const overlay=document.getElementById('todoConfirmOverlay');
+  const id=overlay?.dataset?.tid;
+  overlay?.classList.remove('open');
+  if(id) _doDeleteTodo(id);
+}
+function todoConfirmNo(){
+  document.getElementById('todoConfirmOverlay')?.classList.remove('open');
+}
+function _doDeleteTodo(id){
+  id=String(id);
+  todos=todos.filter(x=>String(x.id)!==id);
+  Storage.set('influ_todos',todos);
+  renderTodo();
+  toast('🎉 Tâche terminée — bien joué !');
 }
 // Alias pour compatibilité
 function toggleTodoDone(id){cycleTodoState(id);}
