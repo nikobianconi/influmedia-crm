@@ -753,6 +753,47 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .postit:hover .postit-actions{opacity:1}
 .postit-act{width:24px;height:24px;border:none;background:rgba(0,0,0,.18);border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:rgba(0,0,0,.85);transition:all .15s}
 .postit-act:hover{background:rgba(0,0,0,.32);transform:scale(1.1)}
+/* Bouton statut unique en haut à droite du post-it */
+.postit-status-btn{
+  position:absolute;top:10px;right:10px;
+  width:32px;height:32px;border-radius:50%;
+  border:2px solid rgba(0,0,0,.22);
+  background:rgba(255,255,255,.55);
+  color:rgba(0,0,0,.55);
+  font-size:15px;font-weight:700;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s cubic-bezier(.4,0,.2,1),background .25s,border-color .25s,color .25s,box-shadow .25s;
+  z-index:5;
+  box-shadow:0 1px 3px rgba(0,0,0,.18);
+  user-select:none;
+}
+.postit-status-btn:hover{
+  transform:scale(1.15) rotate(8deg);
+  background:rgba(255,255,255,.85);
+  color:rgba(0,0,0,.85);
+}
+.postit-status-btn:active{transform:scale(.95)}
+.postit-status-btn.in-progress{
+  background:linear-gradient(135deg,#ff9500 0%,#ff5400 100%);
+  border-color:#ff4400;
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+  box-shadow:0 2px 8px rgba(255,84,0,.45),0 0 0 0 rgba(255,149,0,.7);
+  animation:statusBtnPulse 1.8s ease-in-out infinite;
+}
+.postit-status-btn.in-progress:hover{
+  transform:scale(1.18) rotate(-6deg);
+  background:linear-gradient(135deg,#ffaa1a 0%,#ff6b00 100%);
+}
+.postit-status-btn.done{
+  background:linear-gradient(135deg,#2ecc71 0%,#27ae60 100%);
+  border-color:#1e8449;color:#fff;
+}
+@keyframes statusBtnPulse{
+  0%,100%{box-shadow:0 2px 8px rgba(255,84,0,.45),0 0 0 0 rgba(255,149,0,.55)}
+  60%{box-shadow:0 2px 8px rgba(255,84,0,.45),0 0 0 12px rgba(255,149,0,0)}
+}
 .postit-add{aspect-ratio:1/1;border:2px dashed rgba(255,255,255,.18);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--muted);cursor:pointer;transition:all .25s;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.2px}
 .postit-add .pl{font-size:42px;line-height:1;font-weight:300;opacity:.5;transition:opacity .2s}
 .postit-add:hover{border-color:var(--teal-light);color:var(--teal-light);background:rgba(17,103,118,.06);transform:translateY(-3px)}
@@ -1406,6 +1447,293 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   .lock-brand-logo,.lock-brand-name,.lock-avatar,.lock-avatar::before,
   .chat-fab{animation:none!important}
 }
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  THEME TOGGLE — fixed top-right button (per-user persist)    ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+.theme-toggle{
+  position:fixed;top:14px;right:14px;z-index:9000;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(15,30,40,.65);
+  color:#fff;font-size:20px;
+  border:1px solid rgba(255,255,255,.15);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 6px 22px -6px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset;
+  transition:transform .25s cubic-bezier(.4,0,.2,1),background .25s,border-color .25s,box-shadow .25s;
+}
+.theme-toggle:hover{transform:scale(1.1) rotate(20deg)}
+.theme-toggle:active{transform:scale(.95)}
+[data-theme="day"] .theme-toggle{
+  background:rgba(255,255,255,.92);
+  border-color:rgba(15,23,42,.12);
+  color:#0F172A;
+  box-shadow:0 6px 22px -6px rgba(15,23,42,.25),0 0 0 1px rgba(15,23,42,.04) inset;
+}
+@media(max-width:768px){.theme-toggle{top:10px;right:10px;width:40px;height:40px;font-size:17px}}
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  DAY MODE — fond blanc / texte bleu-noir, très lisible       ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+[data-theme="day"]{
+  --dark:#FFFFFF;
+  --dark2:#FFFFFF;
+  --dark3:#F1F5F9;
+  --mid:#E2E8F0;
+  --cream:#0F172A;
+  --muted:#475569;
+  --border:rgba(15,23,42,0.10);
+  --teal:#0E5A6B;
+  --teal-light:#117A8C;
+  --coral:#DC4848;
+  --coral-dark:#B83232;
+}
+[data-theme="day"] body{background:#F4F6FA;color:#0F172A}
+
+/* Sidebar : blanche avec ombre douce */
+[data-theme="day"] .sidebar{
+  background:linear-gradient(180deg,#FFFFFF 0%,#F8FAFC 100%)!important;
+  border-right:1px solid rgba(15,23,42,.08);
+  box-shadow:1px 0 12px rgba(15,23,42,.04);
+}
+[data-theme="day"] .sidebar-logo{border-bottom:1px solid rgba(15,23,42,.06)}
+[data-theme="day"] .sidebar-footer{border-top:1px solid rgba(15,23,42,.06)}
+
+/* Nav buttons */
+[data-theme="day"] .nav-btn{color:#1E293B}
+[data-theme="day"] .nav-btn:hover{background:rgba(17,103,118,.08)!important;color:#0E5A6B}
+[data-theme="day"] .nav-btn.active{background:rgba(17,103,118,.12)!important;color:#0E5A6B!important;box-shadow:inset 3px 0 0 var(--teal)}
+[data-theme="day"] .nav-group-header{color:#64748B}
+
+/* Cards / tables : surfaces blanches avec ombre soft */
+[data-theme="day"] .dash-card,
+[data-theme="day"] .table-wrap,
+[data-theme="day"] .modal,
+[data-theme="day"] .art-card,
+[data-theme="day"] .note-card{
+  background:#FFFFFF!important;
+  border:1px solid rgba(15,23,42,.08)!important;
+  box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 14px -4px rgba(15,23,42,.08);
+  color:#0F172A;
+}
+[data-theme="day"] .dash-card h3{color:#0F172A}
+[data-theme="day"] .table-wrap th{
+  background:#F8FAFC!important;color:#475569!important;
+  border-bottom:1px solid rgba(15,23,42,.08);
+}
+[data-theme="day"] .table-wrap td{border-bottom:1px solid rgba(15,23,42,.05);color:#0F172A}
+[data-theme="day"] .table-wrap tbody tr:hover{background:rgba(17,103,118,.04)!important}
+
+/* Pills filtres */
+[data-theme="day"] .pill{
+  background:#FFFFFF;color:#475569;
+  border:1px solid rgba(15,23,42,.12)!important;
+}
+[data-theme="day"] .pill:hover{background:#F1F5F9;color:#0F172A}
+[data-theme="day"] .pill.active{background:rgba(17,103,118,.10);color:#0E5A6B;border-color:#0E5A6B!important}
+
+/* Inputs */
+[data-theme="day"] input,
+[data-theme="day"] textarea,
+[data-theme="day"] select{
+  background:#FFFFFF!important;
+  color:#0F172A!important;
+  border:1px solid rgba(15,23,42,.15)!important;
+}
+[data-theme="day"] input::placeholder,
+[data-theme="day"] textarea::placeholder{color:#94A3B8}
+
+/* Boutons cancel */
+[data-theme="day"] .btn-cancel{
+  background:#F1F5F9!important;color:#475569!important;
+}
+[data-theme="day"] .btn-cancel:hover{background:#E2E8F0!important;color:#0F172A!important}
+
+/* Toast */
+[data-theme="day"] .toast{
+  background:#FFFFFF!important;color:#0F172A!important;
+  border:1px solid rgba(15,23,42,.08)!important;
+  box-shadow:0 12px 32px -8px rgba(15,23,42,.18)!important;
+}
+
+/* Overlay modals : fond plus clair en mode jour */
+[data-theme="day"] .overlay{background:rgba(15,23,42,.35)!important}
+
+/* Sidebar user info / pastille présence */
+[data-theme="day"] .user-info{color:#0F172A}
+[data-theme="day"] .user-info .role{color:#64748B}
+
+/* Headers de page : titres lisibles */
+[data-theme="day"] h1,[data-theme="day"] h2,[data-theme="day"] h3{color:#0F172A}
+[data-theme="day"] .page-title{color:#0E5A6B}
+
+/* Toggle perso/équipe (m-toggle) */
+[data-theme="day"] .m-toggle{background:#F1F5F9;border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .m-toggle button{color:#64748B}
+[data-theme="day"] .m-toggle button.active{background:var(--teal)!important;color:#fff!important}
+
+/* Chat widget */
+[data-theme="day"] .chat-fab{background:linear-gradient(135deg,var(--teal),var(--teal-light))!important}
+[data-theme="day"] .chat-window{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);box-shadow:0 18px 50px -10px rgba(15,23,42,.22)}
+
+/* Devis / Factures cards */
+[data-theme="day"] .fac-card,
+[data-theme="day"] .dev-card,
+[data-theme="day"] .trip-card,
+[data-theme="day"] .task-card{background:#FFFFFF;border:1px solid rgba(15,23,42,.08);color:#0F172A}
+
+/* Calendrier / Agenda */
+[data-theme="day"] .gcal{background:#FFFFFF;border:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .gcal-head{background:#F8FAFC;border-bottom:1px solid rgba(15,23,42,.08)}
+[data-theme="day"] .gcal-cell{background:#FFFFFF;border-right:1px solid rgba(15,23,42,.06);border-bottom:1px solid rgba(15,23,42,.06)}
+[data-theme="day"] .gcal-cell.weekend{background:#F8FAFC}
+[data-theme="day"] .gcal-cell.other-month{background:#F1F5F9}
+[data-theme="day"] .gcal-cell.other-month .dnum{color:#CBD5E1}
+[data-theme="day"] .gcal-cell.today{background:rgba(17,103,118,.06)}
+[data-theme="day"] .gcal-dayname{color:#475569}
+[data-theme="day"] .gcal-cell-date .dnum{color:#0F172A}
+[data-theme="day"] .gcal-chip{background:#F1F5F9}
+[data-theme="day"] .gcal-chip:hover{background:#E2E8F0}
+[data-theme="day"] .gcal-chip .gc-name{color:#0F172A}
+
+/* Services / Avis tables (sticky cols) */
+[data-theme="day"] #servicesTable th{background:#F8FAFC!important;color:#475569!important}
+[data-theme="day"] #servicesTable th:first-child,
+[data-theme="day"] #servicesTable td:first-child,
+[data-theme="day"] #servicesTable th:nth-child(2),
+[data-theme="day"] #servicesTable td:nth-child(2){background:#FFFFFF!important;border-right-color:rgba(15,23,42,.08)!important}
+[data-theme="day"] #servicesTable tbody tr:hover td:first-child,
+[data-theme="day"] #servicesTable tbody tr:hover td:nth-child(2){background:#F1F5F9!important}
+[data-theme="day"] #avisTable th{background:#F8FAFC!important;color:#475569!important}
+
+/* Drag handle plus lisible en mode jour */
+[data-theme="day"] .drag-handle{color:#94A3B8}
+[data-theme="day"] .drag-handle:hover{color:#0F172A}
+[data-theme="day"] tr[draggable]:hover .drag-handle{color:var(--teal)}
+
+/* Scrollbar mode jour */
+[data-theme="day"] *::-webkit-scrollbar-thumb{background:rgba(15,23,42,.18)}
+[data-theme="day"] *::-webkit-scrollbar-thumb:hover{background:rgba(14,90,107,.45)}
+
+/* Selection */
+[data-theme="day"] ::selection{background:rgba(17,103,118,.25);color:#0F172A}
+
+/* Le lock screen reste en sombre (animation visuelle) — on ne le touche pas */
+
+/* ── Cases à cocher / cellules vides : bordure grise visible en mode jour ── */
+[data-theme="day"] .month-check{
+  border:1.5px solid rgba(15,23,42,.28)!important;
+  background:#FFFFFF!important;
+}
+[data-theme="day"] .month-check:hover{
+  border-color:var(--teal)!important;
+  background:rgba(17,103,118,.06)!important;
+}
+[data-theme="day"] .month-check.checked{
+  background:var(--teal)!important;
+  border-color:var(--teal)!important;
+}
+[data-theme="day"] .month-check.pending{
+  background:#DC2626!important;
+  border-color:#DC2626!important;
+}
+[data-theme="day"] .month-check.late-month{
+  border-color:rgba(220,38,38,.6)!important;
+  background:rgba(220,38,38,.08)!important;
+}
+
+[data-theme="day"] .av-cell{
+  border:1.5px solid rgba(15,23,42,.28)!important;
+  background:#FFFFFF;
+}
+[data-theme="day"] .av-cell:hover{
+  border-color:var(--teal)!important;
+  background:rgba(17,103,118,.06);
+}
+[data-theme="day"] .av-cell.on{
+  background:#16A34A!important;
+  border-color:#16A34A!important;
+  color:#fff!important;
+}
+
+[data-theme="day"] .svc-cell{
+  border:1.5px solid rgba(15,23,42,.28)!important;
+  background:#FFFFFF;
+}
+[data-theme="day"] .svc-cell:hover{
+  border-color:var(--teal)!important;
+  background:rgba(17,103,118,.06);
+}
+
+[data-theme="day"] .task-check{
+  border:2px solid rgba(15,23,42,.28)!important;
+  background:#FFFFFF;
+}
+[data-theme="day"] .task-check:hover{border-color:var(--teal)!important}
+
+[data-theme="day"] .cnote-check{
+  border:2px solid rgba(15,23,42,.32)!important;
+  background:#F8FAFC!important;
+  color:transparent;
+}
+[data-theme="day"] .cnote-checkitem-circle{
+  border:2px solid rgba(15,23,42,.32)!important;
+  background:#F8FAFC!important;
+}
+
+[data-theme="day"] .month-toggle{
+  background:#FFFFFF!important;
+  border:1px solid rgba(15,23,42,.18)!important;
+  color:#475569!important;
+}
+[data-theme="day"] .month-toggle:hover{border-color:var(--teal)!important;background:#F1F5F9!important;color:#0F172A!important}
+
+/* Bouton "+ Nouvelle note" / "+ Ajouter" en pointillé visible */
+[data-theme="day"] .postit-add{
+  border:2px dashed rgba(15,23,42,.25)!important;
+  color:#64748B!important;
+  background:#FAFCFE!important;
+}
+[data-theme="day"] .postit-add:hover{
+  border-color:var(--teal)!important;
+  color:var(--teal)!important;
+  background:rgba(17,103,118,.04)!important;
+}
+
+/* Agenda chip vide (status empty) */
+[data-theme="day"] .ag-st-empty{
+  border:1.5px dashed rgba(15,23,42,.22)!important;
+  color:#94A3B8!important;
+}
+
+/* Pastille présence (lock-user-list, sidebar) : contour gris en mode jour */
+[data-theme="day"] .lock-user-list{background:#F8FAFC;border:1px solid rgba(15,23,42,.10)}
+[data-theme="day"] .lock-user-item:hover{background:#E2E8F0}
+
+/* Catalog rows */
+[data-theme="day"] .catalog-row{background:#F8FAFC!important;border:1px solid rgba(15,23,42,.08)!important}
+
+/* Chat bubble : bulles plus contrastées en jour */
+[data-theme="day"] .cw-bubble{background:#F1F5F9!important;color:#0F172A!important}
+[data-theme="day"] .cw-bubble.me{background:linear-gradient(135deg,var(--teal),var(--teal-light))!important;color:#fff!important}
+[data-theme="day"] .cw-bubble.deleted{background:#F8FAFC!important;border:1px dashed rgba(15,23,42,.20)!important}
+
+/* Boutons mini (icônes ronds 22px) */
+[data-theme="day"] .hw-ctrl button{background:#F1F5F9!important;color:#475569!important}
+[data-theme="day"] .hw-ctrl button:hover{background:#E2E8F0!important;color:#0F172A!important}
+
+/* Sidebar lock btn (déco-déconnexion) */
+[data-theme="day"] .sidebar-lock-btn{background:#F8FAFC!important;color:#64748B!important}
+[data-theme="day"] .sidebar-lock-btn:hover{background:rgba(220,38,38,.10)!important;color:#DC2626!important}
+
+/* Catalogue cards services */
+[data-theme="day"] .catalog-swatch{box-shadow:0 0 0 1px rgba(15,23,42,.10)}
+
+/* Inputs imbriqués dans les tables (offres / cadeaux) */
+[data-theme="day"] #servicesTable input[type="text"]{
+  background:#FFFFFF!important;border:1px solid rgba(15,23,42,.12)!important;color:#0F172A!important;
+}
 </style>
 </head>
 <body>
@@ -1447,6 +1775,11 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   </div>
   <div class="lock-footer">Influmedia · SaaS Agence — 🔒 Espace sécurisé</div>
 </div>
+
+<!-- Toggle mode jour / nuit (per-profile, top-right) -->
+<button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Basculer mode jour / nuit" style="display:none">
+  <span id="themeIcon">🌙</span>
+</button>
 
 <div class="app">
 <aside class="sidebar">
@@ -3926,6 +4259,8 @@ function doUnlock(member){
   currentUser={id:member.id,name:member.name,role:member.role,initials:member.initials,color:member.color,avatar:member.avatar||currentUser.avatar};
   saveUser();
   document.getElementById('lockScreen').classList.add('hidden');
+  // Applique le thème du profil (jour/nuit) — affiche aussi le bouton de bascule
+  try{ applyTheme(getUserTheme()); const tt=document.getElementById('themeToggle'); if(tt) tt.style.display='flex'; }catch(e){}
   buildSidebar();
   const defaultTab='home';
   showTab(defaultTab);
@@ -3941,6 +4276,35 @@ function doUnlock(member){
   // Démarre le heartbeat de présence (pastille verte/rouge)
   startPresenceHeartbeat();
   toast('👋 Bienvenue '+(member.name||'').split(' ')[0]+' !');
+}
+
+// ╔══════════════════════════════════════════════════════════════
+// ║ THÈME — Mode jour / nuit, persistance par profil (local)
+// ╚══════════════════════════════════════════════════════════════
+function _themeStorageKey(){
+  const uid=(typeof currentUser!=='undefined' && currentUser && currentUser.id) ? currentUser.id : 'guest';
+  return 'influ_theme_'+uid;
+}
+function getUserTheme(){
+  try{ return localStorage.getItem(_themeStorageKey()) || 'night'; }catch(e){ return 'night'; }
+}
+function setUserTheme(theme){
+  try{ localStorage.setItem(_themeStorageKey(), theme); }catch(e){}
+}
+function applyTheme(theme){
+  const t = (theme==='day')?'day':'night';
+  document.documentElement.setAttribute('data-theme', t);
+  const icon=document.getElementById('themeIcon');
+  if(icon) icon.textContent = (t==='day') ? '🌙' : '☀️';
+  const btn=document.getElementById('themeToggle');
+  if(btn) btn.setAttribute('title', t==='day'?'Passer en mode nuit':'Passer en mode jour');
+}
+function toggleTheme(){
+  const cur=getUserTheme();
+  const next=(cur==='day')?'night':'day';
+  setUserTheme(next);
+  applyTheme(next);
+  toast(next==='day'?'☀️ Mode jour activé':'🌙 Mode nuit activé');
 }
 
 // ╔══════════════════════════════════════════════════════════════
@@ -4100,26 +4464,11 @@ function renderTodo(){
   // Perso = seulement les miennes ; Équipe = partagées
   const list=todos.filter(t=>t.bucket===todoBucket && todoVisibleToMe(t));
 
-  // Filters
-  const filters=[
-    {k:'open',l:'À faire',cnt:list.filter(t=>todoState(t)==='todo').length,cls:''},
-    {k:'progress',l:'En cours',cnt:list.filter(t=>todoState(t)==='in_progress').length,cls:'f-orange'},
-    {k:'overdue',l:'En retard',cnt:list.filter(t=>todoState(t)!=='done'&&t.due&&daysFromToday(t.due)<0).length,cls:'f-red'},
-    {k:'today',l:"Aujourd'hui",cnt:list.filter(t=>todoState(t)!=='done'&&t.due&&daysFromToday(t.due)===0).length,cls:'f-orange'},
-    {k:'done',l:'Terminées',cnt:list.filter(t=>todoState(t)==='done').length,cls:'f-green'},
-    {k:'all',l:'Toutes',cnt:list.length,cls:''}
-  ];
-  document.getElementById('todoFilters').innerHTML=filters.map(f=>{
-    const act=todoFilter===f.k?'active '+(f.cls||''):'';
-    return `<button class="pill ${act}" onclick="setTodoFilter('${f.k}')">${f.l} (${f.cnt})</button>`;
-  }).join('');
+  // Plus de filtres / catégories : tout est affiché ensemble
+  const fEl=document.getElementById('todoFilters');
+  if(fEl) fEl.innerHTML='';
 
   let filtered=[...list];
-  if(todoFilter==='open') filtered=filtered.filter(t=>todoState(t)==='todo');
-  else if(todoFilter==='progress') filtered=filtered.filter(t=>todoState(t)==='in_progress');
-  else if(todoFilter==='done') filtered=filtered.filter(t=>todoState(t)==='done');
-  else if(todoFilter==='overdue') filtered=filtered.filter(t=>todoState(t)!=='done'&&t.due&&daysFromToday(t.due)<0);
-  else if(todoFilter==='today') filtered=filtered.filter(t=>todoState(t)!=='done'&&t.due&&daysFromToday(t.due)===0);
   if(search) filtered=filtered.filter(t=>(t.title||'').toLowerCase().includes(search)||(t.notes||'').toLowerCase().includes(search));
 
   // Sort: in_progress first, then todo, then done. Within group: by due asc.
@@ -4152,13 +4501,11 @@ function renderTodo(){
     const owner=teamMembers.find(m=>m.id===t.owner);
     const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${owner.name}">✍️ ${(owner.name||'').split(' ')[0]}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
-    const stamp=st==='in_progress'?'<div class="postit-stamp">EN COURS</div>':'';
-    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="cycleTodoState('${t.id}')" title="Clic = changer le statut · Edit pour détailler">
-      <div class="postit-actions">
-        <button class="postit-act" onclick="event.stopPropagation();editTodo('${t.id}')" title="Modifier">✏️</button>
-        <button class="postit-act" onclick="event.stopPropagation();deleteTodo('${t.id}')" title="Supprimer">✕</button>
-      </div>
-      ${stamp}
+    const stBtnCls=st==='in_progress'?'in-progress':(st==='done'?'done':'');
+    const stBtnIcon=st==='in_progress'?'⏱':(st==='done'?'✓':'○');
+    const stBtnTitle=st==='in_progress'?'En cours · Clic = terminer (supprime la tâche)':'À faire · Clic = mettre en cours';
+    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" title="Cliquer pour modifier">
+      <button class="postit-status-btn ${stBtnCls}" onclick="event.stopPropagation();cycleTodoState('${t.id}')" title="${stBtnTitle}">${stBtnIcon}</button>
       <div class="postit-title">${(t.title||'').replace(/</g,'&lt;')}</div>
       ${t.notes?`<div class="postit-notes">${(t.notes||'').replace(/</g,'&lt;')}</div>`:'<div class="postit-notes" style="opacity:.4">—</div>'}
       <div class="postit-meta">
@@ -4362,15 +4709,22 @@ function cycleTodoState(id){
   id = String(id);
   const t=todos.find(x=>String(x.id)===id);if(!t) return;
   const cur=todoState(t);
-  const next={'todo':'in_progress','in_progress':'done','done':'todo'}[cur];
-  t.state=next;
-  t.done=(next==='done');
-  t.completedAt=next==='done'?new Date().toISOString():null;
-  if(next==='in_progress') t.startedAt=new Date().toISOString();
-  Storage.set('influ_todos',todos);
-  renderTodo();
-  const labels={'todo':'↩️ Réactivée','in_progress':'⏱ En cours','done':'🎉 Bien joué !'};
-  toast(labels[next]);
+  if(cur==='todo'){
+    // À faire → En cours (orange)
+    t.state='in_progress';
+    t.done=false;
+    t.startedAt=new Date().toISOString();
+    t.completedAt=null;
+    Storage.set('influ_todos',todos);
+    renderTodo();
+    toast('⏱ Tâche mise en cours');
+  } else {
+    // En cours (ou done legacy) → Fini = suppression automatique
+    todos=todos.filter(x=>String(x.id)!==id);
+    Storage.set('influ_todos',todos);
+    renderTodo();
+    toast('🎉 Tâche terminée — bien joué !');
+  }
 }
 // Alias pour compatibilité
 function toggleTodoDone(id){cycleTodoState(id);}
