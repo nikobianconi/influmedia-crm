@@ -1657,37 +1657,65 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   color:#fff!important;
 }
 
-[data-theme="day"] .svc-cell{
+[data-theme="day"] .svc-cell:not(.on){
   border:1.5px solid rgba(15,23,42,.28)!important;
-  background:#FFFFFF;
+  background:#FFFFFF!important;
 }
-[data-theme="day"] .svc-cell:hover{
+[data-theme="day"] .svc-cell:not(.on):hover{
   border-color:var(--teal)!important;
-  background:rgba(17,103,118,.06);
+  background:rgba(17,103,118,.06)!important;
 }
+/* Cellules cochées : on respecte les couleurs du catalogue (svc-color-*) */
+[data-theme="day"] .svc-cell.on{border-color:transparent!important;color:#fff!important}
+[data-theme="day"] .svc-cell.on.svc-color-teal{background:#0E5A6B!important}
+[data-theme="day"] .svc-cell.on.svc-color-green{background:#16A34A!important}
+[data-theme="day"] .svc-cell.on.svc-color-blue{background:#2563EB!important}
+[data-theme="day"] .svc-cell.on.svc-color-purple{background:#7C3AED!important}
+[data-theme="day"] .svc-cell.on.svc-color-orange{background:#D97706!important}
+[data-theme="day"] .svc-cell.on.svc-color-red{background:#DC2626!important}
+[data-theme="day"] .svc-cell.on.svc-color-pink{background:#DB2777!important}
+[data-theme="day"] .svc-cell.on.svc-color-grey{background:#475569!important}
 
-[data-theme="day"] .task-check{
+[data-theme="day"] .task-card:not(.done) .task-check{
   border:2px solid rgba(15,23,42,.28)!important;
-  background:#FFFFFF;
+  background:#FFFFFF!important;
 }
-[data-theme="day"] .task-check:hover{border-color:var(--teal)!important}
+[data-theme="day"] .task-card:not(.done) .task-check:hover{border-color:var(--teal)!important}
+/* Tâche faite : vert plein, on respecte l'état */
+[data-theme="day"] .task-card.done .task-check{
+  background:#16A34A!important;border-color:#16A34A!important;color:#fff!important;
+}
 
-[data-theme="day"] .cnote-check{
+[data-theme="day"] .cnote:not(.done) .cnote-check{
   border:2px solid rgba(15,23,42,.32)!important;
   background:#F8FAFC!important;
   color:transparent;
 }
-[data-theme="day"] .cnote-checkitem-circle{
+/* Note entière marquée réalisée : vert plein */
+[data-theme="day"] .cnote.done .cnote-check{
+  background:rgba(20,90,40,.85)!important;border-color:rgba(20,90,40,.85)!important;color:#fff!important;
+}
+[data-theme="day"] .cnote-checkitem:not(.checked) .cnote-checkitem-circle{
   border:2px solid rgba(15,23,42,.32)!important;
   background:#F8FAFC!important;
 }
+/* Item de checklist coché : orange plein */
+[data-theme="day"] .cnote-checkitem.checked .cnote-checkitem-circle{
+  background:#f39c12!important;border-color:#f39c12!important;color:#fff!important;
+}
 
-[data-theme="day"] .month-toggle{
+[data-theme="day"] .month-toggle:not(.on){
   background:#FFFFFF!important;
   border:1px solid rgba(15,23,42,.18)!important;
   color:#475569!important;
 }
-[data-theme="day"] .month-toggle:hover{border-color:var(--teal)!important;background:#F1F5F9!important;color:#0F172A!important}
+[data-theme="day"] .month-toggle:not(.on):hover{border-color:var(--teal)!important;background:#F1F5F9!important;color:#0F172A!important}
+/* Toggle mois actif : teal plein */
+[data-theme="day"] .month-toggle.on{
+  background:rgba(14,90,107,.18)!important;
+  border-color:var(--teal)!important;
+  color:var(--teal)!important;
+}
 
 /* Bouton "+ Nouvelle note" / "+ Ajouter" en pointillé visible */
 [data-theme="day"] .postit-add{
