@@ -1101,14 +1101,15 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .m-header-av{width:46px;height:46px;border-radius:50%;overflow:hidden;background:var(--teal-light);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;border:2px solid rgba(255,255,255,.25);flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .m-header-av img{width:100%;height:100%;object-fit:cover}
 
-/* Screen + animation d'entrée fluide entre onglets */
-.m-screen{flex:1;overflow-y:auto;padding:20px 16px 100px;display:flex;flex-direction:column;gap:16px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;animation:mFadeIn .28s cubic-bezier(.2,.7,.25,1)}
+/* Screen + animation d'entrée fluide entre onglets — padding bottom large + safe-area pour ne pas passer sous la nav */
+.m-screen{flex:1;overflow-y:auto;padding:20px 16px;padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;animation:mFadeIn .28s cubic-bezier(.2,.7,.25,1)}
 @keyframes mFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* Nav bottom — style app iOS, respect du home indicator (safe-area fallback) */
 .m-nav{position:absolute;bottom:0;left:0;right:0;background:rgba(15,32,38,.97);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-around;align-items:stretch;padding-bottom:max(env(safe-area-inset-bottom,0px),12px);padding-top:8px}
-.m-tab{flex:1;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 2px;position:relative;transition:color .18s,transform .1s;min-height:54px}
-.m-tab .ic{font-size:24px;line-height:1}
+.m-tab{flex:1;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.3px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 1px;position:relative;transition:color .18s,transform .1s;min-height:54px;min-width:0}
+.m-tab .ic{font-size:22px;line-height:1}
+.m-tab span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .m-tab.active{color:var(--teal-light)}
 .m-tab:active{transform:scale(.93)}
 .m-tab .m-tab-badge{position:absolute;top:4px;right:22%;background:var(--coral);color:#fff;font-size:9.5px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;font-weight:700;line-height:1;box-shadow:0 1px 4px rgba(231,76,60,.5)}
@@ -9980,6 +9981,7 @@ const M_TABS=[
   {k:'home',ic:'🏠',label:'Accueil'},
   {k:'clients',ic:'👥',label:'Clients'},
   {k:'todo',ic:'✅',label:'Tâches'},
+  {k:'trips',ic:'🚗',label:'Déplac.'},
   {k:'agenda',ic:'📅',label:'Agenda'},
   {k:'chat',ic:'💬',label:'Chat'}
 ];
@@ -10028,6 +10030,7 @@ function mRenderScreen(){
     case 'home': html=mScreenHome(); break;
     case 'clients': html=mScreenClients(); break;
     case 'todo': html=mScreenTodo(); break;
+    case 'trips': html=mScreenTrips(); break;
     case 'agenda': html=mScreenAgenda(); break;
     case 'notes': html=mScreenNotes(); break;
   }
@@ -10107,6 +10110,57 @@ function mScreenAgenda(){
     </div>`;
 }
 function mCycleAgendaDay(dk){if(!agenda[currentUser.id]) agenda[currentUser.id]={};const cur=agenda[currentUser.id][dk];const idx=AGENDA_STATUS.findIndex(s=>s.k===cur);const next=idx===-1?AGENDA_STATUS[0]:AGENDA_STATUS[(idx+1)%AGENDA_STATUS.length];agenda[currentUser.id][dk]=next.k;Storage.set('influ_agenda',agenda);mRenderScreen();}
+
+// ─── DÉPLACEMENTS (Mobile) ───
+function mScreenTrips(){
+  const tripList=(typeof trips!=='undefined'?trips:[]).slice();
+  // Tri : confirmés futurs en haut, puis pending, puis archives
+  const statusOrder={confirmed:0,planned:1,pending:2,archived:3};
+  tripList.sort((a,b)=>{
+    const so=(statusOrder[a.status]??9)-(statusOrder[b.status]??9);
+    if(so!==0) return so;
+    return (a.monthYear||'').localeCompare(b.monthYear||'');
+  });
+  // Group by monthYear
+  const groups={};
+  tripList.forEach(t=>{const k=t.monthYear||'sans-date';(groups[k]=groups[k]||[]).push(t);});
+  const groupKeys=Object.keys(groups).sort();
+  const upcoming=tripList.filter(t=>t.status!=='archived').length;
+  const confirmed=tripList.filter(t=>t.status==='confirmed').length;
+  let html=`
+    <div class="m-kpis">
+      <div class="m-kpi"><span class="m-kpi-label">Total prévus</span><span class="m-kpi-val">${upcoming}</span></div>
+      <div class="m-kpi good"><span class="m-kpi-label">Confirmés</span><span class="m-kpi-val">${confirmed}</span></div>
+    </div>`;
+  if(!tripList.length){
+    html+=`<div class="m-card" style="text-align:center;padding:30px 20px;color:var(--muted)"><div style="font-size:46px;margin-bottom:10px">🚗</div><div>Aucun déplacement prévu pour l'instant</div></div>`;
+    return html;
+  }
+  for(const k of groupKeys){
+    const label=k==='sans-date'?'📌 Sans date':'📅 '+monthYearLabel(k);
+    html+=`<div class="m-card"><div class="m-card-title">${label}</div>`;
+    groups[k].forEach(t=>{
+      const st=tripStatusInfo(t.status);
+      const stMap={confirmed:'green',planned:'blue',pending:'orange',archived:'grey'};
+      const cls=stMap[t.status]||'grey';
+      const stLabel={confirmed:'Confirmé',planned:'Planifié',pending:'En attente',archived:'Terminé'}[t.status]||t.status;
+      const dateTxt=t.dateLabel||'Date libre';
+      const cityTxt=t.city?` · 📍 ${escapeHtml(t.city)}`:'';
+      const note=t.comment||t.notes;
+      html+=`<div class="m-row" ondblclick="if(typeof openTripModal==='function')openTripModal(${t.id})">
+        <div style="flex:1;min-width:0">
+          <div class="nm">${escapeHtml(tripClientLabel(t))}</div>
+          <div class="nm-sub">${escapeHtml(dateTxt)}${cityTxt}</div>
+          ${note?`<div class="nm-sub" style="margin-top:6px;font-style:italic;color:var(--teal-light)">"${escapeHtml(note.slice(0,80))}${note.length>80?'…':''}"</div>`:''}
+        </div>
+        <span class="m-pill ${cls}">${stLabel}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  return html;
+}
+
 function mScreenNotes(){
   const notes=(clientNotes||[]).slice().sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||''));
   return `
