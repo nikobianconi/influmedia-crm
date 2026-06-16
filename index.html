@@ -4636,6 +4636,29 @@ let teamMembers = Storage.get('influ_team', [
 ]);
 function saveTeam(){Storage.set('influ_team', teamMembers);}
 
+// Migration : nettoie les photos de profil dupliquées (bug avant juin 2026)
+// Une photo identique sur plusieurs membres = pollution → on garde celle du 1er, vide les autres
+(function cleanDuplicateAvatars(){
+  try{
+    const seen={};
+    let cleaned=0;
+    teamMembers.forEach(m=>{
+      if(!m.avatar) return;
+      if(seen[m.avatar]){
+        // Doublon → cleanup
+        delete m.avatar;
+        cleaned++;
+      } else {
+        seen[m.avatar]=m.id;
+      }
+    });
+    if(cleaned>0){
+      saveTeam();
+      console.warn(`Nettoyage : ${cleaned} photo(s) dupliquée(s) retirée(s) (les profils concernés afficheront leurs initiales).`);
+    }
+  }catch(e){}
+})();
+
 // ╔══════════════════════════════════════════════════════════════
 // ║ SÉCURITÉ — mots de passe (hashés, défaut "0000")
 // ╚══════════════════════════════════════════════════════════════
@@ -4846,8 +4869,21 @@ function saveNewPwdFromLock(){
 
 function doUnlock(member){
   // currentUser devient le membre connecté (rôle inclus)
-  currentUser={id:member.id,name:member.name,role:member.role,initials:member.initials,color:member.color,avatar:member.avatar||currentUser.avatar};
+  // FIX: PAS de fallback sur currentUser.avatar — sinon le membre hérite de la photo de la session précédente
+  currentUser={id:member.id,name:member.name,role:member.role,initials:member.initials,color:member.color,avatar:member.avatar||null};
   saveUser();
+  // Si la photo du membre actuel correspond exactement à celle d'un autre membre, on la nettoie (anti-pollution legacy)
+  try{
+    if(currentUser.avatar){
+      const others=teamMembers.filter(m=>m.id!==currentUser.id && m.avatar===currentUser.avatar);
+      if(others.length){
+        // Conflit détecté : on retire la photo des autres (l'utilisateur actuel garde la sienne)
+        others.forEach(o=>{ delete o.avatar; });
+        saveTeam();
+        console.warn('Photo dupliquée détectée et nettoyée pour:',others.map(o=>o.name).join(', '));
+      }
+    }
+  }catch(e){}
   document.getElementById('lockScreen').classList.add('hidden');
   // Applique le thème du profil (jour/nuit) — affiche aussi le bouton de bascule
   try{ applyTheme(getUserTheme()); const tt=document.getElementById('themeToggle'); if(tt) tt.style.display='flex'; }catch(e){}
