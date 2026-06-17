@@ -1807,6 +1807,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 }
 .pres-card:hover .pres-edit-btn{opacity:1}
 .pres-edit-btn:hover{background:var(--teal)}
+.pres-edit-btn.pres-del-btn:hover{background:#e74c3c}
 .pres-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column;gap:6px}
 .pres-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;color:var(--cream);line-height:1.25}
 .pres-desc{font-size:12px;color:var(--muted);line-height:1.45;flex:1}
@@ -2407,8 +2408,15 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
       <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5">Colle l'URL d'un document Google Drive, Google Slides, Canva, Notion, Dropbox, ou tout lien direct vers un PDF ou une image.</div>
     </div>
     <div class="fg"><label>🖼 Image de couverture (optionnel)</label>
-      <input id="pe_cover" placeholder="https://… URL d'une image" style="width:100%">
-      <div style="font-size:10.5px;color:var(--muted);margin-top:4px">Lien direct vers une image (Drive partagé, Unsplash, etc.)</div>
+      <div id="pe_coverPreview" style="display:none;margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid var(--border);max-height:120px;background:var(--dark)"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+        <input type="file" id="pe_coverFile" accept="image/*" style="display:none" onchange="onPresCoverSelected(event)">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('pe_coverFile').click()" style="background:rgba(17,103,118,.18);color:var(--teal-light);font-weight:700;font-size:12px;padding:8px 14px">📷 Importer une image</button>
+        <span id="pe_coverInfo" style="font-size:11px;color:var(--muted);font-style:italic;flex:1"></span>
+        <button type="button" class="btn-cancel" id="pe_coverClear" onclick="clearPresCover()" style="font-size:11px;padding:6px 10px;display:none">✕ Retirer</button>
+      </div>
+      <input id="pe_cover" placeholder="ou colle une URL : https://…" style="width:100%" oninput="refreshCoverPreview()">
+      <div style="font-size:10.5px;color:var(--muted);margin-top:4px">Photo affichée en grand sur la carte (importée ou URL externe)</div>
     </div>
     <div class="fg"><label>Couleur de fond</label>
       <select id="pe_color" style="width:100%">
@@ -8385,7 +8393,8 @@ function renderPresentations(){
     const icon=!p.cover ? '🎬' : '';
     const hasUrl=!!p.url;
     return `<div class="pres-card pc-${p.color||'teal'}" onclick="${hasUrl?`launchPres('${p.id}')`:`openPresEdit('${p.id}')`}">
-      <button class="pres-edit-btn" onclick="event.stopPropagation();openPresEdit('${p.id}')" title="Modifier">✏️</button>
+      <button class="pres-edit-btn" onclick="event.stopPropagation();openPresEdit('${p.id}')" title="Modifier" style="right:50px">✏️</button>
+      <button class="pres-edit-btn pres-del-btn" onclick="event.stopPropagation();confirmDeletePres('${p.id}')" title="Supprimer">✕</button>
       <div class="pres-cover" ${cover}>
         ${icon}
         <div class="pres-cover-overlay">
@@ -8436,8 +8445,60 @@ function openPresEdit(id){
   document.getElementById('pe_cover').value = p?.cover || '';
   document.getElementById('pe_color').value = p?.color || 'teal';
   document.getElementById('pe_delBtn').style.display = id ? 'inline-flex' : 'none';
+  document.getElementById('pe_coverFile').value = '';
+  document.getElementById('pe_coverInfo').textContent = '';
+  refreshCoverPreview();
   document.getElementById('presEditOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('pe_title').focus(),60);
+}
+
+function refreshCoverPreview(){
+  const val=document.getElementById('pe_cover').value.trim();
+  const prev=document.getElementById('pe_coverPreview');
+  const clrBtn=document.getElementById('pe_coverClear');
+  if(val){
+    prev.innerHTML=`<img src="${val.replace(/"/g,'&quot;')}" style="width:100%;height:120px;object-fit:cover;display:block">`;
+    prev.style.display='block';
+    clrBtn.style.display='inline-flex';
+  } else {
+    prev.style.display='none';
+    prev.innerHTML='';
+    clrBtn.style.display='none';
+  }
+}
+function clearPresCover(){
+  document.getElementById('pe_cover').value='';
+  document.getElementById('pe_coverFile').value='';
+  document.getElementById('pe_coverInfo').textContent='';
+  refreshCoverPreview();
+}
+function onPresCoverSelected(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Seules les images sont acceptées.'); ev.target.value=''; return; }
+  const info=document.getElementById('pe_coverInfo');
+  info.textContent='⏳ Optimisation...';
+  info.style.color='var(--muted)';
+  const reader=new FileReader();
+  reader.onload=function(){
+    const img=new Image();
+    img.onload=function(){
+      const max=800;
+      const ratio=Math.min(max/img.width, max/img.height, 1);
+      const w=Math.round(img.width*ratio), h=Math.round(img.height*ratio);
+      const cv=document.createElement('canvas');
+      cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      const dataUrl=cv.toDataURL('image/jpeg',0.82);
+      document.getElementById('pe_cover').value=dataUrl;
+      const sizeKB=Math.round(dataUrl.length*0.75/1024);
+      info.textContent=`✓ Image importée (${sizeKB} Ko, ${w}×${h})`;
+      info.style.color='var(--green)';
+      refreshCoverPreview();
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function savePres(){
@@ -8464,12 +8525,35 @@ function savePres(){
 
 function deletePres(){
   if(!_presEditingId) return;
-  if(!confirm('Supprimer cette présentation ?')) return;
-  presentations = presentations.filter(p=>p.id!==_presEditingId);
-  Storage.set('influ_presentations', presentations);
-  closeModal('presEditOverlay');
-  renderPresentations();
-  toast('Présentation supprimée');
+  confirmDeletePres(_presEditingId);
+}
+// Confirmation modale propre (depuis carte ou modal édition)
+function confirmDeletePres(id){
+  const p=presentations.find(x=>x.id===id); if(!p) return;
+  document.getElementById('presDelOverlay')?.remove();
+  const ov=document.createElement('div');
+  ov.id='presDelOverlay';
+  ov.className='overlay open';
+  ov.onclick=(e)=>{ if(e.target===ov) ov.remove(); };
+  ov.innerHTML=`<div class="modal" style="max-width:440px;text-align:center">
+    <div style="font-size:46px;margin-bottom:10px">🗑️</div>
+    <h2 style="margin-bottom:6px">Êtes-vous sûr de vouloir supprimer cette présentation ?</h2>
+    <div style="color:var(--muted);font-style:italic;margin-bottom:20px;word-break:break-word">« ${escapeHtml(p.title||'Sans titre')} »</div>
+    <div class="modal-actions" style="justify-content:center;gap:14px">
+      <button class="btn-cancel" id="pdNoBtn" style="min-width:110px">Non</button>
+      <button class="btn-primary" id="pdYesBtn" style="min-width:140px;background:#e74c3c">Oui, supprimer</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector('#pdNoBtn').onclick=()=>ov.remove();
+  ov.querySelector('#pdYesBtn').onclick=()=>{
+    presentations=presentations.filter(x=>x.id!==id);
+    Storage.set('influ_presentations',presentations);
+    closeModal('presEditOverlay');
+    ov.remove();
+    renderPresentations();
+    toast('🗑 Présentation supprimée');
+  };
 }
 
 // ╔══════════════════════════════════════════════════════════════
@@ -10254,4 +10338,3 @@ setTimeout(()=>{const lp=document.getElementById('lockPwd');if(lp)lp.focus();},1
 </script>
 </body>
 </html>
-
