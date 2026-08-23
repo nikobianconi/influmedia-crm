@@ -39,10 +39,15 @@
 })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<!-- Firebase SDK (synchro cloud) — chargé en best-effort, l'app marche sans -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<!-- Firebase SDK (synchro cloud) — chargé en best-effort, l'app marche sans.
+     defer : le navigateur les télécharge en parallèle du reste et ne les exécute
+     qu'une fois la page analysée. L'écran de connexion s'affiche donc sans
+     attendre plusieurs centaines de Ko de SDK. Rien au démarrage n'a besoin de
+     Firebase : la synchro ne démarre qu'après authentification, et Auth.ready()
+     patiente si quelqu'un tape son mot de passe avant la fin du chargement. -->
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
 :root{--teal:#116776;--teal-light:#1a8fa3;--coral:#FF5F5F;--coral-dark:#e04848;--cream:#F4F2ED;--dark:#0d1f24;--dark2:#122830;--dark3:#1a3540;--mid:#1e3d48;--muted:#6a9aaa;--border:rgba(255,255,255,0.07);--green:#2ecc71;--orange:#f39c12;--red:#e74c3c;--blue:#3498db;--purple:#9b59b6;--grey:#7f8c8d}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -3467,6 +3472,25 @@ const Auth = {
     }catch(e){ return false; }
   },
 
+  // Le SDK est chargé en defer : il peut ne pas être encore exécuté quand
+  // quelqu'un tape son mot de passe très vite. On patiente un court instant
+  // avant de conclure qu'on est hors-ligne.
+  ready(maxMs){
+    if(this.available()) return Promise.resolve(true);
+    // Machine clairement hors réseau : inutile d'attendre un SDK qui
+    // n'arrivera jamais, on bascule tout de suite sur le secours local.
+    try{ if(navigator.onLine===false) return Promise.resolve(false); }catch(e){}
+    const fin=Date.now()+(maxMs||8000);
+    return new Promise(resolve=>{
+      const tick=()=>{
+        if(this.available()) return resolve(true);
+        if(Date.now()>fin) return resolve(false);
+        setTimeout(tick,100);
+      };
+      setTimeout(tick,100);
+    });
+  },
+
   _friendly(code){
     switch(code){
       case 'auth/wrong-password':
@@ -3486,7 +3510,12 @@ const Auth = {
 
   // → {ok:true} | {ok:false, offline:true} | {ok:false, message:'…'}
   signInEmail(email, password){
-    if(!this.available()) return Promise.resolve({ok:false, offline:true});
+    return this.ready().then(pret=>{
+      if(!pret) return {ok:false, offline:true};
+      return this._signIn(email, password);
+    });
+  },
+  _signIn(email, password){
     return firebase.auth().signInWithEmailAndPassword(email, password)
       .then(()=>({ok:true}))
       .catch(e=>{
@@ -3518,7 +3547,12 @@ const Auth = {
 
   // Lien de réinitialisation envoyé à une adresse donnée
   sendResetEmail(email){
-    if(!this.available()) return Promise.resolve({ok:false, message:'Pas de connexion internet'});
+    return this.ready().then(pret=>{
+      if(!pret) return {ok:false, message:'Pas de connexion internet'};
+      return this._sendReset(email);
+    });
+  },
+  _sendReset(email){
     return firebase.auth().sendPasswordResetEmail(email)
       .then(()=>({ok:true}))
       .catch(e=>({ok:false, code:(e&&e.code)||'', message:this._friendly(e&&e.code)}));
@@ -4942,24 +4976,28 @@ function attemptLogin(){
   if(!m) return;
   const entered=document.getElementById('lockPwd').value;
   if(!entered){ _attemptLoginFail('Saisis ton mot de passe'); return; }
-  // SDK Firebase absent (hors-ligne au chargement) → secours local
-  if(!Auth.available()){ return _offlineLogin(m, entered); }
-  // Cet appareil ne connaît pas encore l'adresse de connexion de ce profil
-  // (première connexion après la mise en place, ou navigateur neuf) :
-  // on la demande une fois, elle sera mémorisée ensuite.
-  if(!hasRealEmail(m)){
-    lockShowEmailMode();
-    document.getElementById('lockPwd').value=entered;
-    document.getElementById('lockError').textContent="Première connexion sur cet appareil : indique ton adresse";
-    return;
-  }
   document.getElementById('lockError').textContent='';
   _lockBusy(true);
-  Auth.signIn(m, entered).then(res=>{
-    if(res.ok) return _finishLogin(m.id, entered);
-    _lockBusy(false);
-    if(res.offline) return _offlineLogin(m, entered);
-    _attemptLoginFail(res.message);
+  // Le SDK est différé : on lui laisse le temps d'arriver avant de conclure
+  // quoi que ce soit.
+  Auth.ready().then(pret=>{
+    // Vraiment pas de Firebase (hors-ligne) → secours local, lecture seule
+    if(!pret){ _lockBusy(false); return _offlineLogin(m, entered); }
+    // Cet appareil ne connaît pas encore l'adresse de ce profil : on la
+    // demande une fois, elle sera mémorisée ensuite.
+    if(!hasRealEmail(m)){
+      _lockBusy(false);
+      lockShowEmailMode();
+      document.getElementById('lockPwd').value=entered;
+      document.getElementById('lockError').textContent="Première connexion sur cet appareil : indique ton adresse";
+      return;
+    }
+    return Auth.signIn(m, entered).then(res=>{
+      if(res.ok) return _finishLogin(m.id, entered);
+      _lockBusy(false);
+      if(res.offline) return _offlineLogin(m, entered);
+      _attemptLoginFail(res.message);
+    });
   }).catch(e=>{
     _lockBusy(false);
     console.error('attemptLogin', e);
