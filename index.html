@@ -765,6 +765,11 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .postit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px 28px;padding:30px 8px 20px;perspective:1000px}
 .postit{position:relative;min-height:200px;padding:30px 18px 18px;border-radius:3px;cursor:pointer;transition:all .25s cubic-bezier(.4,.0,.2,1);display:flex;flex-direction:column;font-family:'Barlow',sans-serif;color:#222;box-shadow:0 2px 6px rgba(0,0,0,.35),0 8px 18px rgba(0,0,0,.28);user-select:none}
 /* ── To-Do : avancement d'une checklist dans une note ── */
+.postit-del-btn{position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.55);color:#8a2f24;font-size:12px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .15s;z-index:2}
+.postit:hover .postit-del-btn{opacity:1}
+.postit-del-btn:hover{background:#c0392b;color:#fff;border-color:#c0392b;transform:scale(1.1)}
+.todo-done-day .postit .postit-del-btn{opacity:.55}
+.todo-done-day .postit:hover .postit-del-btn{opacity:1}
 .postit-prog{font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 7px;border-radius:99px;background:rgba(0,0,0,.14);color:#1d3b42;white-space:nowrap}
 .postit-prog.full{background:rgba(39,174,96,.28);color:#12603a}
 
@@ -5307,8 +5312,13 @@ function renderTodo(){
     const notesHtml=t.notes
       ? `<div class="postit-notes">${renderNoteContent(t.notes, t.id, 'toggleTodoChecklistItem')}</div>`
       : '<div class="postit-notes" style="opacity:.4">—</div>';
+    // Suppression individuelle : uniquement sur une tâche terminée
+    const delBtn = st==='done'
+      ? `<button class="postit-del-btn" onclick="event.stopPropagation();askDeleteTodo('${t.id}')" title="Supprimer définitivement cette tâche">✕</button>`
+      : '';
     return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" title="Cliquer pour modifier">
       <button class="postit-status-btn ${stBtnCls}" onclick="event.stopPropagation();cycleTodoState('${t.id}')" title="${stBtnTitle}">${stBtnIcon}</button>
+      ${delBtn}
       <div class="postit-title">${escapeHtml(t.title)}</div>
       ${notesHtml}
       <div class="postit-meta">
@@ -5597,6 +5607,13 @@ function clearDoneTodos(){
   toast('🧹 '+cibles.length+' tâche(s) terminée(s) supprimée(s)');
 }
 
+// Demande de suppression d'une tâche terminée (réutilise la modale existante)
+function askDeleteTodo(id){
+  const t=todos.find(function(x){return String(x.id)===String(id)});
+  if(!t) return;
+  confirmTodoDelete(t);
+}
+
 // Modal de confirmation avant suppression d'un post-it
 function confirmTodoDelete(t){
   const overlay=document.getElementById('todoConfirmOverlay');
@@ -5622,7 +5639,7 @@ function _doDeleteTodo(id){
   todos=todos.filter(x=>String(x.id)!==id);
   Storage.set('influ_todos',todos);
   renderTodo();
-  toast('🎉 Tâche terminée — bien joué !');
+  toast('🗑 Tâche supprimée');
 }
 // Alias pour compatibilité
 function toggleTodoDone(id){cycleTodoState(id);}
