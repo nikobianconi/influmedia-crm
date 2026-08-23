@@ -292,6 +292,44 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cnotes-empty-board{text-align:center;padding:60px 20px;color:var(--muted);background:var(--dark2);border:1px dashed var(--border);border-radius:14px}
 .cnotes-section-h{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 4px 8px;display:flex;align-items:center;gap:8px}
 .cnotes-section-h.pinned{color:var(--coral)}
+.cnotes-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--dark2)}
+.cnrow{border-bottom:1px solid var(--border);transition:background .15s}
+.cnrow:last-child{border-bottom:0}
+.cnrow:hover{background:rgba(255,255,255,.03)}
+.cnrow[open]{background:rgba(255,255,255,.045)}
+.cnrow-head{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;list-style:none;user-select:none}
+.cnrow-head::-webkit-details-marker{display:none}
+.cnrow-dot{width:10px;height:10px;border-radius:50%;flex:none;background:#f1c40f;box-shadow:0 0 0 2px rgba(0,0,0,.18) inset}
+.cnrow.col-pink .cnrow-dot{background:#ff8fa3}.cnrow.col-purple .cnrow-dot{background:#b39ddb}
+.cnrow.col-blue .cnrow-dot{background:#7fc4e8}.cnrow.col-green .cnrow-dot{background:#8fd6a8}
+.cnrow.col-orange .cnrow-dot{background:#ffb168}.cnrow.col-yellow .cnrow-dot{background:#f1c40f}
+.cnrow-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.cnrow-title{font-weight:600;font-size:14.5px;color:var(--cream,#F4F2ED);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnrow-preview{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnrow-date{font-size:11.5px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.cnrow-prog{font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--muted);flex:none;white-space:nowrap}
+.cnrow-prog.full{background:rgba(39,174,96,.25);color:#6ee7a8}
+.cnrow-pin{font-size:11px}
+.cnrow.done .cnrow-title{text-decoration:line-through;opacity:.6}
+.cnrow-body{padding:2px 16px 14px 38px;border-top:1px dashed var(--border)}
+.cnrow-content{display:flex;gap:10px;align-items:flex-start;padding-top:10px}
+.cnrow-body .cnote-content{flex:1;color:var(--cream,#F4F2ED);font-size:14px;line-height:1.55}
+.cnrow-body .cnote-checkitem-text{color:var(--cream,#F4F2ED)}
+.cnrow-body .cnote-checkitem-circle{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.06)}
+.cnrow-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;font-size:11.5px;color:var(--muted)}
+.cnrow-acts{display:flex;gap:6px;align-items:center}
+.cnrow-done-btn{background:rgba(39,174,96,.16);color:#6ee7a8;border:1px solid rgba(39,174,96,.32);padding:4px 11px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;white-space:nowrap;transition:all .15s}
+.cnrow-done-btn:hover{background:rgba(39,174,96,.3)}
+.cnrow-done-btn.is-done{background:rgba(127,140,141,.18);color:var(--muted);border-color:rgba(127,140,141,.3)}
+[data-theme="day"] .cnrow-done-btn{background:rgba(22,163,74,.12);color:#15803d;border-color:rgba(22,163,74,.3)}
+[data-theme="day"] .cnrow-done-btn.is-done{background:rgba(15,23,42,.07);color:#475569;border-color:rgba(15,23,42,.15)}
+[data-theme="day"] .cnotes-list{background:#fff}
+[data-theme="day"] .cnrow:hover{background:rgba(15,23,42,.03)}
+[data-theme="day"] .cnrow[open]{background:rgba(15,23,42,.04)}
+[data-theme="day"] .cnrow-title{color:#0f172a}
+[data-theme="day"] .cnrow-body .cnote-content,[data-theme="day"] .cnrow-body .cnote-checkitem-text{color:#0f172a}
+[data-theme="day"] .cnrow-body .cnote-checkitem-circle{border-color:rgba(15,23,42,.32);background:#F8FAFC}
+[data-theme="day"] .cnrow-prog{background:rgba(15,23,42,.08);color:#475569}
 .cnotes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 
 .cnote{position:relative;border-radius:10px;padding:14px 14px 12px;color:#222;font-family:'Barlow',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.3),0 6px 14px rgba(0,0,0,.22);transition:all .2s;cursor:default;min-height:120px;display:flex;flex-direction:column}
@@ -726,6 +764,34 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 /* ===== POST-IT NOTES (To-Do) ===== */
 .postit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px 28px;padding:30px 8px 20px;perspective:1000px}
 .postit{position:relative;min-height:200px;padding:30px 18px 18px;border-radius:3px;cursor:pointer;transition:all .25s cubic-bezier(.4,.0,.2,1);display:flex;flex-direction:column;font-family:'Barlow',sans-serif;color:#222;box-shadow:0 2px 6px rgba(0,0,0,.35),0 8px 18px rgba(0,0,0,.28);user-select:none}
+/* ── To-Do : avancement d'une checklist dans une note ── */
+.postit-prog{font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 7px;border-radius:99px;background:rgba(0,0,0,.14);color:#1d3b42;white-space:nowrap}
+.postit-prog.full{background:rgba(39,174,96,.28);color:#12603a}
+
+/* ── To-Do : section des tâches terminées ── */
+.todo-done-wrap{margin-top:26px;border-top:1px solid var(--border);padding-top:16px}
+.todo-done-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.todo-done-title{font-family:'Barlow Condensed','Barlow',sans-serif;font-weight:800;font-size:17px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
+.todo-done-count{font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;background:rgba(127,140,141,.22);color:var(--muted);letter-spacing:0}
+.todo-done-clear{background:rgba(192,57,43,.14);color:#e07a6e;border:1px solid rgba(192,57,43,.3);padding:5px 12px;border-radius:99px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s}
+.todo-done-clear:hover{background:rgba(192,57,43,.26);color:#ff8f80}
+.todo-done-day{margin-bottom:12px}
+.todo-done-day>summary{cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--muted);padding:6px 2px;display:flex;align-items:center;gap:8px;user-select:none}
+.todo-done-day>summary::-webkit-details-marker{display:none}
+.todo-done-day>summary::before{content:'▸';display:inline-block;transition:transform .15s;font-size:11px}
+.todo-done-day[open]>summary::before{transform:rotate(90deg)}
+.todo-done-day>summary:hover{color:var(--teal-light,#2fa3b8)}
+/* Les post-its terminés : grisés, mis de côté, mais lisibles */
+.todo-done-day .postit{opacity:.5;filter:grayscale(.85);min-height:150px;transform:none!important;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.todo-done-day .postit:hover{opacity:.85;filter:grayscale(.4)}
+.todo-done-day .postit .postit-title{text-decoration:line-through;text-decoration-thickness:1.5px}
+
+[data-theme="day"] .postit-prog{background:rgba(15,23,42,.1);color:#0f172a}
+[data-theme="day"] .postit-prog.full{background:rgba(22,163,74,.2);color:#14532d}
+[data-theme="day"] .todo-done-clear{background:rgba(220,38,38,.1);color:#b91c1c;border-color:rgba(220,38,38,.28)}
+[data-theme="day"] .todo-done-clear:hover{background:rgba(220,38,38,.18);color:#991b1b}
+[data-theme="day"] .todo-done-count{background:rgba(15,23,42,.1);color:#475569}
+
 .postit::before{content:'';position:absolute;left:50%;top:-2px;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a8a,#c0392b 70%,#7a1f12);box-shadow:0 3px 4px rgba(0,0,0,.45),inset -2px -3px 4px rgba(0,0,0,.3),inset 2px 2px 3px rgba(255,255,255,.4);z-index:3}
 .postit:nth-child(4n+1){transform:rotate(-1.6deg)}
 .postit:nth-child(4n+2){transform:rotate(1.2deg)}
@@ -2784,7 +2850,13 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
         <option value="">— Personne —</option>
       </select></div>
     </div>
-    <div class="fg"><label>Notes</label><input id="td_notes" placeholder="Détails..."></div>
+    <div class="fg">
+      <label>Détails</label>
+      <textarea id="td_notes" rows="5" placeholder="Un point par ligne.&#10;Commence une ligne par [ ] pour en faire une case à cocher."></textarea>
+      <div style="margin-top:6px">
+        <button type="button" class="btn-mini" onclick="insertTodoCheckline()">☑️ Ajouter une ligne à cocher</button>
+      </div>
+    </div>
     <!-- Champ Propriétaire visible UNIQUEMENT à l'admin (pour ré-attribuer en cas de migration buggée) -->
     <div class="fg" id="td_owner_row" style="display:none">
       <label>👑 Propriétaire <span style="font-size:10px;color:var(--muted);font-weight:400">(ADMIN — pour ré-attribuer une todo mal assignée)</span></label>
@@ -5215,42 +5287,80 @@ function renderTodo(){
   });
 
   const body=document.getElementById('todoBody');
-  // Always show the "+" tile, even when empty
-  let html='<div class="postit-grid">';
-  if(!filtered.length){
-    html+=`<div class="postit-add" onclick="openTodoModal()"><span class="pl">+</span><span>Nouvelle note</span></div>`;
-    html+='</div>';
-    html+=`<div style="text-align:center;color:var(--muted);font-size:12px;margin-top:18px;font-style:italic">${todoFilter==='done'?'Aucune note terminée pour l\'instant.':'Aucune note ici. Ajoute ta première !'}</div>`;
-    body.innerHTML=html;
-    updateNavTodoBadge();
-    return;
-  }
 
-  html+=filtered.map(t=>{
+  // Une carte de todo (active ou terminée)
+  function carteTodo(t){
     const st=todoState(t);
     const due=st==='done'?{txt:'✓ Fait',cls:'done'}:fmtDue(t.due);
     const assignee=teamMembers.find(m=>m.id===t.assignee);
     const asgHtml=assignee?`<span class="postit-assignee" title="Assigné à ${escapeHtml(assignee.name)}">👤 ${escapeHtml((assignee.name||'').split(' ')[0])}</span>`:'';
-    // Créateur (owner) — surtout utile pour les todos d'équipe
     const owner=teamMembers.find(m=>m.id===t.owner);
-    const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${escapeHtml(owner.name)}">✍️ ${escapeHtml((owner.name||'').split(' ')[0])}</span>`:'';
+    const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${escapeHtml(owner.name)}">✏️ ${escapeHtml((owner.name||'').split(' ')[0])}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
     const stBtnCls=st==='in_progress'?'in-progress':(st==='done'?'done':'');
     const stBtnIcon=st==='in_progress'?'⏱':(st==='done'?'✓':'○');
-    const stBtnTitle=st==='in_progress'?'En cours · Clic = terminer (supprime la tâche)':'À faire · Clic = mettre en cours';
+    const stBtnTitle=st==='in_progress'?'En cours · Clic = marquer comme fait'
+                     :(st==='done'?'Fait · Clic = réactiver':'À faire · Clic = mettre en cours');
+    // Détails : lignes « [ ] » rendues en cases à cocher, le reste en texte
+    const prog=checklistProgress(t.notes);
+    const progHtml=prog.total?`<span class="postit-prog ${prog.faites===prog.total?'full':''}">☑ ${prog.faites}/${prog.total}</span>`:'';
+    const notesHtml=t.notes
+      ? `<div class="postit-notes">${renderNoteContent(t.notes, t.id, 'toggleTodoChecklistItem')}</div>`
+      : '<div class="postit-notes" style="opacity:.4">—</div>';
     return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" title="Cliquer pour modifier">
       <button class="postit-status-btn ${stBtnCls}" onclick="event.stopPropagation();cycleTodoState('${t.id}')" title="${stBtnTitle}">${stBtnIcon}</button>
       <div class="postit-title">${escapeHtml(t.title)}</div>
-      ${t.notes?`<div class="postit-notes">${escapeHtml(t.notes)}</div>`:'<div class="postit-notes" style="opacity:.4">—</div>'}
+      ${notesHtml}
       <div class="postit-meta">
         <span class="postit-due ${due.cls}">${due.txt}</span>
+        ${progHtml}
         ${ownerHtml}
         ${asgHtml}
       </div>
     </div>`;
-  }).join('');
+  }
+
+  const actives = filtered.filter(t=>todoState(t)!=='done');
+  const faites  = filtered.filter(t=>todoState(t)==='done')
+                          .sort((a,b)=>String(b.completedAt||'').localeCompare(String(a.completedAt||'')));
+
+  let html='<div class="postit-grid">';
+  html+=actives.map(carteTodo).join('');
   html+=`<div class="postit-add" onclick="openTodoModal()"><span class="pl">+</span><span>Nouvelle note</span></div>`;
   html+='</div>';
+
+  if(!actives.length){
+    html+=`<div style="text-align:center;color:var(--muted);font-size:12px;margin-top:14px;font-style:italic">Rien à faire ici pour le moment 🎉</div>`;
+  }
+
+  // ── Section « Terminées », groupée par jour ──
+  if(faites.length){
+    const jour=iso=>{
+      if(!iso) return 'Sans date';
+      const d=new Date(iso); const a=new Date(); a.setHours(0,0,0,0);
+      const j=new Date(d); j.setHours(0,0,0,0);
+      const ecart=Math.round((a-j)/86400000);
+      if(ecart===0) return "Aujourd'hui";
+      if(ecart===1) return 'Hier';
+      return d.toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'});
+    };
+    const groupes={}; const ordre=[];
+    faites.forEach(t=>{ const k=jour(t.completedAt); if(!groupes[k]){groupes[k]=[];ordre.push(k);} groupes[k].push(t); });
+    html+=`<div class="todo-done-wrap">
+      <div class="todo-done-head">
+        <span class="todo-done-title">✓ Terminées <span class="todo-done-count">${faites.length}</span></span>
+        <button class="todo-done-clear" onclick="event.stopPropagation();clearDoneTodos()" title="Supprimer définitivement les tâches terminées">🧹 Vider</button>
+      </div>`;
+    ordre.forEach((k,i)=>{
+      const ouvert = (k==="Aujourd'hui") || i===0;   // le jour le plus récent est déplié
+      html+=`<details class="todo-done-day"${ouvert?' open':''}>
+        <summary>${escapeHtml(k)} <span class="todo-done-count">${groupes[k].length}</span></summary>
+        <div class="postit-grid">${groupes[k].map(carteTodo).join('')}</div>
+      </details>`;
+    });
+    html+='</div>';
+  }
+
   body.innerHTML=html;
   updateNavTodoBadge();
 }
@@ -5452,10 +5562,39 @@ function cycleTodoState(id){
     Storage.set('influ_todos',todos);
     renderTodo();
     toast('⏱ Tâche mise en cours');
+  } else if(cur==='in_progress'){
+    // En cours → Fait. La tâche N'EST PLUS SUPPRIMÉE : elle bascule en grisé
+    // dans la section « Terminées », pour pouvoir faire le point sur sa journée.
+    t.state='done';
+    t.done=true;
+    t.completedAt=new Date().toISOString();
+    Storage.set('influ_todos',todos);
+    renderTodo();
+    toast('✅ Terminé — bien joué !');
   } else {
-    // En cours (ou done legacy) → Fini = confirmation puis suppression
-    confirmTodoDelete(t);
+    // Fait → retour à faire (on a coché par erreur)
+    t.state='todo';
+    t.done=false;
+    t.completedAt=null;
+    Storage.set('influ_todos',todos);
+    renderTodo();
+    toast('↩️ Tâche réactivée');
   }
+}
+
+// Vider les tâches terminées du bucket courant (suppression définitive,
+// avec confirmation — c'est le seul endroit qui supprime vraiment).
+function clearDoneTodos(){
+  const cibles=todos.filter(function(t){
+    return t.bucket===todoBucket && todoVisibleToMe(t) && todoState(t)==='done';
+  });
+  if(!cibles.length){ toast('Aucune tâche terminée à vider'); return; }
+  if(!confirm('Supprimer définitivement '+cibles.length+' tâche'+(cibles.length>1?'s':'')+' terminée'+(cibles.length>1?'s':'')+' ?\n\nCette action est irréversible.')) return;
+  const ids={}; cibles.forEach(function(t){ ids[String(t.id)]=1; });
+  todos=todos.filter(function(t){ return !ids[String(t.id)]; });
+  Storage.set('influ_todos',todos);
+  renderTodo();
+  toast('🧹 '+cibles.length+' tâche(s) terminée(s) supprimée(s)');
 }
 
 // Modal de confirmation avant suppression d'un post-it
@@ -5487,6 +5626,43 @@ function _doDeleteTodo(id){
 }
 // Alias pour compatibilité
 function toggleTodoDone(id){cycleTodoState(id);}
+
+// Coche / décoche une ligne « [ ] » dans les détails d'une todo
+// Insère une ligne « [ ] » dans le champ Détails, au niveau du curseur
+function insertTodoCheckline(){
+  const ta=document.getElementById('td_notes');
+  if(!ta) return;
+  const v=ta.value, pos=ta.selectionStart;
+  const debut = v.lastIndexOf('\n', Math.max(0,pos-1)) + 1;
+  const fin   = v.indexOf('\n', pos) < 0 ? v.length : v.indexOf('\n', pos);
+  const ligne = v.slice(debut, fin);
+  if(/^\s*(?:[-*]\s*)?\[[ xX]\]/.test(ligne)){ ta.focus(); return; }  // déjà une case
+  let curseur;
+  if(ligne.trim()===''){
+    ta.value = v.slice(0,debut) + '[ ] ' + v.slice(debut);   // ligne vide : on la transforme
+    curseur = debut + 4;
+  } else {
+    ta.value = v.slice(0,fin) + '\n[ ] ' + v.slice(fin);     // sinon : nouvelle ligne en dessous
+    curseur = fin + 5;
+  }
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = curseur;
+}
+
+function toggleTodoChecklistItem(id,lineIdx){
+  const t=todos.find(function(x){return String(x.id)===String(id)});
+  if(!t) return;
+  const lines=(t.notes||'').split('\n');
+  if(lineIdx<0||lineIdx>=lines.length) return;
+  const m=lines[lineIdx].match(/^(\s*)((?:[-*]\s*)?)\[([ xX])\](\s?.*)$/);
+  if(!m) return;
+  const coche=m[3].toLowerCase()==='x';
+  lines[lineIdx]=m[1]+m[2]+'['+(coche?' ':'x')+']'+m[4];
+  t.notes=lines.join('\n');
+  t.updatedAt=new Date().toISOString();
+  Storage.set('influ_todos',todos);
+  renderTodo();
+}
 
 function deleteTodo(id){
   id = String(id);
@@ -7466,7 +7642,8 @@ function cnoteLabel(n){
 }
 
 // Rendu du contenu d'une note : lignes "[ ] item" → ronds cliquables, reste → texte+liens
-function renderNoteContent(content, noteId){
+function renderNoteContent(content, noteId, toggleFn){
+  toggleFn = toggleFn || 'toggleNoteChecklistItem';
   if(!content) return '';
   const lines=content.split('\n');
   let html='', buffer=[];
@@ -7484,7 +7661,7 @@ function renderNoteContent(content, noteId){
       flush();
       const checked=m[2].toLowerCase()==='x';
       html+=`<div class="cnote-checkitem ${checked?'checked':''}">
-        <div class="cnote-checkitem-circle" onclick="event.stopPropagation();toggleNoteChecklistItem(${noteId},${idx})" title="${checked?'Décocher':'Cocher'}">${checked?'✓':''}</div>
+        <div class="cnote-checkitem-circle" onclick="event.stopPropagation();${toggleFn}('${noteId}',${idx})" title="${checked?'Décocher':'Cocher'}">${checked?'✓':''}</div>
         <div class="cnote-checkitem-text">${linkify(m[3])}</div>
       </div>`;
     } else {
@@ -7495,8 +7672,18 @@ function renderNoteContent(content, noteId){
   return html;
 }
 
+// Compte les cases d'une checklist : {faites, total}
+function checklistProgress(content){
+  let faites=0,total=0;
+  (content||'').split('\n').forEach(function(l){
+    const m=l.match(/^(\s*)(?:[-*]\s*)?\[([ xX])\]\s?(.*)$/);
+    if(m){ total++; if(m[2].toLowerCase()==='x') faites++; }
+  });
+  return {faites:faites,total:total};
+}
+
 function toggleNoteChecklistItem(noteId,lineIdx){
-  const n=clientNotes.find(x=>x.id===noteId);if(!n) return;
+  const n=clientNotes.find(x=>String(x.id)===String(noteId));if(!n) return;
   const lines=(n.content||'').split('\n');
   if(lineIdx<0||lineIdx>=lines.length) return;
   const m=lines[lineIdx].match(/^(\s*)((?:[-*]\s*)?)\[([ xX])\](\s?.*)$/);
@@ -7609,7 +7796,7 @@ function renderClientNotes(){
   // En vue "toutes", on groupe par client. En vue client/libre, on affiche direct.
   if(cnSelectedClient===null){
     if(pinned.length){
-      html+=`<div class="cnotes-section-h pinned">📌 Épinglées (${pinned.length})</div><div class="cnotes-grid">${pinned.map(cnoteCardHtml).join('')}</div>`;
+      html+=`<div class="cnotes-section-h pinned">📌 Épinglées (${pinned.length})</div><div class="cnotes-list">${pinned.map(cnoteCardHtml).join('')}</div>`;
     }
     // Group normal by client ; les notes libres dans leur propre groupe
     const byClient={}; const freeNotes=[];
@@ -7618,22 +7805,22 @@ function renderClientNotes(){
       if(!byClient[n.clientId])byClient[n.clientId]=[];byClient[n.clientId].push(n);
     });
     Object.keys(byClient).sort((a,b)=>cnoteClientName(+a).localeCompare(cnoteClientName(+b),'fr')).forEach(cid=>{
-      html+=`<div class="cnotes-section-h">${cnoteClientName(+cid)} (${byClient[cid].length})</div><div class="cnotes-grid">${byClient[cid].map(cnoteCardHtml).join('')}</div>`;
+      html+=`<div class="cnotes-section-h">${cnoteClientName(+cid)} (${byClient[cid].length})</div><div class="cnotes-list">${byClient[cid].map(cnoteCardHtml).join('')}</div>`;
     });
     if(freeNotes.length){
-      html+=`<div class="cnotes-section-h" style="color:var(--coral)">📌 Notes libres (${freeNotes.length})</div><div class="cnotes-grid">${freeNotes.map(cnoteCardHtml).join('')}</div>`;
+      html+=`<div class="cnotes-section-h" style="color:var(--coral)">📌 Notes libres (${freeNotes.length})</div><div class="cnotes-list">${freeNotes.map(cnoteCardHtml).join('')}</div>`;
     }
   } else {
     if(pinned.length){
-      html+=`<div class="cnotes-section-h pinned">📌 Épinglées</div><div class="cnotes-grid">${pinned.map(cnoteCardHtml).join('')}</div>`;
+      html+=`<div class="cnotes-section-h pinned">📌 Épinglées</div><div class="cnotes-list">${pinned.map(cnoteCardHtml).join('')}</div>`;
     }
     if(normal.length){
-      html+=`<div class="cnotes-section-h">Idées (${normal.length})</div><div class="cnotes-grid">${normal.map(cnoteCardHtml).join('')}</div>`;
+      html+=`<div class="cnotes-section-h">Idées (${normal.length})</div><div class="cnotes-list">${normal.map(cnoteCardHtml).join('')}</div>`;
     }
   }
   // Section Réalisées (commune aux deux vues)
   if(doneNotes.length){
-    html+=`<div class="cnotes-section-h done">✅ Réalisées (${doneNotes.length})</div><div class="cnotes-grid">${doneNotes.map(cnoteCardHtml).join('')}</div>`;
+    html+=`<div class="cnotes-section-h done">✅ Réalisées (${doneNotes.length})</div><div class="cnotes-list">${doneNotes.map(cnoteCardHtml).join('')}</div>`;
   }
   if(!html) html=`<div class="cnotes-empty-board"><div style="font-size:34px;margin-bottom:8px">💡</div><div style="font-size:14px;color:var(--cream);font-weight:600">Aucune idée à afficher</div></div>`;
   body.innerHTML=html;
@@ -7648,33 +7835,60 @@ function toggleCnoteDone(id){
   toast(n.done?'✅ Idée réalisée — bravo !':'↩️ Idée réactivée');
 }
 
+// État déplié des notes (préservé entre deux rendus)
+let cnOuvertes = {};
+function cnRowToggled(id, ouvert){
+  if(ouvert) cnOuvertes[String(id)] = 1; else delete cnOuvertes[String(id)];
+}
+
+// Première ligne de contenu utile, pour l'aperçu de la liste
+function cnoteApercu(contenu){
+  const lignes=(contenu||'').split('\n');
+  for(let i=0;i<lignes.length;i++){
+    const l=lignes[i].replace(/^\s*(?:[-*]\s*)?\[[ xX]\]\s?/,'').trim();
+    if(l) return l.length>90 ? l.slice(0,90)+'…' : l;
+  }
+  return 'Note vide';
+}
+
+// Une note = une ligne de liste (style Notes d'Apple), dépliable
 function cnoteCardHtml(n){
   const author=teamMembers.find(m=>m.id===n.author);
-  const authorAv=author?(author.avatar?`<img src="${author.avatar}" style="width:100%;height:100%;object-fit:cover">`:author.initials):'?';
+  const authorAv=author?(author.avatar?`<img src="${author.avatar}" style="width:100%;height:100%;object-fit:cover">`:escapeHtml(author.initials||'?')):'?';
   const authorColor=author?author.color:'var(--teal)';
   const date=n.updatedAt||n.createdAt;
   const dateStr=date?new Date(date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'';
   const tagsHtml=(n.tags||[]).map(t=>`<span class="cnote-tag">${escapeHtml(t)}</span>`).join('');
-  const clientLabel=cnSelectedClient===null?'':'';
-  const freeTitleHtml=(!n.clientId&&n.title)?`<div class="cnote-free-title">📌 ${escapeHtml(n.title)}</div>`:'';
-  return `<div class="cnote col-${n.color||'yellow'} ${n.pinned?'pinned':''} ${n.done?'done':''}" data-nid="${n.id}">
-    ${n.pinned&&!n.done?'<div class="cnote-pin-marker">ÉPINGLÉE</div>':''}
-    <div class="cnote-actions">
-      <button class="cnote-act ${n.pinned?'pin-active':''}" onclick="toggleCnotePin(${n.id})" title="${n.pinned?'Désépingler':'Épingler'}">📌</button>
-      <button class="cnote-act" onclick="editClientNote(${n.id})" title="Modifier">✏️</button>
-      <button class="cnote-act" onclick="deleteClientNote(${n.id})" title="Supprimer">✕</button>
+  const titre = n.title ? escapeHtml(n.title) : (n.clientId ? escapeHtml(cnoteClientName(n.clientId)) : 'Note libre');
+  const prog=checklistProgress(n.content);
+  const progHtml=prog.total?`<span class="cnrow-prog ${prog.faites===prog.total?'full':''}">☑ ${prog.faites}/${prog.total}</span>`:'';
+  const ouvert = cnOuvertes[String(n.id)] ? ' open' : '';
+  return `<details class="cnrow col-${n.color||'yellow'} ${n.pinned?'pinned':''} ${n.done?'done':''}" data-nid="${n.id}"${ouvert} ontoggle="cnRowToggled(${n.id}, this.open)">
+    <summary class="cnrow-head">
+      <span class="cnrow-dot" title="Couleur de la note"></span>
+      <span class="cnrow-main">
+        <span class="cnrow-title">${n.pinned?'<span class="cnrow-pin" title="Épinglée">📌</span> ':''}${titre}</span>
+        <span class="cnrow-preview">${escapeHtml(cnoteApercu(n.content))}</span>
+      </span>
+      ${progHtml}
+      <span class="cnrow-date">${dateStr}</span>
+    </summary>
+    <div class="cnrow-body">
+      <div class="cnrow-content">
+        <div class="cnote-content">${renderNoteContent(n.content||'',n.id)}</div>
+      </div>
+      ${tagsHtml?`<div class="cnote-tags">${tagsHtml}</div>`:''}
+      <div class="cnrow-foot">
+        <span class="cnote-author"><span class="cnote-author-av" style="background:${authorColor}">${authorAv}</span>${escapeHtml(author?(author.name||'').split(' ')[0]:'?')}</span>
+        <span class="cnrow-acts">
+          <button class="cnrow-done-btn ${n.done?'is-done':''}" onclick="event.stopPropagation();toggleCnoteDone(${n.id})" title="${n.done?'Réactiver cette idée':'Marquer toute l\'idée comme réalisée'}">${n.done?'↩️ Réactiver':'✓ Idée réalisée'}</button>
+          <button class="cnote-act ${n.pinned?'pin-active':''}" onclick="event.stopPropagation();toggleCnotePin(${n.id})" title="${n.pinned?'Désépingler':'Épingler'}">📌</button>
+          <button class="cnote-act" onclick="event.stopPropagation();editClientNote(${n.id})" title="Modifier">✏️</button>
+          <button class="cnote-act" onclick="event.stopPropagation();deleteClientNote(${n.id})" title="Supprimer">✕</button>
+        </span>
+      </div>
     </div>
-    ${freeTitleHtml}
-    <div class="cnote-top">
-      <div class="cnote-check" onclick="toggleCnoteDone(${n.id})" title="${n.done?'Marquer note non réalisée':'Marquer toute la note réalisée ✓'}">${n.done?'✓':''}</div>
-      <div class="cnote-content">${renderNoteContent(n.content||'',n.id)}</div>
-    </div>
-    ${tagsHtml?`<div class="cnote-tags">${tagsHtml}</div>`:''}
-    <div class="cnote-meta">
-      <span class="cnote-author"><span class="cnote-author-av" style="background:${authorColor}">${authorAv}</span>${escapeHtml(author?(author.name||'').split(' ')[0]:'?')}</span>
-      <span>${dateStr}</span>
-    </div>
-  </div>`;
+  </details>`;
 }
 
 function selectCnoteClient(clientId){
