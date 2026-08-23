@@ -2330,16 +2330,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 <!-- ═══════════════════════════════════════════════════════════════
      COMMERCE — Documents de présentation
      ═══════════════════════════════════════════════════════════════ -->
-<div id="tab-presentations" class="tab-content">
-  <div class="page-header">
-    <div class="page-title">🎬 <span>Documents de présentation</span></div>
-    <button class="btn-primary" onclick="openPresEdit(null)">＋ Nouvelle présentation</button>
-  </div>
-  <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">
-    Bibliothèque commune des présentations à montrer aux clients. Cliquer sur <strong>▶ Lancer</strong> pour ouvrir la présentation en plein écran ou dans un nouvel onglet.
-  </div>
-  <div class="pres-grid" id="presGrid"></div>
-</div>
+
 
 <!-- ═══════════════════════════════════════════════════════════════
      COMMERCE — Leads prospects (pipeline commercial perso)
@@ -2402,43 +2393,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 </div>
 
 <!-- Modal édition présentation -->
-<div class="overlay" id="presEditOverlay" onclick="closeBg(event,'presEditOverlay')">
-  <div class="modal" style="max-width:560px">
-    <h2 id="presEditTitle">🎬 Nouvelle présentation</h2>
-    <div class="fg"><label>Titre *</label><input id="pe_title" placeholder="Ex: Présentation Agence Influmedia 2026"></div>
-    <div class="fg"><label>Description (optionnel)</label><textarea id="pe_desc" rows="2" placeholder="Pitch complet 15 min pour nouveaux clients"></textarea></div>
-    <div class="fg">
-      <label>🔗 URL du document *</label>
-      <input id="pe_url" placeholder="https://…" type="url" style="width:100%">
-      <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5">Colle l'URL d'un document Google Drive, Google Slides, Canva, Notion, Dropbox, ou tout lien direct vers un PDF ou une image.</div>
-    </div>
-    <div class="fg"><label>🖼 Image de couverture (optionnel)</label>
-      <div id="pe_coverPreview" style="display:none;margin-bottom:8px;border-radius:10px;overflow:hidden;border:1px solid var(--border);max-height:120px;background:var(--dark)"></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
-        <input type="file" id="pe_coverFile" accept="image/*" style="display:none" onchange="onPresCoverSelected(event)">
-        <button type="button" class="btn-cancel" onclick="document.getElementById('pe_coverFile').click()" style="background:rgba(17,103,118,.18);color:var(--teal-light);font-weight:700;font-size:12px;padding:8px 14px">📷 Importer une image</button>
-        <span id="pe_coverInfo" style="font-size:11px;color:var(--muted);font-style:italic;flex:1"></span>
-        <button type="button" class="btn-cancel" id="pe_coverClear" onclick="clearPresCover()" style="font-size:11px;padding:6px 10px;display:none">✕ Retirer</button>
-      </div>
-      <input id="pe_cover" placeholder="ou colle une URL : https://…" style="width:100%" oninput="refreshCoverPreview()">
-      <div style="font-size:10.5px;color:var(--muted);margin-top:4px">Photo affichée en grand sur la carte (importée ou URL externe)</div>
-    </div>
-    <div class="fg"><label>Couleur de fond</label>
-      <select id="pe_color" style="width:100%">
-        <option value="teal">🟢 Teal (défaut)</option>
-        <option value="coral">🟠 Corail</option>
-        <option value="blue">🔵 Bleu</option>
-        <option value="purple">🟣 Violet</option>
-        <option value="green">💚 Vert</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('presEditOverlay')">Annuler</button>
-      <button class="btn-cancel" id="pe_delBtn" onclick="deletePres()" style="background:rgba(231,76,60,.15);color:var(--coral);display:none">✕ Supprimer</button>
-      <button class="btn-primary" onclick="savePres()" style="background:var(--teal)">💾 Enregistrer</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- Modal édition lead -->
 <div class="overlay" id="leadEditOverlay" onclick="closeBg(event,'leadEditOverlay')">
@@ -2573,26 +2528,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 </div>
 
 <!-- CALENDRIER ÉDITORIAL -->
-<div id="tab-editorial" class="tab-content">
-  <div class="page-header">
-    <div class="page-title">🗓️ <span>Calendrier éditorial</span></div>
-    <button class="btn-primary" onclick="openEditorialModal()">＋ Nouveau contenu</button>
-  </div>
-  <div class="ed-topbar">
-    <select class="ed-client-sel" id="edClientFilter" onchange="setEdClientFilter(this.value)"></select>
-    <div class="ed-views">
-      <button class="ed-view-btn active" data-view="cal" onclick="setEdView('cal')">📅 Mois</button>
-      <button class="ed-view-btn" data-view="week" onclick="setEdView('week')">📆 Semaine</button>
-      <button class="ed-view-btn" data-view="list" onclick="setEdView('list')">☰ Liste</button>
-      <button class="ed-view-btn" data-view="kanban" onclick="setEdView('kanban')">📋 Kanban</button>
-    </div>
-    <div class="search-box" style="margin-left:auto">
-      <span style="color:var(--muted)">🔍</span>
-      <input type="text" id="edSearch" placeholder="Rechercher..." oninput="renderEditorial()">
-    </div>
-  </div>
-  <div id="editorialBody"></div>
-</div>
+
 
 <!-- FICHES CONTACTS -->
 <div id="tab-contacts" class="tab-content">
@@ -2626,27 +2562,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 </div>
 
 <!-- ARTICLES DE BLOG -->
-<div id="tab-articles" class="tab-content">
-  <div class="page-header">
-    <div class="page-title">📰 <span>Articles de blog</span></div>
-    <button class="btn-primary" onclick="openArticleEditor()">＋ Nouvel article</button>
-  </div>
-  <div class="fin-stats" id="articlesStats"></div>
-  <div class="toolbar">
-    <div class="search-box">
-      <span style="color:var(--muted)">🔍</span>
-      <input type="text" id="artSearch" placeholder="Rechercher (titre / tag / contenu)..." oninput="renderArticles()">
-    </div>
-    <div class="filter-pills" id="artFilters"></div>
-    <select class="sort-sel" id="artSortSel" onchange="renderArticles()">
-      <option value="updated">Récemment modifiés</option>
-      <option value="created">Plus récents</option>
-      <option value="title">Titre A→Z</option>
-      <option value="status">Par statut</option>
-    </select>
-  </div>
-  <div class="art-grid" id="articlesBody"></div>
-</div>
+
 
 <!-- AGENDA COMMUN -->
 <div id="tab-agenda" class="tab-content">
@@ -2944,38 +2860,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   </div>
 </div>
 
-<!-- EDITORIAL MODAL -->
-<div class="overlay" id="edOverlay" onclick="closeBg(event,'edOverlay')">
-  <div class="modal">
-    <h2 id="edModalTitle">🗓️ Nouveau contenu</h2>
-    <div class="fg"><label>Sujet / Titre du post *</label><input id="ed_title" placeholder="Ex: Reels PPF + visuel Insta"></div>
-    <div class="fg-row">
-      <div class="fg"><label>Client</label><select id="ed_client"></select></div>
-      <div class="fg"><label>Plateforme</label><select id="ed_platform">
-        <option>Instagram</option><option>Facebook</option><option>LinkedIn</option><option>TikTok</option><option>YouTube</option><option>Google Business</option><option>Site web</option><option>Autre</option>
-      </select></div>
-    </div>
-    <div class="fg-row">
-      <div class="fg"><label>Date prévue</label><input id="ed_date" type="date"></div>
-      <div class="fg"><label>Statut</label><select id="ed_status">
-        <option value="todo">📝 À produire</option>
-        <option value="review">👀 En validation</option>
-        <option value="ready">✅ Prêt à publier</option>
-        <option value="published">🚀 Publié</option>
-      </select></div>
-    </div>
-    <div class="fg">
-      <label>🖼 URL du visuel <span style="font-size:10px;color:var(--muted);font-weight:400">(Drive, Dropbox, iCloud, Cloudinary, etc. — image OU vidéo)</span></label>
-      <input id="ed_visual" placeholder="https://drive.google.com/... ou https://media.giphy.com/...gif" oninput="edPreviewVisual()">
-    </div>
-    <div class="ed-modal-preview" id="edPreviewBox"><div class="ph">Colle une URL d'image/vidéo pour voir l'aperçu</div></div>
-    <div class="fg"><label>📝 Notes / Brief / Description</label><textarea id="ed_notes" rows="7" placeholder="Description complète du post, brief créatif, hashtags, mentions, liens, idées de visuels, angles éditoriaux..." style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:13px;padding:11px 14px;outline:none;line-height:1.5;resize:vertical;min-height:140px"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('edOverlay')">Annuler</button>
-      <button class="btn-save" onclick="saveEditorial()"><span id="edSaveLabel">Enregistrer</span></button>
-    </div>
-  </div>
-</div>
+
 
 <!-- CONTACT FICHE MODAL -->
 <div class="overlay" id="contactOverlay" onclick="closeBg(event,'contactOverlay')">
@@ -3121,92 +3006,10 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 </div>
 
 <!-- ARTICLE EDITOR MODAL -->
-<div class="overlay" id="artEditorOverlay" onclick="closeBg(event,'artEditorOverlay')">
-  <div class="modal art-editor">
-    <h2 id="artEditorTitle">📰 Nouvel article</h2>
-    <div class="editor-row">
-      <div class="editor-main">
-        <div class="fg"><label>Titre *</label><input id="ar_title" placeholder="Ex: 5 conseils pour booster votre référencement local" style="font-size:16px;font-weight:600"></div>
-        <div class="fg">
-          <label>Image de couverture</label>
-          <div class="art-cover-upload" id="ar_coverPreview" onclick="document.getElementById('ar_coverInput').click()">
-            <span id="ar_coverHint">📷 Cliquer pour ajouter une image</span>
-            <button class="remove-cover" onclick="event.stopPropagation();clearArticleCover()">✕</button>
-          </div>
-          <input type="file" id="ar_coverInput" accept="image/*" style="display:none" onchange="onArticleCoverSelected(event)">
-        </div>
-        <div class="fg">
-          <label>Contenu (Markdown supporté)</label>
-          <div class="art-md-toolbar">
-            <button type="button" class="art-md-btn bold" onclick="mdInsert('**','**','gras')" title="Gras">B</button>
-            <button type="button" class="art-md-btn italic" onclick="mdInsert('*','*','italique')" title="Italique">I</button>
-            <button type="button" class="art-md-btn" onclick="mdInsert('# ','','Titre 1')" title="Titre 1">H1</button>
-            <button type="button" class="art-md-btn" onclick="mdInsert('## ','','Titre 2')" title="Titre 2">H2</button>
-            <button type="button" class="art-md-btn" onclick="mdInsert('- ','','élément')" title="Liste">• Liste</button>
-            <button type="button" class="art-md-btn" onclick="mdInsert('> ','','citation')" title="Citation">❝</button>
-            <button type="button" class="art-md-btn" onclick="mdInsert('[','](https://)','lien')" title="Lien">🔗</button>
-          </div>
-          <textarea id="ar_content" class="art-content-input" placeholder="Écris ton article ici…&#10;&#10;Utilise **gras**, *italique*, # Titres, - listes, > citations, [liens](url)…"></textarea>
-        </div>
-      </div>
-      <div class="editor-side">
-        <div>
-          <div class="art-side-section">📊 Statut</div>
-          <select id="ar_status" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;font-size:13px">
-            <option value="draft">📝 Brouillon</option>
-            <option value="in_review">👀 En relecture</option>
-            <option value="scheduled">📅 Programmé</option>
-            <option value="published">🚀 Publié</option>
-          </select>
-        </div>
-        <div>
-          <div class="art-side-section">👥 Client lié</div>
-          <select id="ar_client" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;font-size:13px"></select>
-        </div>
-        <div>
-          <div class="art-side-section">📅 Date de publication</div>
-          <input type="date" id="ar_pubDate" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;font-size:13px">
-        </div>
-        <div>
-          <div class="art-side-section">🏷 Tags</div>
-          <div class="art-tag-input" id="ar_tagsBox">
-            <input type="text" id="ar_tagInput" placeholder="Ajouter un tag…" onkeydown="onArticleTagKeydown(event)">
-          </div>
-        </div>
-        <div>
-          <div class="art-side-section">🔗 URL publiée</div>
-          <input type="url" id="ar_url" placeholder="https://…" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;font-size:12px">
-        </div>
-        <div>
-          <div class="art-side-section">📝 Extrait (résumé)</div>
-          <textarea id="ar_excerpt" placeholder="Résumé de 1-2 lignes (optionnel, sinon auto)…" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);padding:9px 12px;font-size:12px;font-family:'Barlow',sans-serif;min-height:60px;resize:vertical"></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('artEditorOverlay')">Annuler</button>
-      <button class="btn-cancel" onclick="previewArticle()">👁 Aperçu</button>
-      <button class="btn-save" onclick="saveArticle()"><span id="artSaveLabel">Enregistrer</span></button>
-    </div>
-  </div>
-</div>
+
 
 <!-- ARTICLE READER MODAL -->
-<div class="overlay" id="artReaderOverlay" onclick="closeBg(event,'artReaderOverlay')">
-  <div class="modal art-view">
-    <div id="ar_readerCover" class="art-cover-large"></div>
-    <div class="art-meta-bar">
-      <h1 class="art-h1" id="ar_readerTitle"></h1>
-      <div id="ar_readerMeta" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)"></div>
-    </div>
-    <div class="art-rendered" id="ar_readerContent"></div>
-    <div class="art-actions-bar">
-      <button class="btn-cancel" onclick="closeModal('artReaderOverlay')">Fermer</button>
-      <button class="btn-cancel" id="ar_readerOpenLink" style="display:none">🔗 Voir en ligne</button>
-      <button class="btn-save" onclick="editArticleFromReader()">✏️ Modifier</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- CLIENT NOTE MODAL -->
 <div class="overlay" id="cnoteOverlay" onclick="closeBg(event,'cnoteOverlay')">
@@ -3277,23 +3080,8 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
   </div>
 </div>
 
-<!-- SECRET ANSWER MODAL -->
-<div class="overlay" id="secretAnsOverlay" onclick="closeBg(event,'secretAnsOverlay')">
-  <div class="modal" style="max-width:420px">
-    <h2 id="secretAnsModalTitle">🤔 Ma réponse secrète</h2>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">
-      Cette réponse te permettra de débloquer ton compte si tu oublies ton mot de passe.<br>
-      Question : <b style="color:var(--teal-light);font-style:italic">Qui est le plus Bg du monde ?</b><br>
-      <span style="font-size:10px">Insensible à la casse et aux accents. Connue uniquement de toi.</span>
-    </div>
-    <div class="fg"><label>Ta réponse</label><input id="sa_new" type="text" placeholder="Ex: Bouboule" maxlength="50"></div>
-    <div class="fg"><label>Confirmer</label><input id="sa_confirm" type="text" placeholder="Retape ta réponse" maxlength="50" onkeydown="if(event.key==='Enter')saveSecretAns()"></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('secretAnsOverlay')">Annuler</button>
-      <button class="btn-save" onclick="saveSecretAns()">Enregistrer</button>
-    </div>
-  </div>
-</div>
+<!-- Modale « réponse secrète » retirée : le mot de passe est géré par Firebase,
+     la réinitialisation se fait par e-mail. -->
 
 <!-- PASSWORD MODAL -->
 <div class="overlay" id="pwdOverlay" onclick="closeBg(event,'pwdOverlay')">
@@ -3413,12 +3201,12 @@ const Storage = {
 // ║ L'app fonctionne normalement même sans cloud configuré.
 // ╚══════════════════════════════════════════════════════════════
 const SYNC_KEYS = ['influ_clients3','influ_prospects3','influ_tasks3','influ_todos',
-  'influ_avis_clients','influ_avis_days','influ_editorial','influ_contacts',
+  'influ_avis_clients','influ_avis_days','influ_contacts',
   'influ_client_services','influ_client_offers','influ_service_catalog','influ_service_extras','influ_team',
   'influ_quotes','influ_invoices','influ_trips','influ_trips_seeded_v1','influ_agenda',
-  'influ_articles','influ_client_notes','influ_chat_channels','influ_chat_messages',
+  'influ_client_notes','influ_chat_channels','influ_chat_messages',
   'influ_chat_read','influ_chat_gifs','influ_home_widgets','influ_home_note','influ_presence',
-  'influ_presentations','influ_leads','influ_autoecoles_seeded_users','influ_adshow_default_head','influ_adshow_leaderboard'];
+  'influ_leads','influ_autoecoles_seeded_users','influ_adshow_default_head','influ_adshow_leaderboard'];
 
 // ── Firebase config HARDCODÉE (projet saas-influ) ──
 // Permet à n'importe quel appareil/navigateur d'auto-connecter au cloud
@@ -3869,7 +3657,6 @@ function exportData(){
     exportDate:new Date().toISOString(),
     clients,prospects,tasks,
     todos,
-    editorial,
     avisClients,avisDays,
     serviceCatalog,clientServices,clientOffers,serviceExtras,
     contactsData,
@@ -3877,7 +3664,6 @@ function exportData(){
     quotes,invoices,
     trips,
     agenda,
-    articles,
     clientNotes,
     chatChannels,chatMessages,chatRead,
     homeWidgets,homeNote,
@@ -3909,7 +3695,6 @@ function importData(event){
       prospects=data.prospects;
       tasks=Array.isArray(data.tasks)?data.tasks:[];
       todos=Array.isArray(data.todos)?data.todos:[];
-      editorial=Array.isArray(data.editorial)?data.editorial:[];
       if(Array.isArray(data.avisClients)){avisClients=data.avisClients;Storage.set('influ_avis_clients',avisClients);}
       if(data.avisDays){avisDays=data.avisDays;Storage.set('influ_avis_days',avisDays);}
       if(Array.isArray(data.serviceCatalog)){serviceCatalog=data.serviceCatalog;Storage.set('influ_service_catalog',serviceCatalog);}
@@ -3922,7 +3707,6 @@ function importData(event){
       if(Array.isArray(data.invoices)){invoices=data.invoices;Storage.set('influ_invoices',invoices);}
       if(Array.isArray(data.trips)){trips=data.trips;Storage.set('influ_trips',trips);}
       if(data.agenda&&typeof data.agenda==='object'){agenda=data.agenda;Storage.set('influ_agenda',agenda);}
-      if(Array.isArray(data.articles)){articles=data.articles;Storage.set('influ_articles',articles);nextArticleId=articles.length?Math.max(...articles.map(a=>a.id))+1:1;}
       if(Array.isArray(data.clientNotes)){clientNotes=data.clientNotes;Storage.set('influ_client_notes',clientNotes);nextCnoteId=clientNotes.length?Math.max(...clientNotes.map(n=>n.id))+1:1;}
       if(Array.isArray(data.chatChannels)){chatChannels=data.chatChannels;Storage.set('influ_chat_channels',chatChannels);}
       if(data.chatMessages&&typeof data.chatMessages==='object'){chatMessages=data.chatMessages;Storage.set('influ_chat_messages',chatMessages);nextChatMsgId=(function(){let mx=0;Object.values(chatMessages).forEach(arr=>arr.forEach(m=>{if(m.id>mx)mx=m.id;}));return mx+1;})();}
@@ -3930,13 +3714,12 @@ function importData(event){
       if(Array.isArray(data.homeWidgets)){homeWidgets=data.homeWidgets;Storage.set('influ_home_widgets',homeWidgets);}
       if(typeof data.homeNote==='string'){homeNote=data.homeNote;Storage.set('influ_home_note',homeNote);}
       if(data.user){currentUser=data.user;saveUser();}
-      Storage.set('influ_todos',todos);Storage.set('influ_editorial',editorial);
+      Storage.set('influ_todos',todos);
       clientId=Math.max(...clients.map(c=>c.id))+1;
       prospId=Math.max(...prospects.map(p=>p.id))+1;
       taskId=tasks.length?Math.max(...tasks.map(t=>t.id))+1:1;
       // FIX collision IDs : on n'utilise plus de compteur incrémental pour les todos
       todos.forEach(t => { if(typeof t.id !== 'string') t.id = String(t.id); });
-      nextEdId=editorial.length?Math.max(...editorial.map(e=>e.id))+1:1;
       nextQuoteId=quotes.length?Math.max(...quotes.map(q=>q.id))+1:1;
       nextInvoiceId=invoices.length?Math.max(...invoices.map(i=>i.id))+1:1;
       nextTripId=trips.length?Math.max(...trips.map(t=>t.id))+1:1;
@@ -3978,15 +3761,12 @@ const NAV_GROUPS = [
   {id:'production', label:'Production · équipe', lock:false, adminOnly:false, items:[
     {tab:'todo',     icon:'✅', label:'To-Do (Perso/Équipe)', badge:'navTodoBadge'},
     {tab:'agenda',   icon:'📆', label:'Agenda commun équipe'},
-    {tab:'editorial',icon:'🗓️', label:'Calendrier éditorial'},
-    {tab:'articles', icon:'📰', label:'Articles de blog'},
     {tab:'cnotes',   icon:'📝', label:'Notes idées clients'},
     {tab:'trips',    icon:'🚗', label:'Déplacements terrain', badge:'navTripBadge'},
     {tab:'services', icon:'🛍️', label:'Services par client'},
     {tab:'avis',     icon:'⭐', label:'Avis Google'}
   ]},
   {id:'commerce', label:'Commerce', lock:false, adminOnly:false, items:[
-    {tab:'presentations', icon:'🎬', label:'Documents de présentation'},
     {tab:'leads',         icon:'🚀', label:'Leads prospects'},
     {tab:'leadstats',     icon:'🏆', label:'Mes stats & trophées'}
   ]},
@@ -4009,17 +3789,17 @@ function buildSidebar(){
   const collapsed=Storage.get('influ_sidebar_collapsed', {});
   // Items du haut (Accueil…)
   let topHtml=`<div class="nav-top">`+NAV_TOP.map(it=>
-    `<button class="nav-btn nav-btn-top" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${it.label}</span></button>`
+    `<button class="nav-btn nav-btn-top" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${escapeHtml(it.label)}</span></button>`
   ).join('')+`</div>`;
   nav.innerHTML=topHtml+NAV_GROUPS.filter(g=>!g.adminOnly||isAdmin()).map(g=>{
     const isCol=collapsed[g.id]?'collapsed':'';
     const items=g.items.map(it=>{
       const badge=it.badge?`<span class="badge-mini" id="${it.badge}" style="margin-left:auto;background:var(--coral);color:white;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;display:none"></span>`:'';
-      return `<button class="nav-btn" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${it.label}</span>${badge}</button>`;
+      return `<button class="nav-btn" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${escapeHtml(it.label)}</span>${badge}</button>`;
     }).join('');
     return `<div class="nav-group ${isCol}" data-group="${g.id}">
       <div class="nav-group-header" onclick="toggleNavGroup('${g.id}')">
-        ${g.lock?'<span class="lock">🔒</span>':''}<span class="grp-label">${g.label}</span><span class="chev">▾</span>
+        ${g.lock?'<span class="lock">🔒</span>':''}<span class="grp-label">${escapeHtml(g.label)}</span><span class="chev">▾</span>
       </div>
       <div class="nav-group-items">${items}</div>
     </div>`;
@@ -4065,7 +3845,6 @@ function showTab(name,btn){
   if(name==='todo') renderTodo();
   if(name==='services') renderServices();
   if(name==='avis') renderAvis();
-  if(name==='editorial') renderEditorial();
   if(name==='contacts') renderContacts();
   if(name==='settings') renderSettings();
   // Pages Devis / Factures désactivées (suppression demandée juin 2026)
@@ -4073,9 +3852,7 @@ function showTab(name,btn){
   // if(name==='invoices') renderInvoices();
   if(name==='trips') renderTrips();
   if(name==='agenda') renderAgenda();
-  if(name==='articles') renderArticles();
   if(name==='cnotes') renderClientNotes();
-  if(name==='presentations') renderPresentations();
   if(name==='leads') renderLeads();
   if(name==='leadstats') renderLeadStats();
   if(name==='adshow') renderAdShow();
@@ -4126,7 +3903,7 @@ function renderClients(){
       const titleTxt = c.months[m]===2?'Facture envoyée — en attente de paiement':(c.months[m]===1?'Payé':(pastUnpaid?'En retard':'À faire'));
       return `<td style="text-align:center;padding:8px 3px" class="${m===CUR_M?'td-current':''}"><div class="month-check ${monthCls} ${pastUnpaid&&!c.months[m]?'late-month':''}" onclick="toggleMonth(${c.id},'${m}')" title="${titleTxt}"></div></td>`;
     }).join('');
-    const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="20"><div class="inline-note-form"><input id="ni_${c.id}" value="${(c.notes||'').replace(/"/g,'&quot;')}" placeholder="Note rapide..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderClients()">✕</button></div></td></tr>`:'';
+    const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="20"><div class="inline-note-form"><input id="ni_${c.id}" value="${escapeHtml(c.notes)}" placeholder="Note rapide..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderClients()">✕</button></div></td></tr>`:'';
     return `<tr class="${late?'late-row':''}" draggable="true" data-id="${c.id}"
       ondragstart="dragStart(event,${c.id})"
       ondragover="dragOver(event)"
@@ -4135,7 +3912,7 @@ function renderClients(){
       ondragend="dragEnd(event)">
       <td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
       <td>${bdg(cStatusMap,c.status)}</td>
-      <td><span class="client-name">${c.name}</span>${unpaidNow?`<span class="unpaid-dot" title="${CUR_MF} non payé"></span>`:''} ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${c.notes}</div>`:''}</td>
+      <td><span class="client-name">${escapeHtml(c.name)}</span>${unpaidNow?`<span class="unpaid-dot" title="${CUR_MF} non payé"></span>`:''} ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${escapeHtml(c.notes)}</div>`:''}</td>
       <td>${c.ca?`<span class="ca-val">${c.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td>
       <td>${tgs(c.accomp)}</td>
       <td style="font-size:12px;color:var(--muted)">${c.prel||'—'}</td>
@@ -4171,7 +3948,7 @@ function renderFins(){
 
   tbody.innerHTML=filtered.map(c=>{
     const mCells=MONTHS.map(m=>{const cls=c.months[m]===2?'pending':(c.months[m]===1?'checked':'');return `<td style="text-align:center;padding:8px 3px"><div class="month-check ${cls}" onclick="toggleMonth(${c.id},'${m}')"></div></td>`;}).join('');
-    const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="18"><div class="inline-note-form"><input id="ni_${c.id}" value="${(c.notes||'').replace(/"/g,'&quot;')}" placeholder="Note..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderFins()">✕</button></div></td></tr>`:'';
+    const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="18"><div class="inline-note-form"><input id="ni_${c.id}" value="${escapeHtml(c.notes)}" placeholder="Note..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderFins()">✕</button></div></td></tr>`:'';
     return `<tr draggable="true" data-fid="${c.id}"
       ondragstart="fDragStart(event,${c.id})"
       ondragover="fDragOver(event)"
@@ -4180,8 +3957,8 @@ function renderFins(){
       ondragend="fDragEnd(event)">
       <td style="padding:8px 6px;width:28px"><span class="drag-handle">⠿</span></td>
       <td>
-        <span class="client-name">${c.name}</span>
-        ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${c.notes}</div>`:''}
+        <span class="client-name">${escapeHtml(c.name)}</span>
+        ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${escapeHtml(c.notes)}</div>`:''}
       </td>
       <td>${tgs(c.accomp)}</td>
       <td style="font-size:12px;color:var(--muted)">${c.prel||'—'}</td>
@@ -4306,12 +4083,12 @@ function renderProspects(){
       ondragend="pDragEnd(event)">
       <td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
       <td>${bdg(pStatusMap,p.status)}</td>
-      <td><span class="client-name">${p.name}</span></td>
+      <td><span class="client-name">${escapeHtml(p.name)}</span></td>
       <td><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--muted)">${p.date||'—'}</span></td>
       <td>${p.secteur||'<span style="color:var(--muted)">—</span>'}</td>
       <td>${tgs(p.solutions)}</td>
       <td>${p.ca?`<span style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700">~${p.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td>
-      <td style="max-width:140px;font-size:12px;color:var(--muted)">${p.notes||'—'}</td>
+      <td style="max-width:140px;font-size:12px;color:var(--muted)">${escapeHtml(p.notes||'—')}</td>
       <td><div class="actions-cell"><button class="act-btn act-conv" onclick="convertToClient(${p.id})" title="Convertir en client ✅">✅</button><button class="act-btn act-edit" onclick="editProspect(${p.id})" title="Modifier">✏️</button><button class="act-btn act-del" onclick="deleteProspect(${p.id})" title="Supprimer">✕</button></div></td>
     </tr>`;
   }).join('');
@@ -4398,7 +4175,7 @@ function renderDashboard(){
 
   const top=[...actifs,...enDiff].sort((a,b)=>(b.ca||0)-(a.ca||0)).slice(0,7);
   const maxCa=top[0]?.ca||1;
-  document.getElementById('topClients').innerHTML=top.map(c=>`<div class="ca-bar"><div class="ca-bar-label"><span class="nm">${c.name}</span><span class="vl">${(c.ca||0).toLocaleString('fr-FR')} €</span></div><div class="ca-bar-track"><div class="ca-bar-fill" style="width:${Math.round((c.ca||0)/maxCa*100)}%"></div></div></div>`).join('');
+  document.getElementById('topClients').innerHTML=top.map(c=>`<div class="ca-bar"><div class="ca-bar-label"><span class="nm">${escapeHtml(c.name)}</span><span class="vl">${(c.ca||0).toLocaleString('fr-FR')} €</span></div><div class="ca-bar-track"><div class="ca-bar-fill" style="width:${Math.round((c.ca||0)/maxCa*100)}%"></div></div></div>`).join('');
 
   const funnelData=[{l:'A prospecter',c:'var(--grey)',s:'A prospecter'},{l:'R1 à venir',c:'var(--blue)',s:'R1 à venir'},{l:'R2 à venir',c:'var(--purple)',s:'R2 à venir'},{l:'Devis signé',c:'var(--teal-light)',s:'Devis signé'},{l:'Accord verbal',c:'var(--green)',s:'Accord verbal'},{l:'Blocage',c:'var(--red)',s:'blocage'}];
   document.getElementById('funnelChart').innerHTML=funnelData.map(f=>{const cnt=prospects.filter(p=>p.status===f.s).length;return `<div class="funnel-item"><div class="funnel-label"><div class="funnel-dot" style="background:${f.c}"></div>${f.l}</div><div class="funnel-count" style="color:${f.c}">${cnt}</div></div>`;}).join('');
@@ -4419,7 +4196,7 @@ function renderDashboard(){
         <div style="font-size:11px;color:var(--orange);margin-top:2px">Recouvrement : ${taux}%</div>
       </div>
     </div>
-    ${unpaidNow.slice(0,5).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="display:flex;align-items:center;gap:5px"><span class="unpaid-dot"></span>${c.name}</span><span style="color:var(--orange)">${c.prel||'—'}</span></div>`).join('')}
+    ${unpaidNow.slice(0,5).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="display:flex;align-items:center;gap:5px"><span class="unpaid-dot"></span>${escapeHtml(c.name)}</span><span style="color:var(--orange)">${c.prel||'—'}</span></div>`).join('')}
     ${unpaidNow.length>5?`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">+${unpaidNow.length-5} autres</div>`:''}
     ${unpaidNow.length===0?`<div style="text-align:center;padding:10px;color:var(--green);font-weight:600">🎉 Tous ont payé ce mois !</div>`:''}
   `;
@@ -4468,9 +4245,9 @@ function renderDashboard(){
       upEl.innerHTML=upcoming.map(t=>{
         const due=fmtDue(t.due);
         const ent=findEntity(t.linkedTo);
-        const linkHtml=ent?` <span style="color:var(--teal-light);font-size:11px">· ${ent.name}</span>`:'';
+        const linkHtml=ent?` <span style="color:var(--teal-light);font-size:11px">· ${escapeHtml(ent.name)}</span>`:'';
         return `<div class="dash-task-row">
-          <span class="dash-task-name"><span class="task-prio p-${t.prio||'normal'}" style="margin-right:6px">${PRIO_LABEL[t.prio||'normal']}</span>${(t.title||'').replace(/</g,'&lt;')}${linkHtml}</span>
+          <span class="dash-task-name"><span class="task-prio p-${t.prio||'normal'}" style="margin-right:6px">${PRIO_LABEL[t.prio||'normal']}</span>${escapeHtml(t.title)}${linkHtml}</span>
           <span class="dash-task-due ${due.cls}" style="color:${due.cls==='overdue'?'var(--red)':due.cls==='today'?'var(--orange)':due.cls==='soon'?'var(--teal-light)':'var(--muted)'}">${due.txt}</span>
         </div>`;
       }).join('');
@@ -4577,13 +4354,13 @@ function fillLinkOptions(selectedVal){
   const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   if(actives.length){
     html+='<optgroup label="👥 Clients">';
-    actives.forEach(c=>{html+=`<option value="c:${c.id}"${selectedVal===`c:${c.id}`?' selected':''}>${c.name}</option>`;});
+    actives.forEach(c=>{html+=`<option value="c:${c.id}"${selectedVal===`c:${c.id}`?' selected':''}>${escapeHtml(c.name)}</option>`;});
     html+='</optgroup>';
   }
   const sortedP=[...prospects].sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   if(sortedP.length){
     html+='<optgroup label="🎯 Prospects">';
-    sortedP.forEach(p=>{html+=`<option value="p:${p.id}"${selectedVal===`p:${p.id}`?' selected':''}>${p.name}</option>`;});
+    sortedP.forEach(p=>{html+=`<option value="p:${p.id}"${selectedVal===`p:${p.id}`?' selected':''}>${escapeHtml(p.name)}</option>`;});
     html+='</optgroup>';
   }
   sel.innerHTML=html;
@@ -4654,13 +4431,13 @@ function taskCardHtml(t){
   const bucket=getTaskBucket(t);
   const due=t.done?{txt:'Terminée'+(t.completedAt?` le ${new Date(t.completedAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}`:''),cls:'done'}:fmtDue(t.due);
   const ent=findEntity(t.linkedTo);
-  const linkHtml=ent?`<span class="task-link" onclick="goToEntity('${t.linkedTo}')">${ent.type==='client'?'👥':'🎯'} ${ent.name}</span>`:'';
+  const linkHtml=ent?`<span class="task-link" onclick="goToEntity('${t.linkedTo}')">${ent.type==='client'?'👥':'🎯'} ${escapeHtml(ent.name)}</span>`:'';
   const prioCls=t.done?'p-low':('p-'+(t.prio||'normal'));
   return `<div class="task-card ${t.done?'done':bucket}" data-tid="${t.id}">
     <div class="task-check" onclick="toggleTaskDone(${t.id})" title="${t.done?'Marquer non terminée':'Marquer terminée'}">${t.done?'✓':''}</div>
     <div class="task-body">
       <div class="task-line1">
-        <span class="task-title">${(t.title||'').replace(/</g,'&lt;')}</span>
+        <span class="task-title">${escapeHtml(t.title)}</span>
         <span class="task-prio ${prioCls}">${PRIO_LABEL[t.prio||'normal']}</span>
       </div>
       <div class="task-line2">
@@ -4668,7 +4445,7 @@ function taskCardHtml(t){
         <span class="task-due ${due.cls}">${due.txt}</span>
         ${linkHtml}
       </div>
-      ${t.notes?`<div class="task-notes">${(t.notes||'').replace(/</g,'&lt;')}</div>`:''}
+      ${t.notes?`<div class="task-notes">${escapeHtml(t.notes)}</div>`:''}
     </div>
     <div class="task-actions">
       <button class="act-btn act-edit" onclick="editTask(${t.id})" title="Modifier">✏️</button>
@@ -5115,32 +4892,9 @@ function attemptEmailLogin(){
 
 // ── MOT DE PASSE OUBLIÉ — question secrète personnelle par membre ──
 let lockMode='login'; // 'login' | 'forgot' | 'newPwd'
-const SECRET_QUESTION='🤔 Qui est le plus Bg du monde ?';
 
 // Définir / modifier sa propre réponse secrète (depuis Paramètres)
-function openSecretAnsModal(){
-  document.getElementById('sa_new').value='';
-  document.getElementById('sa_confirm').value='';
-  const m=teamMembers.find(x=>x.id===currentUser.id);
-  const has=!!(m&&m.secretAns);
-  document.getElementById('secretAnsModalTitle').textContent=has?'🤔 Modifier ma réponse secrète':'🤔 Définir ma réponse secrète';
-  document.getElementById('secretAnsOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('sa_new').focus(),50);
-}
 
-function saveSecretAns(){
-  const a=document.getElementById('sa_new').value.trim();
-  const c=document.getElementById('sa_confirm').value.trim();
-  if(a.length<2){alert('Réponse trop courte (au moins 2 caractères)');return;}
-  if(normalizeAnswer(a)!==normalizeAnswer(c)){alert('Les deux réponses ne correspondent pas');return;}
-  const m=teamMembers.find(x=>x.id===currentUser.id);
-  if(!m) return;
-  m.secretAns=hashPwd(normalizeAnswer(a));
-  saveTeam(); // sync auto au cloud
-  closeModal('secretAnsOverlay');
-  renderSettings();
-  toast('🤔 Réponse secrète enregistrée ✓');
-}
 
 function lockSubmit(){
   if(lockMode==='login') attemptLogin();
@@ -5213,51 +4967,7 @@ function lockBackToLogin(){
   pwd.focus();
 }
 
-function normalizeAnswer(s){
-  return (s||'').toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
-}
-function attemptForgotAnswer(){
-  const m=teamMembers.find(x=>x.id===lockUserId);
-  if(!m){ document.getElementById('lockError').textContent='Profil introuvable'; return; }
-  if(!m.secretAns){
-    document.getElementById('lockError').textContent='Aucune réponse secrète définie. Demande à ton admin de réinitialiser ton mot de passe.';
-    return;
-  }
-  const a=normalizeAnswer(document.getElementById('lockPwd').value);
-  if(hashPwd(a)===m.secretAns){
-    lockMode='newPwd';
-    const q=document.getElementById('lockQuestion');
-    q.textContent='✅ Bonne réponse — choisis un nouveau mot de passe';
-    q.classList.add('success');
-    const pwd=document.getElementById('lockPwd');
-    pwd.type='password';pwd.placeholder='Nouveau mot de passe';pwd.value='';pwd.focus();
-    const pwd2=document.getElementById('lockPwd2');
-    pwd2.style.display='block';pwd2.value='';
-    document.getElementById('lockError').textContent='';
-  } else {
-    const inp=document.getElementById('lockPwd');
-    inp.classList.add('shake');
-    setTimeout(()=>inp.classList.remove('shake'),400);
-    document.getElementById('lockError').textContent='Mauvaise réponse 🤨';
-    inp.value='';inp.focus();
-  }
-}
 
-function saveNewPwdFromLock(){
-  const p1=document.getElementById('lockPwd').value;
-  const p2=document.getElementById('lockPwd2').value;
-  if(p1.length<6){document.getElementById('lockError').textContent='6 caractères minimum (RGPD)';return;}
-  if(p1!==p2){document.getElementById('lockError').textContent='Les mots de passe ne correspondent pas';document.getElementById('lockPwd2').focus();return;}
-  const m=teamMembers.find(x=>x.id===lockUserId);
-  if(!m){lockBackToLogin();return;}
-  hashPwdSecure(p1).then(h=>{
-    m.pwd=h;
-    saveTeam();
-    toast('🔑 Mot de passe réinitialisé (chiffrement renforcé) !');
-    lockBackToLogin();
-    doUnlock(m);
-  });
-}
 
 function doUnlock(member){
   // currentUser devient le membre connecté (rôle inclus)
@@ -5424,7 +5134,7 @@ function todoVisibleToMe(t){
 }
 
 function fillAssigneeOptions(sel,selected){
-  sel.innerHTML='<option value="">— Personne —</option>'+teamMembers.map(m=>`<option value="${m.id}"${selected===m.id?' selected':''}>${m.name}</option>`).join('');
+  sel.innerHTML='<option value="">— Personne —</option>'+teamMembers.map(m=>`<option value="${m.id}"${selected===m.id?' selected':''}>${escapeHtml(m.name)}</option>`).join('');
 }
 
 function setTodoBucket(b,btn){
@@ -5520,18 +5230,18 @@ function renderTodo(){
     const st=todoState(t);
     const due=st==='done'?{txt:'✓ Fait',cls:'done'}:fmtDue(t.due);
     const assignee=teamMembers.find(m=>m.id===t.assignee);
-    const asgHtml=assignee?`<span class="postit-assignee" title="Assigné à ${assignee.name}">👤 ${(assignee.name||'').split(' ')[0]}</span>`:'';
+    const asgHtml=assignee?`<span class="postit-assignee" title="Assigné à ${escapeHtml(assignee.name)}">👤 ${escapeHtml((assignee.name||'').split(' ')[0])}</span>`:'';
     // Créateur (owner) — surtout utile pour les todos d'équipe
     const owner=teamMembers.find(m=>m.id===t.owner);
-    const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${owner.name}">✍️ ${(owner.name||'').split(' ')[0]}</span>`:'';
+    const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${escapeHtml(owner.name)}">✍️ ${escapeHtml((owner.name||'').split(' ')[0])}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
     const stBtnCls=st==='in_progress'?'in-progress':(st==='done'?'done':'');
     const stBtnIcon=st==='in_progress'?'⏱':(st==='done'?'✓':'○');
     const stBtnTitle=st==='in_progress'?'En cours · Clic = terminer (supprime la tâche)':'À faire · Clic = mettre en cours';
     return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" title="Cliquer pour modifier">
       <button class="postit-status-btn ${stBtnCls}" onclick="event.stopPropagation();cycleTodoState('${t.id}')" title="${stBtnTitle}">${stBtnIcon}</button>
-      <div class="postit-title">${(t.title||'').replace(/</g,'&lt;')}</div>
-      ${t.notes?`<div class="postit-notes">${(t.notes||'').replace(/</g,'&lt;')}</div>`:'<div class="postit-notes" style="opacity:.4">—</div>'}
+      <div class="postit-title">${escapeHtml(t.title)}</div>
+      ${t.notes?`<div class="postit-notes">${escapeHtml(t.notes)}</div>`:'<div class="postit-notes" style="opacity:.4">—</div>'}
       <div class="postit-meta">
         <span class="postit-due ${due.cls}">${due.txt}</span>
         ${ownerHtml}
@@ -5565,7 +5275,7 @@ function renderOrphanTodosList(){
   el.innerHTML=orphans.map(t=>{
     const prioColor={urgent:'#e74c3c',high:'#e67e22',normal:'#f1c40f',low:'#7f8c8d'}[t.prio||'normal'];
     const due=t.due?` · Échéance : ${t.due}`:'';
-    const notes=t.notes?`<div style="font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4">${escapeHtml(t.notes).slice(0,140)}${t.notes.length>140?'…':''}</div>`:'';
+    const notes=t.notes?`<div style="font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4">${escapeHtml(t.notes).slice(0,140)}${escapeHtml(t.notes.length>140?'…':'')}</div>`:'';
     const memberOpts=teamMembers.map(m=>`<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
     return `<div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:10px 12px">
       <div style="display:flex;align-items:flex-start;gap:10px">
@@ -5825,7 +5535,7 @@ function renderServices(){
   const search=(document.getElementById('servicesSearch')?.value||'').toLowerCase();
   const tbl=document.getElementById('servicesTable');
   // Build header — colonne Offres/Cadeaux à droite + petite colonne drag à gauche
-  let head=`<thead><tr><th></th><th>Client</th>${serviceCatalog.map(s=>`<th title="${s.name}">${s.name}</th>`).join('')}<th style="min-width:200px">🎁 Offres / Cadeaux</th></tr></thead>`;
+  let head=`<thead><tr><th></th><th>Client</th>${serviceCatalog.map(s=>`<th title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</th>`).join('')}<th style="min-width:200px">🎁 Offres / Cadeaux</th></tr></thead>`;
   // Clients du CRM (hors fin de contrat)
   let crmRows=clients.filter(c=>c.status!=='Fin de contrat');
   if(search) crmRows=crmRows.filter(c=>c.name.toLowerCase().includes(search)||(clientOffers[c.id]||'').toLowerCase().includes(search));
@@ -5840,7 +5550,7 @@ function renderServices(){
     const sel=clientServices[c.id]||[];
     const cells=serviceCatalog.map(s=>{
       const on=sel.includes(s.id);
-      return `<td><div class="svc-cell ${on?'on svc-color-'+s.color:''}" onclick="toggleClientService('${c.id}','${s.id}')" title="${s.name}">${on?'✓':''}</div></td>`;
+      return `<td><div class="svc-cell ${on?'on svc-color-'+s.color:''}" onclick="toggleClientService('${c.id}','${s.id}')" title="${escapeHtml(s.name)}">${on?'✓':''}</div></td>`;
     }).join('');
     const offerVal=(clientOffers[c.id]||'').replace(/"/g,'&quot;');
     const offerCell=`<td style="text-align:left;padding:6px 10px"><input type="text" value="${offerVal}" placeholder="Ex: -10% jusqu'au 31/12, bouteille offerte..." onblur="setClientOffer('${c.id}', this.value)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:6px;color:var(--cream);padding:6px 8px;font-size:12px;font-family:'Barlow',sans-serif;outline:none" onfocus="this.style.borderColor='rgba(17,103,118,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)'"></td>`;
@@ -5920,7 +5630,7 @@ function renderCatalog(){
   body.innerHTML=serviceCatalog.map((s,i)=>`
     <div class="catalog-row">
       <div class="catalog-swatch svc-color-${s.color}"></div>
-      <div class="catalog-name">${s.name}</div>
+      <div class="catalog-name">${escapeHtml(s.name)}</div>
       <select onchange="changeServiceColor('${s.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:5px;color:var(--cream);padding:4px;font-size:11px">
         ${['teal','green','blue','purple','orange','red','pink','grey'].map(c=>`<option value="${c}"${c===s.color?' selected':''}>${c}</option>`).join('')}
       </select>
@@ -6028,7 +5738,7 @@ function renderAvis(){
       const isTodayCol=dayDates[i].getTime()===todayObj.getTime();
       const on=data[dk]?'on':'';
       const dis=c.status==='waiting'?'opacity:.4;cursor:not-allowed':'';
-      return `<td style="text-align:center"><div class="av-cell ${on} ${isTodayCol?'today-col':''}" style="${dis}" onclick="toggleAvis(${c.id},'${dk}')" title="${c.name} - ${days[i]}">${data[dk]?'✓':''}</div></td>`;
+      return `<td style="text-align:center"><div class="av-cell ${on} ${isTodayCol?'today-col':''}" style="${dis}" onclick="toggleAvis(${c.id},'${dk}')" title="${escapeHtml(c.name)} - ${days[i]}">${data[dk]?'✓':''}</div></td>`;
     }).join('');
     const stCls={active:'av-st-active',waiting:'av-st-waiting',paused:'av-st-paused'}[c.status];
     const stLabel={active:'Prestation',waiting:'En attente',paused:'Pause'}[c.status];
@@ -6039,9 +5749,9 @@ function renderAvis(){
       ondrop="avDragDrop(event,${c.id})"
       ondragend="avDragEnd(event)">
       <td><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
-      <td><div class="svc-client-name">${c.name}</div><div style="margin-top:3px"><span class="av-status-badge ${stCls}">${stLabel}</span></div></td>
+      <td><div class="svc-client-name">${escapeHtml(c.name)}</div><div style="margin-top:3px"><span class="av-status-badge ${stCls}">${stLabel}</span></div></td>
       ${cells}
-      <td style="font-size:11px;color:var(--muted);max-width:180px">${c.note||'—'}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:180px">${escapeHtml(c.note||'—')}</td>
       <td><div class="actions-cell">
         <button class="act-btn act-edit" onclick="editAvisClient(${c.id})" title="Modifier">✏️</button>
         <button class="act-btn act-del" onclick="deleteAvisClient(${c.id})" title="Supprimer">✕</button>
@@ -6180,297 +5890,6 @@ function deleteAvisClient(id){
 }
 
 // ╔══════════════════════════════════════════════════════════════
-// ║ CALENDRIER ÉDITORIAL
-// ╚══════════════════════════════════════════════════════════════
-let editorial = Storage.get('influ_editorial', []);
-let nextEdId = editorial.length?Math.max(...editorial.map(e=>e.id))+1:1;
-let editEdId=null;
-// Nouvelles vars : sélecteur de client + vue active + date courante calendrier
-let edClientFilter = Storage.get('influ_ed_client_filter', 'all'); // 'all' ou clientId
-let edView = Storage.get('influ_ed_view', 'cal'); // 'cal'|'week'|'list'|'kanban'
-let edCalCurrentMonth = (function(){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);return d;})();
-let edWeekCurrentMonday = mondayOf(new Date());
-
-function isVideoUrl(u){
-  return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(u||'') || /youtube\.com|youtu\.be|vimeo\.com/.test(u||'');
-}
-function edThumbHtml(url, size){
-  if(!url) return '';
-  if(isVideoUrl(url)){
-    return `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#222,#444);font-size:${(size||18)*0.55}px">▶</div>`;
-  }
-  return `<div class="thumb"><img src="${escapeHtml(url)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`;
-}
-function edThumbLargeHtml(url){
-  if(!url) return '<div class="thumb-l">📄</div>';
-  if(isVideoUrl(url)){
-    return `<div class="thumb-l" style="background:linear-gradient(135deg,#222,#444);color:#fff;font-size:20px">▶</div>`;
-  }
-  return `<div class="thumb-l"><img src="${escapeHtml(url)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`;
-}
-
-function setEdView(v){
-  edView=v;
-  Storage.set('influ_ed_view',v);
-  document.querySelectorAll('.ed-view-btn').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===v));
-  renderEditorial();
-}
-function setEdClientFilter(v){
-  edClientFilter=v;
-  Storage.set('influ_ed_client_filter',v);
-  renderEditorial();
-}
-
-function fillEdClientFilterSelect(){
-  const sel=document.getElementById('edClientFilter'); if(!sel) return;
-  const cur=edClientFilter;
-  const all=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
-  sel.innerHTML=`<option value="all"${cur==='all'?' selected':''}>👥 Tous les clients</option>`
-    + all.map(c=>`<option value="${c.id}"${String(cur)===String(c.id)?' selected':''}>${escapeHtml(c.name)}</option>`).join('');
-}
-
-function getFilteredEd(){
-  const search=(document.getElementById('edSearch')?.value||'').toLowerCase();
-  let list=[...editorial];
-  if(edClientFilter!=='all') list=list.filter(e=>String(e.clientId||'')===String(edClientFilter));
-  if(search) list=list.filter(e=>(e.title||'').toLowerCase().includes(search)||(e.notes||'').toLowerCase().includes(search)||(clients.find(c=>String(c.id)===String(e.clientId))?.name||'').toLowerCase().includes(search));
-  return list;
-}
-
-function renderEditorial(){
-  fillEdClientFilterSelect();
-  // active la bonne vue dans le switch (au cas où changé en JS)
-  document.querySelectorAll('.ed-view-btn').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===edView));
-  const body=document.getElementById('editorialBody');
-  if(!body) return;
-  const list=getFilteredEd();
-  if(edView==='kanban'){ body.innerHTML=renderEdKanban(list); return; }
-  if(edView==='list'){ body.innerHTML=renderEdList(list); return; }
-  if(edView==='week'){ body.innerHTML=renderEdWeek(list); return; }
-  body.innerHTML=renderEdMonth(list); // 'cal' = mois par défaut
-}
-
-// ── Vue Kanban (4 colonnes : à produire / validation / prêt / publié)
-function renderEdKanban(list){
-  const cols=[{k:'todo',l:'📝 À produire'},{k:'review',l:'👀 En validation'},{k:'ready',l:'✅ Prêt à publier'},{k:'published',l:'🚀 Publié'}];
-  return '<div class="ed-grid">'+cols.map(col=>{
-    const items=list.filter(e=>e.status===col.k).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
-    return `<div class="ed-col ${col.k}">
-      <div class="ed-col-h"><span>${col.l}</span><span class="cnt">${items.length}</span></div>
-      ${items.length?items.map(edCardKanbanHtml).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;font-style:italic">Vide</div>'}
-    </div>`;
-  }).join('')+'</div>';
-}
-function edCardKanbanHtml(e){
-  const c=clients.find(c=>String(c.id)===String(e.clientId));
-  const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
-  const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'—';
-  const thumb=e.visualUrl?edThumbLargeHtml(e.visualUrl):'';
-  return `<div class="ed-card ${e.status}" onclick="editEditorial(${e.id})">
-    ${thumb?'<div style="margin:-4px -4px 6px;border-radius:6px;overflow:hidden">'+thumb.replace('thumb-l','').replace('class="" ','style="width:100%;aspect-ratio:16/9;background:var(--dark3)" ')+'</div>':''}
-    <div class="ed-card-title">${escapeHtml(e.title||'')}</div>
-    <div class="ed-card-meta">
-      <span class="ed-card-pf">${escapeHtml(e.platform||'?')}</span>
-      <span class="ed-card-date">${dueLabel}</span>
-      ${c?`<span style="color:var(--teal-light)">${escapeHtml(c.name)}</span>`:''}
-    </div>
-  </div>`;
-}
-
-// ── Vue Liste (chronologique)
-function renderEdList(list){
-  const sorted=list.slice().sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
-  if(!sorted.length) return '<div class="empty" style="padding:30px;color:var(--muted);font-style:italic;text-align:center">Aucun contenu pour ce filtre.</div>';
-  return '<div class="ed-list-list">'+sorted.map(e=>{
-    const c=clients.find(c=>String(c.id)===String(e.clientId));
-    const dueObj=e.date?new Date(e.date+'T00:00:00'):null;
-    const dueLabel=dueObj?dueObj.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}):'—';
-    const stLbl={todo:'📝 À produire',review:'👀 En validation',ready:'✅ Prêt',published:'🚀 Publié'}[e.status]||e.status;
-    return `<div class="ed-list-item" onclick="editEditorial(${e.id})">
-      ${edThumbLargeHtml(e.visualUrl)}
-      <div class="ed-list-body">
-        <div class="tt">${escapeHtml(e.title||'')}</div>
-        <div class="mt">
-          <span>📅 ${dueLabel}</span>
-          <span>${escapeHtml(e.platform||'?')}</span>
-          ${c?`<span style="color:var(--teal-light)">${escapeHtml(c.name)}</span>`:''}
-          <span>${stLbl}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('')+'</div>';
-}
-
-// ── Vue Semaine (7 colonnes lun → dim)
-function renderEdWeek(list){
-  const monday=new Date(edWeekCurrentMonday);
-  const sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
-  const today=todayISO();
-  const fmtRange=(d1,d2)=>{
-    const a=d1.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-    const b=d2.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
-    return a+' → '+b;
-  };
-  const days=[];
-  for(let i=0;i<7;i++){
-    const d=new Date(monday); d.setDate(monday.getDate()+i);
-    const dk=dayKey(d);
-    const items=list.filter(e=>e.date===dk).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
-    const dayName=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'][i];
-    days.push({d,dk,items,dayName,isToday:dk===today});
-  }
-  return `<div class="ed-cal-nav" style="border-radius:14px 14px 0 0;border:1px solid var(--border);border-bottom:none;background:var(--dark2)">
-    <button class="ed-cal-nav-btn" onclick="edWeekPrev()">‹</button>
-    <span class="ed-cal-title">Semaine du ${fmtRange(monday,sunday)}</span>
-    <button class="ed-cal-nav-btn" onclick="edWeekNext()">›</button>
-  </div>
-  <div class="ed-week" style="border-top:none;border-radius:0 0 14px 14px">
-    ${days.map(({d,dk,items,dayName,isToday})=>`<div class="ed-week-col ${isToday?'today':''}">
-      <h4>${dayName} ${d.getDate()}</h4>
-      ${items.length?items.map(e=>{
-        const stLbl={todo:'À produire',review:'Validation',ready:'Prêt',published:'Publié'}[e.status]||'';
-        return `<div class="ed-card-week pf-${escapeHtml(e.platform||'?')}" onclick="editEditorial(${e.id})">
-          ${e.visualUrl?(isVideoUrl(e.visualUrl)?`<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#222,#444);font-size:18px">▶</div>`:`<div class="thumb"><img src="${escapeHtml(e.visualUrl)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`):''}
-          <div class="tt">${escapeHtml(e.title||'')}</div>
-          <div class="meta"><span>${escapeHtml(e.platform||'?')}</span><span>${stLbl}</span></div>
-        </div>`;
-      }).join(''):'<div style="text-align:center;color:var(--muted);font-size:10.5px;font-style:italic;padding:14px 0">—</div>'}
-    </div>`).join('')}
-  </div>`;
-}
-function edWeekPrev(){const d=new Date(edWeekCurrentMonday);d.setDate(d.getDate()-7);edWeekCurrentMonday=d;renderEditorial();}
-function edWeekNext(){const d=new Date(edWeekCurrentMonday);d.setDate(d.getDate()+7);edWeekCurrentMonday=d;renderEditorial();}
-
-// ── Vue Calendrier mois
-function renderEdMonth(list){
-  const monthStart=new Date(edCalCurrentMonth);
-  const monthLabel=monthStart.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
-  // Premier lundi avant ou égal au 1er du mois
-  const firstDay=new Date(monthStart);
-  const dow=(firstDay.getDay()+6)%7; // 0=lun
-  const gridStart=new Date(firstDay); gridStart.setDate(firstDay.getDate()-dow);
-  const today=todayISO();
-  const cells=[];
-  for(let i=0;i<42;i++){
-    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
-    const dk=dayKey(d);
-    const inMonth=d.getMonth()===monthStart.getMonth();
-    const items=list.filter(e=>e.date===dk).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
-    cells.push({d,dk,inMonth,items,isToday:dk===today});
-  }
-  return `<div class="ed-cal">
-    <div class="ed-cal-nav">
-      <button class="ed-cal-nav-btn" onclick="edMonthPrev()">‹</button>
-      <span class="ed-cal-title">${monthLabel}</span>
-      <button class="ed-cal-nav-btn" onclick="edMonthNext()">›</button>
-    </div>
-    <div class="ed-cal-grid">
-      ${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(d=>`<div class="ed-cal-dayhead">${d}</div>`).join('')}
-      ${cells.map(({d,dk,inMonth,items,isToday})=>`<div class="ed-cal-cell ${inMonth?'':'other'} ${isToday?'today':''}">
-        <div class="dn">${d.getDate()}</div>
-        ${items.map(e=>`<div class="ed-card-mini pf-${escapeHtml(e.platform||'?')}" onclick="event.stopPropagation();editEditorial(${e.id})" title="${escapeHtml(e.title||'')}">
-          ${e.visualUrl?(isVideoUrl(e.visualUrl)?`<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;background:#222;font-size:9px">▶</div>`:`<div class="thumb"><img src="${escapeHtml(e.visualUrl)}" loading="lazy" onerror="this.parentElement.innerHTML='🖼'"></div>`):''}
-          <span class="tt">${escapeHtml(e.title||'')}</span>
-        </div>`).join('')}
-      </div>`).join('')}
-    </div>
-  </div>`;
-}
-function edMonthPrev(){const d=new Date(edCalCurrentMonth);d.setMonth(d.getMonth()-1);edCalCurrentMonth=d;renderEditorial();}
-function edMonthNext(){const d=new Date(edCalCurrentMonth);d.setMonth(d.getMonth()+1);edCalCurrentMonth=d;renderEditorial();}
-
-// Preview du visuel dans le modal
-function edPreviewVisual(){
-  const box=document.getElementById('edPreviewBox');
-  const url=(document.getElementById('ed_visual')?.value||'').trim();
-  if(!box) return;
-  if(!url){ box.innerHTML='<div class="ph">Colle une URL d\'image/vidéo pour voir l\'aperçu</div>'; return; }
-  if(isVideoUrl(url)){
-    if(/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)){
-      box.innerHTML=`<video src="${escapeHtml(url)}" controls preload="metadata"></video>`;
-    } else {
-      box.innerHTML=`<div class="ph">🎬 Lien vidéo détecté (YouTube/Vimeo)<br><a href="${escapeHtml(url)}" target="_blank" style="color:var(--teal-light)">Ouvrir dans un nouvel onglet</a></div>`;
-    }
-  } else {
-    box.innerHTML=`<img src="${escapeHtml(url)}" onerror="this.parentElement.innerHTML='<div class=\\'ph\\'>⚠️ Image inaccessible (URL invalide ou non publique)</div>'">`;
-  }
-}
-
-function fillEdClientSelect(selected){
-  const sel=document.getElementById('ed_client');
-  sel.innerHTML='<option value="">— Aucun —</option>'+clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr')).map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('');
-}
-
-function openEditorialModal(){
-  editEdId=null;
-  document.getElementById('edModalTitle').textContent='🗓️ Nouveau contenu';
-  document.getElementById('edSaveLabel').textContent='Enregistrer';
-  document.getElementById('ed_title').value='';
-  document.getElementById('ed_platform').value='Instagram';
-  document.getElementById('ed_date').value=todayISO();
-  document.getElementById('ed_status').value='todo';
-  document.getElementById('ed_notes').value='';
-  if(document.getElementById('ed_visual')) document.getElementById('ed_visual').value='';
-  // Pré-sélectionne le client filtré si applicable
-  const preset=(edClientFilter && edClientFilter!=='all')?edClientFilter:'';
-  fillEdClientSelect(preset);
-  edPreviewVisual();
-  document.getElementById('edOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('ed_title').focus(),50);
-}
-
-function editEditorial(id){
-  const e=editorial.find(x=>String(x.id)===String(id));if(!e) return;
-  editEdId=e.id;
-  document.getElementById('edModalTitle').textContent='✏️ Modifier le contenu';
-  document.getElementById('edSaveLabel').textContent='Mettre à jour';
-  document.getElementById('ed_title').value=e.title||'';
-  document.getElementById('ed_platform').value=e.platform||'Instagram';
-  document.getElementById('ed_date').value=e.date||'';
-  document.getElementById('ed_status').value=e.status||'todo';
-  document.getElementById('ed_notes').value=e.notes||'';
-  if(document.getElementById('ed_visual')) document.getElementById('ed_visual').value=e.visualUrl||'';
-  fillEdClientSelect(e.clientId||'');
-  edPreviewVisual();
-  document.getElementById('edOverlay').classList.add('open');
-}
-
-function saveEditorial(){
-  const title=document.getElementById('ed_title').value.trim();
-  if(!title){alert('Titre requis');return;}
-  const data={
-    title,
-    clientId:parseInt(document.getElementById('ed_client').value)||null,
-    platform:document.getElementById('ed_platform').value,
-    date:document.getElementById('ed_date').value||'',
-    status:document.getElementById('ed_status').value,
-    notes:document.getElementById('ed_notes').value.trim(),
-    visualUrl:(document.getElementById('ed_visual')?.value||'').trim()
-  };
-  if(editEdId!==null){
-    const i=editorial.findIndex(e=>String(e.id)===String(editEdId));
-    if(i>=0){
-      editorial[i]={...editorial[i],...data};
-      toast('Contenu mis à jour ✓');
-    }
-  } else {
-    editorial.push({id:nextEdId++,...data,createdAt:new Date().toISOString()});
-    toast('Contenu ajouté ✓');
-  }
-  Storage.set('influ_editorial',editorial);
-  closeModal('edOverlay');
-  renderEditorial();
-}
-
-function deleteEditorial(id){
-  if(!confirm('Supprimer ce contenu ?')) return;
-  editorial=editorial.filter(e=>e.id!==id);
-  Storage.set('influ_editorial',editorial);
-  renderEditorial();
-  toast('Contenu supprimé');
-}
-
-// ╔══════════════════════════════════════════════════════════════
 // ║ FICHES CONTACTS — interlocuteurs clients
 // ╚══════════════════════════════════════════════════════════════
 let contactsData = Storage.get('influ_contacts', {});
@@ -6541,8 +5960,8 @@ function contactCardHtml(c){
     info=`
     ${ct.person?`<div class="contact-person">${escapeHtml(ct.person)}${ct.role?` · ${escapeHtml(ct.role)}`:''}</div>`:''}
     <div class="contact-info">
-      ${ct.email?`<div class="contact-info-line"><span class="ic">✉️</span><a href="mailto:${ct.email}" onclick="event.stopPropagation()">${escapeHtml(ct.email)}</a></div>`:''}
-      ${ct.phone?`<div class="contact-info-line"><span class="ic">📞</span><a href="tel:${(ct.phone||'').replace(/\s/g,'')}" onclick="event.stopPropagation()">${escapeHtml(ct.phone)}</a></div>`:''}
+      ${ct.email?`<div class="contact-info-line"><span class="ic">✉️</span><a href="mailto:${escapeHtml(ct.email)}" onclick="event.stopPropagation()">${escapeHtml(ct.email)}</a></div>`:''}
+      ${ct.phone?`<div class="contact-info-line"><span class="ic">📞</span><a href="tel:${escapeHtml((ct.phone||'').replace(/\s/g,''))}" onclick="event.stopPropagation()">${escapeHtml(ct.phone)}</a></div>`:''}
       ${ct.address?`<div class="contact-info-line"><span class="ic">📍</span><span>${escapeHtml(ct.address)}</span></div>`:''}
       ${ct.web?`<div class="contact-info-line"><span class="ic">🌐</span><a href="${ct.web}" target="_blank" onclick="event.stopPropagation()">${escapeHtml(ct.web.replace(/https?:\/\//,''))}</a></div>`:''}
       ${ct.logs&&ct.logs.length?`<div class="contact-info-line" style="color:var(--teal-light)"><span class="ic">📝</span>${ct.logs.length} note${ct.logs.length>1?'s':''} d'échange</div>`:''}
@@ -6553,8 +5972,8 @@ function contactCardHtml(c){
   const badge=ancien?'<span class="contact-badge-ancien">Ancien</span>':'';
   return `<div class="contact-card ${cls}" onclick="openContactModal(${c.id})">
     <div class="contact-h">
-      <div class="contact-avatar" style="background:${avColor}">${makeInitials(c.name)}</div>
-      <div class="contact-name">${c.name}</div>
+      <div class="contact-avatar" style="background:${avColor}">${escapeHtml(makeInitials(c.name))}</div>
+      <div class="contact-name">${escapeHtml(c.name)}</div>
       ${badge}
     </div>
     ${info}
@@ -6733,20 +6152,15 @@ function renderSettings(){
       </div>
       <div class="settings-row">
         <div><div class="settings-label">Nom affiché</div><div class="settings-sub">Visible dans la sidebar et l'équipe</div></div>
-        <input id="set_userName" value="${currentUser.name}" style="background:var(--dark);border:1px solid var(--border);border-radius:8px;color:var(--cream);padding:8px 12px;font-size:13px;width:240px" onblur="updateMyProfile()">
+        <input id="set_userName" value="${escapeHtml(currentUser.name)}" style="background:var(--dark);border:1px solid var(--border);border-radius:8px;color:var(--cream);padding:8px 12px;font-size:13px;width:240px" onblur="updateMyProfile()">
       </div>
       <div class="settings-row">
-        <div><div class="settings-label">🔑 Mot de passe</div><div class="settings-sub">Pour te connecter à l'app. Défaut : 0000</div></div>
+        <div><div class="settings-label">🔑 Mot de passe</div><div class="settings-sub">Géré par Firebase — connu de toi seul.</div></div>
         <button class="btn-mini" onclick="openPwdModal('${currentUser.id}')">Modifier mon mot de passe</button>
       </div>
-      ${(function(){
-        const me=teamMembers.find(x=>x.id===currentUser.id);
-        const has=!!(me&&me.secretAns);
-        return `<div class="settings-row">
-          <div><div class="settings-label">🤔 Ma réponse secrète</div><div class="settings-sub">Pour débloquer mon compte si j'oublie mon mot de passe.<br><i style="color:var(--teal-light)">Question : "Qui est le plus Bg du monde ?"</i> · ${has?'<span style="color:var(--green);font-weight:700">✅ Définie</span>':'<span style="color:var(--orange);font-weight:700">⚠️ Non définie</span>'}</div></div>
-          <button class="btn-mini" onclick="openSecretAnsModal()">${has?'Modifier':'Définir maintenant'}</button>
-        </div>`;
-      })()}
+      <div class="settings-row">
+        <div><div class="settings-label">🔐 Mot de passe oublié</div><div class="settings-sub">Depuis l'écran de connexion, clique sur « Mot de passe oublié ? » : tu recevras un lien par e-mail pour en choisir un nouveau.</div></div>
+      </div>
       <div class="settings-row">
         <div><div class="settings-label">Mon rôle</div><div class="settings-sub">${admin?'🔐 Admin · accès complet à toutes les pages':'👤 Équipe · accès aux pages de production'}</div></div>
         <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:${admin?'rgba(46,204,113,.18)':'rgba(127,140,141,.18)'};color:${admin?'var(--green)':'var(--grey)'};text-transform:uppercase;letter-spacing:.5px">${admin?'Admin':'Équipe'}</span>
@@ -6766,7 +6180,7 @@ function renderSettings(){
           <div style="display:flex;align-items:center;gap:10px">
             <div class="user-avatar" style="background:${m.color}">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.initials}</div>
             <div>
-              <input value="${m.name}" onblur="updateTeamName('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 10px;font-size:12px;width:180px">
+              <input value="${escapeHtml(m.name)}" onblur="updateTeamName('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 10px;font-size:12px;width:180px">
               <div class="settings-sub">${m.role==='admin'?'🔐 Admin · accès complet':'👤 Équipe · accès production'}${m.pwd===DEFAULT_PWD_HASH?' · 🔓 mdp par défaut':' · 🔑 mdp défini'}</div>
             </div>
           </div>
@@ -7056,7 +6470,7 @@ const WIDGET_CATALOG = {
   'shortcuts':{name:'Raccourcis',icon:'⚡',desc:'Accès rapide aux pages',wide:true,render(){
     const items=homeShortcutTargets();
     return `<div class="hw-shortcuts">${items.map(it=>
-      `<div class="hw-shortcut" onclick="showTab('${it.tab}')"><div class="sc-ic">${it.icon}</div><div class="sc-lbl">${it.label}</div></div>`
+      `<div class="hw-shortcut" onclick="showTab('${it.tab}')"><div class="sc-ic">${it.icon}</div><div class="sc-lbl">${escapeHtml(it.label)}</div></div>`
     ).join('')}</div>`;
   }},
   'kpi-ca':{name:'CA mensuel',icon:'💰',desc:'Chiffre d\'affaires du mois',adminOnly:true,render(){
@@ -7131,7 +6545,7 @@ function renderHome(){
   else av.textContent=currentUser.initials||'U';
   const hour=new Date().getHours();
   const greet=hour<12?'Bonjour':hour<18?'Bon après-midi':'Bonsoir';
-  document.getElementById('homeHello').innerHTML=`${greet} <span>${(currentUser.name||'').split(' ')[0]}</span> 👋`;
+  document.getElementById('homeHello').innerHTML=`${greet} <span>${escapeHtml((currentUser.name||'').split(' ')[0])}</span> 👋`;
   document.getElementById('homeDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
   const grid=document.getElementById('homeGrid');
@@ -7146,7 +6560,7 @@ function renderHome(){
     return `<div class="hw ${w.wide?'wide':''}">
       <div class="hw-head">
         <span class="hw-ic">${w.icon}</span>
-        <span class="hw-title">${w.name}</span>
+        <span class="hw-title">${escapeHtml(w.name)}</span>
         <span class="hw-ctrl">
           <button onclick="moveWidget(${idx},-1)" title="Monter">▲</button>
           <button onclick="moveWidget(${idx},1)" title="Descendre">▼</button>
@@ -7185,7 +6599,7 @@ function openWidgetPicker(){
     const added=homeWidgets.includes(type);
     return `<div class="widget-pick ${added?'added':''}" onclick="addWidget('${type}')">
       <span class="wp-ic">${w.icon}</span>
-      <div><div class="wp-name">${w.name}${added?' ✓':''}</div><div class="wp-desc">${w.desc}</div></div>
+      <div><div class="wp-name">${escapeHtml(w.name)}${added?' ✓':''}</div><div class="wp-desc">${escapeHtml(w.desc)}</div></div>
     </div>`;
   }).join('');
   document.getElementById('widgetPickerOverlay').classList.add('open');
@@ -7881,9 +7295,7 @@ function applyExternalUpdate(key){
       else if(tab==='services') renderServices();
       else if(tab==='avis') renderAvis();
       else if(tab==='contacts') renderContacts();
-      else if(tab==='editorial') renderEditorial();
       else if(tab==='cnotes') renderClientNotes();
-      else if(tab==='articles') renderArticles();
       else if(tab==='trips') renderTrips();
       if(inDash) renderDashboard();
       break;
@@ -7913,10 +7325,6 @@ function applyExternalUpdate(key){
     case 'influ_avis_days':
       avisDays = parsed;
       if(tab==='avis') renderAvis();
-      break;
-    case 'influ_editorial':
-      editorial = parsed;
-      if(tab==='editorial') renderEditorial();
       break;
     case 'influ_contacts':
       contactsData = parsed;
@@ -7954,10 +7362,6 @@ function applyExternalUpdate(key){
       // donc il faut le re-render dès qu'agenda change même sur la page d'accueil
       if(tab==='home') renderHome();
       if(inDash) renderDashboard();
-      break;
-    case 'influ_articles':
-      articles = parsed;
-      if(tab==='articles') renderArticles();
       break;
     case 'influ_client_notes':
       clientNotes = parsed;
@@ -8017,10 +7421,6 @@ function applyExternalUpdate(key){
       if(tab==='leadstats') renderLeadStats();
       break;
     }
-    case 'influ_presentations':
-      presentations = parsed;
-      if(tab==='presentations') renderPresentations();
-      break;
     case 'influ_presence':
       presence = parsed || {};
       // Re-render chat list + chat header pour rafraîchir les pastilles vert/rouge
@@ -8122,6 +7522,10 @@ function insertCnoteCheckline(){
 }
 
 // Transforme URLs et [texte](url) en liens cliquables (après échappement HTML)
+// Échappement HTML — utilitaire général (vivait auparavant dans le module
+// Articles de blog, retiré ; déplacé ici pour être au bon endroit).
+function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
 function linkify(text){
   let html=escapeHtml(text||'');
   // Markdown links [texte](url) — d'abord
@@ -8170,8 +7574,8 @@ function renderClientNotes(){
   sbHtml+=sbClients.map(c=>{
     const n=noteCount(c.id);
     return `<div class="cnotes-client ${cnSelectedClient===c.id?'active':''}" onclick="selectCnoteClient(${c.id})">
-      <div class="cnotes-client-av" style="background:${clientColorFor(c.id)}">${makeInitials(c.name)}</div>
-      <div class="cnotes-cname">${c.name}</div>
+      <div class="cnotes-client-av" style="background:${clientColorFor(c.id)}">${escapeHtml(makeInitials(c.name))}</div>
+      <div class="cnotes-cname">${escapeHtml(c.name)}</div>
       <div class="cnotes-ccount">${n}</div>
     </div>`;
   }).join('');
@@ -8267,7 +7671,7 @@ function cnoteCardHtml(n){
     </div>
     ${tagsHtml?`<div class="cnote-tags">${tagsHtml}</div>`:''}
     <div class="cnote-meta">
-      <span class="cnote-author"><span class="cnote-author-av" style="background:${authorColor}">${authorAv}</span>${author?(author.name||'').split(' ')[0]:'?'}</span>
+      <span class="cnote-author"><span class="cnote-author-av" style="background:${authorColor}">${authorAv}</span>${escapeHtml(author?(author.name||'').split(' ')[0]:'?')}</span>
       <span>${dateStr}</span>
     </div>
   </div>`;
@@ -8282,7 +7686,7 @@ function fillCnoteClientSelect(selected){
   const sel=document.getElementById('cn_client');
   const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   sel.innerHTML='<option value="free">📌 Note libre (titre perso, sans client)</option>'
-    +'<optgroup label="Clients">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>';
+    +'<optgroup label="Clients">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${escapeHtml(c.name)}</option>`).join('')+'</optgroup>';
   if(!selected||selected==='free') sel.value='free';
 }
 
@@ -8381,608 +7785,6 @@ function deleteClientNote(id){
   Storage.set('influ_client_notes',clientNotes);
   renderClientNotes();
   toast('Idée supprimée');
-}
-
-// ╔══════════════════════════════════════════════════════════════
-// ║ ARTICLES DE BLOG
-// ║ data: {id, title, content, excerpt, clientId, tags[], status,
-// ║        coverImage, publishedUrl, pubDate, author,
-// ║        createdAt, updatedAt}
-// ╚══════════════════════════════════════════════════════════════
-let articles = Storage.get('influ_articles', []);
-let nextArticleId = articles.length?Math.max(...articles.map(a=>a.id))+1:1;
-let articleFilter='all', editArticleId=null, editorTags=[], editorCoverData=null;
-
-const ARTICLE_STATUS=[
-  {k:'draft',     l:'📝 Brouillon',   short:'Brouillon',   cls:'art-st-draft',     pillCls:'f-grey'},
-  {k:'in_review', l:'👀 En relecture',short:'Relecture',   cls:'art-st-in_review', pillCls:'f-orange'},
-  {k:'scheduled', l:'📅 Programmé',   short:'Programmé',   cls:'art-st-scheduled', pillCls:'f-blue'},
-  {k:'published', l:'🚀 Publié',      short:'Publié',      cls:'art-st-published', pillCls:'f-green'}
-];
-function articleStatusInfo(k){return ARTICLE_STATUS.find(s=>s.k===k)||ARTICLE_STATUS[0];}
-
-// Markdown parser léger (pas besoin d'une lib)
-function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function renderMarkdown(md){
-  if(!md) return '';
-  // Échapper d'abord, puis remplacer
-  let html=escapeHtml(md);
-  // Headings (### avant ## avant #)
-  html=html.replace(/^### (.+)$/gm,'<h3>$1</h3>');
-  html=html.replace(/^## (.+)$/gm,'<h2>$1</h2>');
-  html=html.replace(/^# (.+)$/gm,'<h1>$1</h1>');
-  // Bold + italic
-  html=html.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-  html=html.replace(/\*([^*]+)\*/g,'<em>$1</em>');
-  // Inline code
-  html=html.replace(/`([^`]+)`/g,'<code>$1</code>');
-  // Liens [text](url)
-  html=html.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-  // Quotes
-  html=html.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
-  // Lists
-  // Group consecutive `- ` lines
-  html=html.replace(/(^- .+(\n- .+)*)/gm, m=>'<ul>'+m.split('\n').map(l=>'<li>'+l.replace(/^- /,'')+'</li>').join('')+'</ul>');
-  html=html.replace(/(^\d+\. .+(\n\d+\. .+)*)/gm, m=>'<ol>'+m.split('\n').map(l=>'<li>'+l.replace(/^\d+\. /,'')+'</li>').join('')+'</ol>');
-  // Paragraphs : split blank-line groups
-  html=html.split(/\n\n+/).map(block=>{
-    const t=block.trim();
-    if(!t) return '';
-    if(/^<(h[1-6]|ul|ol|blockquote|p)/.test(t)) return t;
-    return '<p>'+t.replace(/\n/g,'<br>')+'</p>';
-  }).join('\n');
-  return html;
-}
-
-function autoExcerpt(md, maxLen=160){
-  if(!md) return '';
-  // Strip markdown to plain text
-  let txt=md.replace(/[#*`>_-]+/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
-  if(txt.length<=maxLen) return txt;
-  return txt.slice(0,maxLen).replace(/\s+\S*$/,'')+'…';
-}
-
-function renderArticles(){
-  const search=(document.getElementById('artSearch')?.value||'').toLowerCase();
-  const sort=document.getElementById('artSortSel')?.value||'updated';
-
-  // Stats
-  const cnts={draft:0,in_review:0,scheduled:0,published:0};
-  articles.forEach(a=>{cnts[a.status]=(cnts[a.status]||0)+1;});
-  document.getElementById('articlesStats').innerHTML=`
-    <div class="fin-stat teal"><div class="lbl">Total articles</div><div class="val">${articles.length}</div><div class="sub">Tous confondus</div></div>
-    <div class="fin-stat green"><div class="lbl">🚀 Publiés</div><div class="val">${cnts.published||0}</div><div class="sub">Articles en ligne</div></div>
-    <div class="fin-stat blue"><div class="lbl">📅 Programmés</div><div class="val">${cnts.scheduled||0}</div><div class="sub">À publier bientôt</div></div>
-    <div class="fin-stat orange"><div class="lbl">👀 En relecture / 📝 brouillons</div><div class="val">${(cnts.in_review||0)+(cnts.draft||0)}</div><div class="sub">${cnts.in_review||0} relecture · ${cnts.draft||0} brouillon</div></div>
-  `;
-
-  // Filters
-  const filters=[
-    {k:'all',l:'Tous',cnt:articles.length,cls:''},
-    ...ARTICLE_STATUS.map(s=>({k:s.k,l:s.l,cnt:cnts[s.k]||0,cls:s.pillCls}))
-  ];
-  document.getElementById('artFilters').innerHTML=filters.map(f=>{
-    const act=articleFilter===f.k?'active '+(f.cls||''):'';
-    return `<button class="pill ${act}" onclick="setArticleFilter('${f.k}')">${f.l} (${f.cnt})</button>`;
-  }).join('');
-
-  let list=[...articles];
-  if(articleFilter!=='all') list=list.filter(a=>a.status===articleFilter);
-  if(search) list=list.filter(a=>(a.title||'').toLowerCase().includes(search)||(a.content||'').toLowerCase().includes(search)||(a.tags||[]).join(' ').toLowerCase().includes(search));
-
-  if(sort==='updated') list.sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||''));
-  if(sort==='created') list.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
-  if(sort==='title') list.sort((a,b)=>(a.title||'').localeCompare(b.title||'','fr'));
-  if(sort==='status') list.sort((a,b)=>(a.status||'').localeCompare(b.status||''));
-
-  const body=document.getElementById('articlesBody');
-  if(!list.length){body.innerHTML=`<div class="empty" style="grid-column:1/-1">📰 Aucun article<div style="margin-top:8px;font-size:12px">Clique sur "+ Nouvel article" pour commencer.</div></div>`;return;}
-
-  body.innerHTML=list.map(a=>{
-    const st=articleStatusInfo(a.status);
-    const c=clients.find(c=>c.id===a.clientId);
-    const cover=a.coverImage?`style="background-image:url('${a.coverImage}')"`:'class="no-img"';
-    const coverInner=a.coverImage?'':'📰 PAS DE COUVERTURE';
-    const date=a.pubDate||a.updatedAt||a.createdAt;
-    const dateStr=date?(date.length===10?new Date(date+'T00:00:00'):new Date(date)).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
-    const tagsHtml=(a.tags||[]).slice(0,3).map(t=>`<span class="art-tag">${escapeHtml(t)}</span>`).join('');
-    const excerpt=a.excerpt||autoExcerpt(a.content);
-    return `<div class="art-card ${a.status}" onclick="viewArticle(${a.id})">
-      <div class="art-cover ${a.coverImage?'':'no-img'}" ${cover}>${coverInner}</div>
-      <div class="art-body">
-        <div class="art-title">${escapeHtml(a.title||'Sans titre')}</div>
-        ${excerpt?`<div class="art-excerpt">${escapeHtml(excerpt)}</div>`:''}
-        ${tagsHtml?`<div class="art-tags">${tagsHtml}</div>`:''}
-        <div class="art-meta">
-          <span class="art-status ${st.cls}">${st.short}</span>
-          ${c?`<span class="art-client-tag">👥 ${c.name}</span>`:'<span class="art-client-tag" style="color:var(--coral)">📌 Libre</span>'}
-          <span class="art-date">${dateStr}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function setArticleFilter(f){articleFilter=f;renderArticles();}
-
-function fillArticleClientSelect(selected){
-  const sel=document.getElementById('ar_client');
-  const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
-  sel.innerHTML='<option value="">📌 Article libre (sans client)</option>'
-    +'<optgroup label="Clients">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>';
-}
-
-function refreshTagPills(){
-  const box=document.getElementById('ar_tagsBox');
-  const input=document.getElementById('ar_tagInput');
-  // Remove existing pills
-  box.querySelectorAll('.art-tag-pill').forEach(p=>p.remove());
-  // Insert pills before input
-  editorTags.forEach((t,i)=>{
-    const pill=document.createElement('span');
-    pill.className='art-tag-pill';
-    pill.innerHTML=`${escapeHtml(t)} <span class="x" onclick="removeEditorTag(${i})">✕</span>`;
-    box.insertBefore(pill,input);
-  });
-}
-function removeEditorTag(idx){editorTags.splice(idx,1);refreshTagPills();}
-function onArticleTagKeydown(e){
-  if(e.key==='Enter'||e.key===','){
-    e.preventDefault();
-    const v=e.target.value.trim().replace(/,$/,'').trim();
-    if(v&&!editorTags.includes(v)){editorTags.push(v);refreshTagPills();}
-    e.target.value='';
-  } else if(e.key==='Backspace'&&!e.target.value&&editorTags.length){
-    editorTags.pop();refreshTagPills();
-  }
-}
-
-function setEditorCover(dataUrl){
-  editorCoverData=dataUrl||null;
-  const prev=document.getElementById('ar_coverPreview');
-  if(dataUrl){
-    prev.style.backgroundImage=`url('${dataUrl}')`;
-    prev.classList.add('has-img');
-    document.getElementById('ar_coverHint').style.display='none';
-  } else {
-    prev.style.backgroundImage='';
-    prev.classList.remove('has-img');
-    document.getElementById('ar_coverHint').style.display='inline';
-  }
-}
-function onArticleCoverSelected(ev){
-  const file=ev.target.files&&ev.target.files[0];
-  if(!file) return;
-  if(file.size>5*1024*1024){alert('Image trop lourde (max 5 Mo)');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    // Resize to max 1200×675 (16:9), JPEG q.85
-    const img=new Image();
-    img.onload=()=>{
-      const maxW=1200, maxH=675;
-      let w=img.width, h=img.height;
-      const ratio=Math.min(maxW/w, maxH/h, 1);
-      w=Math.round(w*ratio); h=Math.round(h*ratio);
-      const c=document.createElement('canvas');c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      setEditorCover(c.toDataURL('image/jpeg',0.85));
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-function clearArticleCover(){setEditorCover(null);}
-
-function mdInsert(before,after,placeholder){
-  const ta=document.getElementById('ar_content');
-  const start=ta.selectionStart, end=ta.selectionEnd;
-  const sel=ta.value.slice(start,end)||placeholder;
-  const txt=ta.value.slice(0,start)+before+sel+after+ta.value.slice(end);
-  ta.value=txt;
-  ta.focus();
-  ta.selectionStart=start+before.length;
-  ta.selectionEnd=start+before.length+sel.length;
-}
-
-function openArticleEditor(){
-  editArticleId=null;editorTags=[];setEditorCover(null);
-  document.getElementById('artEditorTitle').textContent='📰 Nouvel article';
-  document.getElementById('artSaveLabel').textContent='Créer l\'article';
-  document.getElementById('ar_title').value='';
-  document.getElementById('ar_content').value='';
-  document.getElementById('ar_excerpt').value='';
-  document.getElementById('ar_status').value='draft';
-  document.getElementById('ar_pubDate').value='';
-  document.getElementById('ar_url').value='';
-  document.getElementById('ar_tagInput').value='';
-  fillArticleClientSelect('');
-  refreshTagPills();
-  document.getElementById('artEditorOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('ar_title').focus(),50);
-}
-
-function editArticle(id){
-  const a=articles.find(x=>x.id===id);if(!a) return;
-  editArticleId=id;editorTags=[...(a.tags||[])];setEditorCover(a.coverImage||null);
-  document.getElementById('artEditorTitle').textContent='✏️ Modifier l\'article';
-  document.getElementById('artSaveLabel').textContent='Mettre à jour';
-  document.getElementById('ar_title').value=a.title||'';
-  document.getElementById('ar_content').value=a.content||'';
-  document.getElementById('ar_excerpt').value=a.excerpt||'';
-  document.getElementById('ar_status').value=a.status||'draft';
-  document.getElementById('ar_pubDate').value=a.pubDate||'';
-  document.getElementById('ar_url').value=a.publishedUrl||'';
-  document.getElementById('ar_tagInput').value='';
-  fillArticleClientSelect(a.clientId||'');
-  refreshTagPills();
-  document.getElementById('artEditorOverlay').classList.add('open');
-}
-
-function saveArticle(){
-  const title=document.getElementById('ar_title').value.trim();
-  if(!title){alert('Titre requis');return;}
-  const content=document.getElementById('ar_content').value;
-  const data={
-    title,
-    content,
-    excerpt:document.getElementById('ar_excerpt').value.trim(),
-    clientId:parseInt(document.getElementById('ar_client').value)||null,
-    tags:[...editorTags],
-    status:document.getElementById('ar_status').value,
-    coverImage:editorCoverData||'',
-    publishedUrl:document.getElementById('ar_url').value.trim(),
-    pubDate:document.getElementById('ar_pubDate').value||'',
-    author:currentUser.id,
-    updatedAt:new Date().toISOString()
-  };
-  if(editArticleId!==null){
-    const i=articles.findIndex(a=>a.id===editArticleId);
-    articles[i]={...articles[i],...data};
-    toast('Article mis à jour ✓');
-  } else {
-    articles.push({id:nextArticleId++,...data,createdAt:new Date().toISOString()});
-    toast('Article créé ✓');
-  }
-  Storage.set('influ_articles',articles);
-  closeModal('artEditorOverlay');
-  renderArticles();
-}
-
-function deleteArticle(id){
-  if(!confirm('Supprimer cet article ? Action irréversible.')) return;
-  articles=articles.filter(a=>a.id!==id);
-  Storage.set('influ_articles',articles);
-  closeModal('artReaderOverlay');
-  renderArticles();
-  toast('Article supprimé');
-}
-
-let viewingArticleId=null;
-function viewArticle(id){
-  const a=articles.find(x=>x.id===id);if(!a) return;
-  viewingArticleId=id;
-  const cover=document.getElementById('ar_readerCover');
-  if(a.coverImage) cover.style.backgroundImage=`url('${a.coverImage}')`;
-  else cover.style.backgroundImage='linear-gradient(135deg,rgba(17,103,118,.45),rgba(255,95,95,.25))';
-  // ── Bouton "Télécharger HD" sur la cover ─────────────────────
-  cover.style.position='relative';
-  let dlBtn=document.getElementById('ar_readerDownloadCover');
-  if(!dlBtn){
-    dlBtn=document.createElement('button');
-    dlBtn.id='ar_readerDownloadCover';
-    dlBtn.type='button';
-    dlBtn.innerHTML='⬇ Télécharger HD';
-    dlBtn.style.cssText='position:absolute;top:10px;right:10px;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .2s;z-index:5;box-shadow:0 4px 12px rgba(0,0,0,.3)';
-    dlBtn.onmouseenter=()=>{dlBtn.style.background='rgba(17,103,118,.95)';dlBtn.style.transform='translateY(-1px)';};
-    dlBtn.onmouseleave=()=>{dlBtn.style.background='rgba(0,0,0,.65)';dlBtn.style.transform='none';};
-    cover.appendChild(dlBtn);
-  }
-  if(a.coverImage){
-    dlBtn.style.display='flex';
-    dlBtn.onclick=(e)=>{e.stopPropagation();downloadArticleCover(a.coverImage, a.title||'article');};
-  } else {
-    dlBtn.style.display='none';
-  }
-  document.getElementById('ar_readerTitle').textContent=a.title||'Sans titre';
-  const st=articleStatusInfo(a.status);
-  const c=clients.find(c=>c.id===a.clientId);
-  const date=a.pubDate||a.updatedAt||a.createdAt;
-  const dateStr=date?(date.length===10?new Date(date+'T00:00:00'):new Date(date)).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'—';
-  const tagsHtml=(a.tags||[]).map(t=>`<span class="art-tag">${escapeHtml(t)}</span>`).join('');
-  document.getElementById('ar_readerMeta').innerHTML=`
-    <span class="art-status ${st.cls}">${st.short}</span>
-    ${c?`<span class="art-client-tag">👥 ${c.name}</span>`:'<span class="art-client-tag" style="color:var(--coral)">📌 Article libre</span>'}
-    <span style="color:var(--muted)">📅 ${dateStr}</span>
-    ${tagsHtml?`<span class="art-tags" style="display:inline-flex">${tagsHtml}</span>`:''}
-  `;
-  document.getElementById('ar_readerContent').innerHTML=renderMarkdown(a.content||'<em style="color:var(--muted)">Aucun contenu</em>');
-  const linkBtn=document.getElementById('ar_readerOpenLink');
-  if(a.publishedUrl){linkBtn.style.display='inline-block';linkBtn.onclick=()=>window.open(a.publishedUrl,'_blank');}
-  else linkBtn.style.display='none';
-  // Add delete button to actions bar (recreate)
-  const bar=linkBtn.parentElement;
-  // Make sure delete button exists
-  let delBtn=bar.querySelector('.del-art-btn');
-  if(!delBtn){
-    delBtn=document.createElement('button');
-    delBtn.className='btn-cancel del-art-btn';
-    delBtn.style='background:rgba(231,76,60,.15);color:var(--red)';
-    delBtn.textContent='✕ Supprimer';
-    delBtn.onclick=()=>deleteArticle(viewingArticleId);
-    bar.insertBefore(delBtn,bar.children[1]||linkBtn);
-  } else delBtn.onclick=()=>deleteArticle(viewingArticleId);
-  document.getElementById('artReaderOverlay').classList.add('open');
-}
-
-function editArticleFromReader(){
-  closeModal('artReaderOverlay');
-  if(viewingArticleId!==null) editArticle(viewingArticleId);
-}
-
-// Télécharge l'image de couverture en HD (base64 ou URL externe)
-function downloadArticleCover(src, title){
-  if(!src) return;
-  const safeName=(title||'article').replace(/[^a-z0-9àâäéèêëîïôöùûüç_\-\s]/gi,'').trim().replace(/\s+/g,'-').toLowerCase().slice(0,60)||'cover';
-  function triggerDownload(url, ext){
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=safeName+'-cover.'+ext;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-  // Cas 1 : data:image base64 → on déclenche direct
-  if(src.startsWith('data:')){
-    const m=src.match(/^data:image\/([a-zA-Z0-9+]+);/);
-    const ext=m?(m[1]==='jpeg'?'jpg':m[1]):'png';
-    triggerDownload(src, ext);
-    toast('Image téléchargée');
-    return;
-  }
-  // Cas 2 : URL externe → on tente fetch+blob pour forcer le download HD
-  toast('Téléchargement en cours…');
-  fetch(src).then(r=>{
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.blob();
-  }).then(blob=>{
-    const ext=(blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');
-    const url=URL.createObjectURL(blob);
-    triggerDownload(url, ext);
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-    toast('Image téléchargée');
-  }).catch(err=>{
-    // Fallback : ouvre dans un nouvel onglet (CORS bloqué)
-    console.warn('Download direct impossible (CORS), ouverture nouvel onglet',err);
-    window.open(src,'_blank');
-    toast("Image ouverte dans un nouvel onglet (clic droit → Enregistrer sous)");
-  });
-}
-
-function previewArticle(){
-  // Sauve temporairement les valeurs courantes du formulaire et appelle viewArticle
-  const fakeId=-1;
-  const fake={
-    id:fakeId,
-    title:document.getElementById('ar_title').value||'Aperçu',
-    content:document.getElementById('ar_content').value,
-    excerpt:document.getElementById('ar_excerpt').value,
-    clientId:parseInt(document.getElementById('ar_client').value)||null,
-    tags:[...editorTags],
-    status:document.getElementById('ar_status').value,
-    coverImage:editorCoverData||'',
-    publishedUrl:document.getElementById('ar_url').value,
-    pubDate:document.getElementById('ar_pubDate').value
-  };
-  // Render without saving
-  articles.push(fake);
-  viewArticle(fakeId);
-  articles.pop();
-}
-
-// ╔══════════════════════════════════════════════════════════════
-// ║ COMMERCE — Documents de présentation (bibliothèque équipe)
-// ╚══════════════════════════════════════════════════════════════
-let presentations = Storage.get('influ_presentations', null);
-if(!presentations){
-  // Seed avec 4 cases placeholder à éditer
-  presentations = [
-    {id:'pres_1', title:'Présentation Agence Influmedia', description:'Pitch complet 15 min pour nouveaux clients', url:'', cover:'', color:'teal'},
-    {id:'pres_2', title:'Offre Social Media', description:'Pack Facebook / Instagram / TikTok', url:'', cover:'', color:'coral'},
-    {id:'pres_3', title:'Offre Google Ads', description:'Campagnes SEA — étude de cas', url:'', cover:'', color:'blue'},
-    {id:'pres_4', title:'Avis Google & e-Réputation', description:'Comment booster son SEO local', url:'', cover:'', color:'purple'}
-  ];
-  Storage.set('influ_presentations', presentations);
-}
-
-let _presEditingId=null;
-
-function renderPresentations(){
-  const grid=document.getElementById('presGrid');
-  if(!grid) return;
-  let html=presentations.map(p=>{
-    const cover=p.cover ? `style="background-image:url('${p.cover.replace(/'/g,"\\'")}');"` : '';
-    const icon=!p.cover ? '🎬' : '';
-    const hasUrl=!!p.url;
-    return `<div class="pres-card pc-${p.color||'teal'}" onclick="${hasUrl?`launchPres('${p.id}')`:`openPresEdit('${p.id}')`}">
-      <button class="pres-edit-btn" onclick="event.stopPropagation();openPresEdit('${p.id}')" title="Modifier" style="right:50px">✏️</button>
-      <button class="pres-edit-btn pres-del-btn" onclick="event.stopPropagation();confirmDeletePres('${p.id}')" title="Supprimer">✕</button>
-      <div class="pres-cover" ${cover}>
-        ${icon}
-        <div class="pres-cover-overlay">
-          ${hasUrl?`<button class="pres-launch-btn" onclick="event.stopPropagation();launchPres('${p.id}')">▶ Lancer</button>`:`<span style="color:rgba(255,255,255,.7);font-size:11px;font-style:italic">Cliquer pour configurer</span>`}
-        </div>
-      </div>
-      <div class="pres-body">
-        <div class="pres-title">${escapeHtml(p.title||'Sans titre')}</div>
-        <div class="pres-desc">${escapeHtml(p.description||'')}</div>
-      </div>
-    </div>`;
-  }).join('');
-  html+=`<div class="pres-add" onclick="openPresEdit(null)"><div class="ic">＋</div><div>Nouvelle présentation</div></div>`;
-  grid.innerHTML=html;
-}
-
-function launchPres(id){
-  const p=presentations.find(x=>x.id===id); if(!p) return;
-  if(!p.url){ openPresEdit(id); return; }
-  // Fichier importé (data:) → convertir en Blob URL pour ouverture fiable, sinon ouvrir l'URL telle quelle
-  if(p.url.startsWith('data:')){
-    try{
-      const arr = p.url.split(',');
-      const mime = arr[0].match(/:(.*?);/)[1];
-      const bstr = atob(arr[1]);
-      const u8 = new Uint8Array(bstr.length);
-      for(let i=0;i<bstr.length;i++) u8[i]=bstr.charCodeAt(i);
-      const blob = new Blob([u8], {type:mime});
-      const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
-      setTimeout(()=>URL.revokeObjectURL(blobUrl), 60000);
-    }catch(e){
-      window.open(p.url, '_blank');
-    }
-  } else {
-    window.open(p.url, '_blank', 'noopener,noreferrer');
-  }
-  toast('▶ '+(p.title||'Présentation')+' ouverte');
-}
-
-function openPresEdit(id){
-  _presEditingId=id;
-  const p = id ? presentations.find(x=>x.id===id) : null;
-  document.getElementById('presEditTitle').textContent = p ? '✏️ Modifier la présentation' : '🎬 Nouvelle présentation';
-  document.getElementById('pe_title').value = p?.title || '';
-  document.getElementById('pe_desc').value = p?.description || '';
-  document.getElementById('pe_url').value = p?.url || '';
-  document.getElementById('pe_cover').value = p?.cover || '';
-  document.getElementById('pe_color').value = p?.color || 'teal';
-  document.getElementById('pe_delBtn').style.display = id ? 'inline-flex' : 'none';
-  document.getElementById('pe_coverFile').value = '';
-  document.getElementById('pe_coverInfo').textContent = '';
-  refreshCoverPreview();
-  document.getElementById('presEditOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('pe_title').focus(),60);
-}
-
-function refreshCoverPreview(){
-  const val=document.getElementById('pe_cover').value.trim();
-  const prev=document.getElementById('pe_coverPreview');
-  const clrBtn=document.getElementById('pe_coverClear');
-  if(val){
-    prev.innerHTML=`<img src="${val.replace(/"/g,'&quot;')}" style="width:100%;height:120px;object-fit:cover;display:block">`;
-    prev.style.display='block';
-    clrBtn.style.display='inline-flex';
-  } else {
-    prev.style.display='none';
-    prev.innerHTML='';
-    clrBtn.style.display='none';
-  }
-}
-function clearPresCover(){
-  document.getElementById('pe_cover').value='';
-  document.getElementById('pe_coverFile').value='';
-  document.getElementById('pe_coverInfo').textContent='';
-  refreshCoverPreview();
-}
-function onPresCoverSelected(ev){
-  const file=ev.target.files&&ev.target.files[0];
-  if(!file) return;
-  if(!file.type.startsWith('image/')){ alert('Seules les images sont acceptées.'); ev.target.value=''; return; }
-  const info=document.getElementById('pe_coverInfo');
-  info.textContent='⏳ Recadrage et optimisation...';
-  info.style.color='var(--muted)';
-  const reader=new FileReader();
-  reader.onload=function(){
-    const img=new Image();
-    img.onload=function(){
-      // === Recadrage automatique au format 16:10 (ratio de la carte), centré ===
-      const targetRatio = 16/10;
-      const srcRatio = img.width / img.height;
-      let sx, sy, sw, sh;
-      if(srcRatio > targetRatio){
-        // Image trop large → on coupe sur les côtés
-        sh = img.height;
-        sw = sh * targetRatio;
-        sx = (img.width - sw) / 2;
-        sy = 0;
-      } else {
-        // Image trop haute (portrait) → on coupe en haut/bas
-        sw = img.width;
-        sh = sw / targetRatio;
-        sx = 0;
-        sy = (img.height - sh) / 2;
-      }
-      // Taille finale : 960×600 (16:10), qualité OK pour les cartes
-      const targetW = 960, targetH = 600;
-      const cv = document.createElement('canvas');
-      cv.width = targetW; cv.height = targetH;
-      const ctx = cv.getContext('2d');
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
-      const dataUrl = cv.toDataURL('image/jpeg', 0.85);
-      document.getElementById('pe_cover').value = dataUrl;
-      const sizeKB = Math.round(dataUrl.length*0.75/1024);
-      info.textContent = `✓ Image recadrée 16:10 et centrée (${sizeKB} Ko, ${targetW}×${targetH})`;
-      info.style.color = 'var(--green)';
-      refreshCoverPreview();
-    };
-    img.src=reader.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function savePres(){
-  const title=document.getElementById('pe_title').value.trim();
-  if(!title){ alert('Titre requis'); return; }
-  const data={
-    title,
-    description:document.getElementById('pe_desc').value.trim(),
-    url:document.getElementById('pe_url').value.trim(),
-    cover:document.getElementById('pe_cover').value.trim(),
-    color:document.getElementById('pe_color').value||'teal'
-  };
-  if(_presEditingId){
-    const p=presentations.find(x=>x.id===_presEditingId);
-    if(p) Object.assign(p, data);
-  } else {
-    presentations.push({id:'pres_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), ...data});
-  }
-  Storage.set('influ_presentations', presentations);
-  closeModal('presEditOverlay');
-  renderPresentations();
-  toast('Présentation enregistrée ✓');
-}
-
-function deletePres(){
-  if(!_presEditingId) return;
-  confirmDeletePres(_presEditingId);
-}
-// Confirmation modale propre (depuis carte ou modal édition)
-function confirmDeletePres(id){
-  const p=presentations.find(x=>x.id===id); if(!p) return;
-  document.getElementById('presDelOverlay')?.remove();
-  const ov=document.createElement('div');
-  ov.id='presDelOverlay';
-  ov.className='overlay open';
-  ov.onclick=(e)=>{ if(e.target===ov) ov.remove(); };
-  ov.innerHTML=`<div class="modal" style="max-width:440px;text-align:center">
-    <div style="font-size:46px;margin-bottom:10px">🗑️</div>
-    <h2 style="margin-bottom:6px">Êtes-vous sûr de vouloir supprimer cette présentation ?</h2>
-    <div style="color:var(--muted);font-style:italic;margin-bottom:20px;word-break:break-word">« ${escapeHtml(p.title||'Sans titre')} »</div>
-    <div class="modal-actions" style="justify-content:center;gap:14px">
-      <button class="btn-cancel" id="pdNoBtn" style="min-width:110px">Non</button>
-      <button class="btn-primary" id="pdYesBtn" style="min-width:140px;background:#e74c3c">Oui, supprimer</button>
-    </div>
-  </div>`;
-  document.body.appendChild(ov);
-  ov.querySelector('#pdNoBtn').onclick=()=>ov.remove();
-  ov.querySelector('#pdYesBtn').onclick=()=>{
-    presentations=presentations.filter(x=>x.id!==id);
-    Storage.set('influ_presentations',presentations);
-    closeModal('presEditOverlay');
-    ov.remove();
-    renderPresentations();
-    toast('🗑 Présentation supprimée');
-  };
 }
 
 // ╔══════════════════════════════════════════════════════════════
@@ -9204,7 +8006,7 @@ function renderLeads(){
     } else if(l.status==='signe'){
       signHtml=`<span style="color:var(--orange);font-style:italic;font-size:11px">à renseigner</span>`;
     }
-    const notePreview = l.notes ? `<span title="${(l.notes||'').replace(/"/g,'&quot;')}">${escapeHtml((l.notes||'').slice(0,60))}${l.notes.length>60?'…':''}</span>` : '<span style="color:var(--muted)">—</span>';
+    const notePreview = l.notes ? `<span title="${escapeHtml(l.notes)}">${escapeHtml((l.notes||'').slice(0,60))}${escapeHtml(l.notes.length>60?'…':'')}</span>` : '<span style="color:var(--muted)">—</span>';
     let prestaBadge='';
     if(l.prestation){
       const pIcon={'Ouiglass':'🚗','Influmedia':'⚡','Autre':'📦'}[l.prestation]||'🏷️';
@@ -9217,7 +8019,7 @@ function renderLeads(){
     return `<tr ondblclick="openLeadEdit('${l.id}')" style="cursor:pointer">
       <td style="text-align:center;padding:8px 4px"><div onclick="event.stopPropagation();toggleLeadContacted('${l.id}')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;transition:all .15s;${checkColor}" title="${advancedStatus?'Décocher (revenir à Nouveau)':'Cocher = marquer comme Contacté'}">${advancedStatus?'✓':''}</div></td>
       <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}</td>
-      <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${l.email}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
+      <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${escapeHtml(l.email)}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
       <td><span class="lead-st ${st.cls}">${st.l}</span></td>
       <td style="font-size:12px;color:var(--muted)">${escapeHtml(l.source||'—')}</td>
       <td style="font-size:12px">${signHtml}</td>
@@ -9392,7 +8194,7 @@ function renderTeamLeaderboard(){
     const winnerName=leader.m.name.split(' ')[0];
     const second=byMonth[1];
     const gap=leader.thisMonth-second.thisMonth;
-    banner=`🥇 <strong>${winnerName}</strong> mène ${monthLbl} avec ${leader.thisMonth} signé${leader.thisMonth>1?'s':''} — ${gap===1?'1 d\'écart':gap+' d\'écart'}, ${second.m.name.split(' ')[0]} peut renverser !`;
+    banner=`🥇 <strong>${winnerName}</strong> mène ${monthLbl} avec ${leader.thisMonth} signé${leader.thisMonth>1?'s':''} — ${gap===1?'1 d\'écart':gap+' d\'écart'}, ${escapeHtml(second.m.name.split(' ')[0])} peut renverser !`;
   }
 
   // Cards (toutes affichées, ordre = classement)
@@ -9402,7 +8204,7 @@ function renderTeamLeaderboard(){
     const medal = idx===0?'🥇':(idx===1?'🥈':(idx===2?'🥉':''));
     const avatar = d.m.avatar
       ? `<img src="${d.m.avatar}" style="width:54px;height:54px;border-radius:50%;object-fit:cover;flex-shrink:0">`
-      : `<div style="width:54px;height:54px;border-radius:50%;background:${d.m.color||'#116776'};display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;flex-shrink:0">${d.m.initials||(d.m.name||'?').slice(0,2).toUpperCase()}</div>`;
+      : `<div style="width:54px;height:54px;border-radius:50%;background:${d.m.color||'#116776'};display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;flex-shrink:0">${escapeHtml(d.m.initials||(d.m.name||'?').slice(0,2).toUpperCase())}</div>`;
     const meRing = isMe ? 'box-shadow:0 0 0 3px var(--teal),0 8px 22px -8px rgba(0,0,0,.45);' : '';
     return `<div class="team-com-card ${isMe?'is-me':''}" style="${meRing}">
       <div class="rank-badge">${medal||'#'+(idx+1)}</div>
@@ -9410,7 +8212,7 @@ function renderTeamLeaderboard(){
         ${avatar}
         <div style="flex:1;min-width:0">
           <div class="tc-name">${escapeHtml(d.m.name||'')}${isMe?' <span class="me-tag">moi</span>':''}</div>
-          <div class="tc-level"><span class="emoji">${lvl.emoji}</span> ${lvl.name}</div>
+          <div class="tc-level"><span class="emoji">${lvl.emoji}</span> ${escapeHtml(lvl.name)}</div>
         </div>
       </div>
       <div class="tc-stats">
@@ -9511,7 +8313,7 @@ function renderLeadStats(){
     const span=next.min-lvl.min || 1;
     const done=total-lvl.min;
     progressPct=Math.min(100, Math.round((done/span)*100));
-    progressTxt=`${total} / ${next.min} signés — encore ${next.min-total} pour devenir <strong style="color:#d4af37">${next.name} ${next.emoji}</strong>`;
+    progressTxt=`${total} / ${next.min} signés — encore ${next.min-total} pour devenir <strong style="color:#d4af37">${escapeHtml(next.name)} ${next.emoji}</strong>`;
   }
 
   // Trophées
@@ -9564,7 +8366,7 @@ function renderLeadStats(){
       <div class="level-row">
         <div class="level-emoji">${lvl.emoji}</div>
         <div class="level-info">
-          <div class="level-rank">${lvl.name.toUpperCase()}</div>
+          <div class="level-rank">${escapeHtml(lvl.name.toUpperCase())}</div>
           <div class="level-sub">${lvl.sub}</div>
           <div class="level-bar"><div class="level-bar-fill" style="width:${progressPct}%"></div></div>
           <div class="level-progress-text"><span>${progressTxt}</span><span>${progressPct}%</span></div>
@@ -9583,11 +8385,11 @@ function renderLeadStats(){
           const isBest = b===bestBucket && b.count>0;
           const cls = b.count===0?'empty':(isBest?'best':(isCur?'current':''));
           const countLbl = b.count>0?`<div class="stat-bar-count">${b.count}</div>`:'';
-          return `<div class="stat-bar-col"><div class="stat-bar ${cls}" style="height:${h}px" title="${b.label} ${b.y}: ${b.count} signé${b.count>1?'s':''}">${countLbl}</div></div>`;
+          return `<div class="stat-bar-col"><div class="stat-bar ${cls}" style="height:${h}px" title="${escapeHtml(b.label)} ${b.y}: ${b.count} signé${b.count>1?'s':''}">${countLbl}</div></div>`;
         }).join('')}
       </div>
       <div class="stat-month-labels">
-        ${buckets.map(b=>`<div class="lbl ${(b.y===curY&&b.m===curM)?'cur':''}">${b.label}</div>`).join('')}
+        ${buckets.map(b=>`<div class="lbl ${(b.y===curY&&b.m===curM)?'cur':''}">${escapeHtml(b.label)}</div>`).join('')}
       </div>
     </div>
   `;
@@ -9598,8 +8400,8 @@ function renderLeadStats(){
       <div class="trophy-grid">
         ${trophies.map(t=>`<div class="trophy ${t.unlocked?'unlocked':''}" title="${t.unlocked?'Débloqué ✓':'À débloquer'}">
           <span class="ic">${t.ic}</span>
-          <div class="name">${t.name}</div>
-          <div class="desc">${t.desc}</div>
+          <div class="name">${escapeHtml(t.name)}</div>
+          <div class="desc">${escapeHtml(t.desc)}</div>
         </div>`).join('')}
       </div>
     </div>
@@ -9758,7 +8560,7 @@ function agendaMemberChip(m,d){
   const tip=`${m.name} · ${d.toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'short'})}${stInfo?' — '+stInfo.l:' — non renseigné'}${canEdit?' (clic = change, clic-droit = vide)':''}`;
   return `<div class="gcal-chip gc-s-${stKey}" ${handlers} title="${tip}">
     <span class="gc-dot"></span>
-    <span class="gc-name">${(m.name||'').split(' ')[0]}</span>
+    <span class="gc-name">${escapeHtml((m.name||'').split(' ')[0])}</span>
     <span class="gc-st">${stEmoji}</span>
   </div>`;
 }
@@ -9989,8 +8791,8 @@ function renderTripsByClient(list){
     const isCol=tripCollapsed[g.key];
     return `<div class="trip-client-sec ${isCol?'collapsed':''}" data-clientkey="${g.key}">
       <div class="trip-client-h" onclick="toggleTripClient('${g.key.replace(/'/g,"\\'")}')">
-        <div class="trip-avatar av-${aggSt}">${makeInitials(g.name)}</div>
-        <div class="trip-client-name">${g.name}</div>
+        <div class="trip-avatar av-${aggSt}">${escapeHtml(makeInitials(g.name))}</div>
+        <div class="trip-client-name">${escapeHtml(g.name)}</div>
         <span class="trip-client-count">${g.trips.length} mission${g.trips.length>1?'s':''}</span>
         <span class="trip-client-chev">▾</span>
       </div>
@@ -10067,7 +8869,7 @@ function tripCardHtml(t, showClient=false){
         ${t.city?`<span class="city"><span class="ic">📍</span>${t.city}</span>`:''}
         ${t.comment?`<span class="comment"><span class="ic">💬</span>${t.comment}</span>`:''}
       </div>
-      ${t.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;font-style:italic">${(t.notes||'').replace(/</g,'&lt;')}</div>`:''}
+      ${t.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;font-style:italic">${escapeHtml(t.notes)}</div>`:''}
     </div>
     <span class="trip-status ${s.cls}">${s.short}</span>
     <div class="trip-row-actions">
@@ -10095,8 +8897,8 @@ function fillTripClientSelect(selected){
   const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   const fins=clients.filter(c=>c.status==='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   sel.innerHTML='<option value="">— Aucun (utiliser nom externe) —</option>'
-    +'<optgroup label="Clients actifs">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>'
-    +(fins.length?'<optgroup label="Anciens">'+fins.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>':'');
+    +'<optgroup label="Clients actifs">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${escapeHtml(c.name)}</option>`).join('')+'</optgroup>'
+    +(fins.length?'<optgroup label="Anciens">'+fins.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${escapeHtml(c.name)}</option>`).join('')+'</optgroup>':'');
 }
 function onTripClientChange(){
   // If user picks a CRM client, clear the external name field
@@ -10273,8 +9075,8 @@ function fillFinClientSelect(selected){
   const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   const fins=clients.filter(c=>c.status==='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   sel.innerHTML='<option value="">— Sélectionner —</option>'
-    +'<optgroup label="Clients actifs">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>'
-    +(fins.length?'<optgroup label="Anciens">'+fins.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${c.name}</option>`).join('')+'</optgroup>':'');
+    +'<optgroup label="Clients actifs">'+actives.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${escapeHtml(c.name)}</option>`).join('')+'</optgroup>'
+    +(fins.length?'<optgroup label="Anciens">'+fins.map(c=>`<option value="${c.id}"${selected==c.id?' selected':''}>${escapeHtml(c.name)}</option>`).join('')+'</optgroup>':'');
 }
 function fillFinStatusSelect(kind, selected){
   const sel=document.getElementById('fn_status');
@@ -10339,7 +9141,7 @@ function renderQuotes(){
         <div class="fin-meta">
           <span>📅 Validité : ${dDue}</span>
           <span>${(q.lines||[]).length} ligne${(q.lines||[]).length>1?'s':''}</span>
-          ${q.notes?`<span style="color:var(--muted);font-style:italic">${q.notes.length>40?q.notes.slice(0,40)+'…':q.notes}</span>`:''}
+          ${q.notes?`<span style="color:var(--muted);font-style:italic">${escapeHtml(q.notes.length>40?q.notes.slice(0,40)+'…':q.notes)}</span>`:''}
         </div>
       </div>
       <div class="fin-amount">
@@ -10425,7 +9227,7 @@ function renderInvoices(){
         <div class="fin-meta">
           ${dueInfo}
           <span>${(inv.lines||[]).length} ligne${(inv.lines||[]).length>1?'s':''}</span>
-          ${inv.notes?`<span style="color:var(--muted);font-style:italic">${inv.notes.length>40?inv.notes.slice(0,40)+'…':inv.notes}</span>`:''}
+          ${inv.notes?`<span style="color:var(--muted);font-style:italic">${escapeHtml(inv.notes.length>40?inv.notes.slice(0,40)+'…':inv.notes)}</span>`:''}
         </div>
       </div>
       <div class="fin-amount">
@@ -10486,7 +9288,7 @@ function renderFinLine(line){
   const el=document.createElement('div');
   el.className='fin-line';
   el.innerHTML=`
-    <input class="li-label" value="${(line.label||'').replace(/"/g,'&quot;')}" placeholder="Désignation (ex: Community management Mai)" oninput="recalcFin()">
+    <input class="li-label" value="${escapeHtml(line.label)}" placeholder="Désignation (ex: Community management Mai)" oninput="recalcFin()">
     <input class="li-qty" type="number" step="1" value="${line.qty||1}" oninput="recalcFin()">
     <input class="li-pu" type="number" step="0.01" value="${line.pu||0}" oninput="recalcFin()">
     <div class="line-total" data-total>0,00 €</div>
@@ -10686,7 +9488,7 @@ function exportMyData(){
     rgpdRequest: 'Portabilité des données (RGPD art. 20)',
     profile: {
       id: me.id, name: me.name, role: me.role, initials: me.initials, color: me.color,
-      hasAvatar: !!me.avatar, hasSecretAnswer: !!me.secretAns,
+      hasAvatar: !!me.avatar,
       pwdAlgo: (me.pwd||'').startsWith('s:') ? 'SHA-256' : 'legacy DJB2'
     },
     leads: leads.filter(l=>l.owner===uid),
@@ -10814,7 +9616,7 @@ function mRenderNav(){
   nav.innerHTML=M_TABS.map(t=>{
     const act=mCurrentTab===t.k?'active':'';
     const badge=(t.k==='chat'&&unread>0)?`<span class="m-tab-badge">${unread>9?'9+':unread}</span>`:'';
-    return `<button class="m-tab ${act}" onclick="mGoTab('${t.k}')"><span class="ic">${t.ic}</span><span>${t.label}</span>${badge}</button>`;
+    return `<button class="m-tab ${act}" onclick="mGoTab('${t.k}')"><span class="ic">${t.ic}</span><span>${escapeHtml(t.label)}</span>${badge}</button>`;
   }).join('');
 }
 function mGoTab(k){
@@ -10900,7 +9702,7 @@ function mScreenTodo(){
   return `
     <div class="m-toggle"><button class="${mTodoBucket==='perso'?'active':''}" onclick="mSetTodoBucket('perso')">👤 Perso (${persoN})</button><button class="${mTodoBucket==='team'?'active':''}" onclick="mSetTodoBucket('team')">👥 Équipe (${teamN})</button></div>
     <div style="display:flex;flex-direction:column;gap:8px">
-    ${list.length?list.map(t=>{const st=todoState(t);const overdue=t.due&&t.due<tk&&st!=='done';const ass=teamMembers.find(m=>m.id===t.assignee);return `<div class="m-todo ${st}" onclick="mCycleTodo('${t.id}')"><div class="ck"></div><div class="ti">${escapeHtml(t.title||'')}${t.notes?`<div class="due">${escapeHtml((t.notes||'').slice(0,80))}${t.notes.length>80?'…':''}</div>`:''}${t.due||ass?`<div class="due ${overdue?'red':''}">${t.due?(overdue?'⚠️ ':'')+t.due:''}${ass?(t.due?' · ':'')+'👤 '+escapeHtml((ass.name||'').split(' ')[0]):''}</div>`:''}</div></div>`;}).join(''):'<div class="m-empty">Aucune tâche 🎉</div>'}
+    ${list.length?list.map(t=>{const st=todoState(t);const overdue=t.due&&t.due<tk&&st!=='done';const ass=teamMembers.find(m=>m.id===t.assignee);return `<div class="m-todo ${st}" onclick="mCycleTodo('${t.id}')"><div class="ck"></div><div class="ti">${escapeHtml(t.title||'')}${t.notes?`<div class="due">${escapeHtml((t.notes||'').slice(0,80))}${escapeHtml(t.notes.length>80?'…':'')}</div>`:''}${t.due||ass?`<div class="due ${overdue?'red':''}">${t.due?(overdue?'⚠️ ':'')+t.due:''}${ass?(t.due?' · ':'')+'👤 '+escapeHtml((ass.name||'').split(' ')[0]):''}</div>`:''}</div></div>`;}).join(''):'<div class="m-empty">Aucune tâche 🎉</div>'}
     </div>`;
 }
 function mScreenAgenda(){
