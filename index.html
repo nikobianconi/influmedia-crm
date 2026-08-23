@@ -3516,13 +3516,18 @@ const Auth = {
     }catch(e){ return Promise.resolve({ok:false, message:'Connexion cloud indisponible'}); }
   },
 
-  // Lien de réinitialisation par e-mail (seulement si vraie adresse)
-  sendReset(member){
-    if(!hasRealEmail(member)) return Promise.resolve({ok:false, message:"Aucune adresse e-mail enregistrée pour ce profil — demande à un admin de réinitialiser ton mot de passe"});
+  // Lien de réinitialisation envoyé à une adresse donnée
+  sendResetEmail(email){
     if(!this.available()) return Promise.resolve({ok:false, message:'Pas de connexion internet'});
-    return firebase.auth().sendPasswordResetEmail(authEmailFor(member))
+    return firebase.auth().sendPasswordResetEmail(email)
       .then(()=>({ok:true}))
-      .catch(e=>({ok:false, message:this._friendly(e&&e.code)}));
+      .catch(e=>({ok:false, code:(e&&e.code)||'', message:this._friendly(e&&e.code)}));
+  },
+
+  // Idem, à partir d'un profil qui a déjà une adresse enregistrée
+  sendReset(member){
+    if(!hasRealEmail(member)) return Promise.resolve({ok:false, message:"Aucune adresse e-mail enregistrée pour ce profil"});
+    return this.sendResetEmail(authEmailFor(member));
   }
 };
 
@@ -5016,6 +5021,31 @@ function lockShowEmailMode(){
   em.focus();
 }
 
+function sendResetToTypedEmail(){
+  const email=(document.getElementById('lockEmail').value||'').trim().toLowerCase();
+  const err=document.getElementById('lockError');
+  const q=document.getElementById('lockQuestion');
+  if(email.indexOf('@')<1){ err.textContent='Adresse e-mail invalide'; return; }
+  err.textContent='';
+  q.textContent='Envoi du lien…';
+  _lockBusy(true);
+  Auth.sendResetEmail(email).then(r=>{
+    _lockBusy(false);
+    if(r.ok){
+      q.textContent='✅ Lien envoyé à '+email+' — regarde ta boîte mail, puis reviens te connecter';
+      q.classList.add('success');
+      document.getElementById('lockEmail').style.display='none';
+    } else {
+      q.style.display='none';
+      // Message adapté au contexte : ici on ne vérifie pas un mot de passe,
+      // on cherche un compte.
+      err.textContent = (r.code==='auth/user-not-found' || r.code==='auth/invalid-credential')
+        ? "Aucun compte avec cette adresse — vérifie l'orthographe ou demande à ton admin"
+        : r.message;
+    }
+  }).catch(()=>{ _lockBusy(false); err.textContent='Envoi impossible'; });
+}
+
 function attemptEmailLogin(){
   const email=(document.getElementById('lockEmail').value||'').trim().toLowerCase();
   const entered=document.getElementById('lockPwd').value;
@@ -5077,6 +5107,7 @@ function saveSecretAns(){
 function lockSubmit(){
   if(lockMode==='login') attemptLogin();
   else if(lockMode==='email') attemptEmailLogin();
+  else if(lockMode==='forgotEmail') sendResetToTypedEmail();
 }
 function lockPwdKeydown(e){ if(e.key==='Enter') lockSubmit(); }
 
@@ -5089,7 +5120,23 @@ function lockShowForgot(){
   const q=document.getElementById('lockQuestion');
   if(!m){ err.textContent='Profil introuvable'; return; }
   if(!hasRealEmail(m)){
-    err.textContent="Aucune adresse e-mail sur ce profil — demande à ton admin de te réinitialiser";
+    // Cet appareil ne connaît pas encore l'adresse de ce profil (première
+    // connexion : plus rien n'est téléchargé avant authentification).
+    // On la demande, et le lien part directement à cette adresse.
+    lockMode='forgotEmail';
+    q.textContent='Indique ton adresse : tu recevras un lien pour choisir ton mot de passe';
+    q.classList.remove('success');
+    q.style.display='block';
+    const em=document.getElementById('lockEmail');
+    em.style.display='block'; em.value='';
+    document.getElementById('lockPwd').style.display='none';
+    document.getElementById('lockForgotLink').style.display='none';
+    document.getElementById('lockSwitchLink').style.display='none';
+    document.getElementById('lockEmailLink').style.display='none';
+    document.getElementById('lockBackLink').style.display='inline-block';
+    document.getElementById('lockUserList').style.display='none';
+    err.textContent='';
+    em.focus();
     return;
   }
   err.textContent='';
@@ -5120,7 +5167,8 @@ function lockBackToLogin(){
   const el=document.getElementById('lockEmailLink'); if(el) el.style.display='inline-block';
   const em=document.getElementById('lockEmail'); if(em){ em.style.display='none'; em.value=''; }
   _pendingAuthEmail=null;
-  const pw=document.getElementById('lockPwd'); if(pw&&pw.parentElement) pw.parentElement.style.display='';
+  const pw=document.getElementById('lockPwd');
+  if(pw){ pw.style.display=''; if(pw.parentElement) pw.parentElement.style.display=''; }
   document.getElementById('lockUserList').style.display='none';
   document.getElementById('lockBackLink').style.display='none';
   document.getElementById('lockError').textContent='';
