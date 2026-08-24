@@ -4636,7 +4636,7 @@ const DEFAULT_TEAM = [
   {id:'marina',  name:'Marina',       role:'team',  initials:'MA', color:'#9b59b6', email:'marina@influmedia.digital'},
   {id:'membre2', name:'Léonie',       role:'team',  initials:'LE', color:'#e67e22', email:'leonie@influmedia.digital'},
   {id:'membre3', name:'Sara',         role:'team',  initials:'SA', color:'#27ae60', email:'sara@influmedia.digital'},
-  {id:'membre4', name:'Nicolas J&M',  role:'team',  initials:'NJ', color:'#3498db', email:'nicolas@influmedia.digital'}
+  {id:'membre4', name:'Nicolas J&M',  role:'team',  initials:'NJ', color:'#3498db', email:'n.lecourieux@influmedia.digital'}
 ];
 let teamMembers = Storage.get('influ_team', DEFAULT_TEAM.map(m=>Object.assign({}, m)));
 
@@ -4647,12 +4647,17 @@ let teamMembers = Storage.get('influ_team', DEFAULT_TEAM.map(m=>Object.assign({}
 // Seule exception : les anciens noms bouche-trous restés dans le cache de
 // certains appareils, qu'on remplace par le vrai nom.
 const LEGACY_TEAM_NAMES = ['membre 1','membre 2','membre 3','membre 4','nicolas bianconi'];
+// Adresses livrées par erreur (aucun compte Firebase derrière) : si elles ont eu
+// le temps de partir dans le cloud, on les remplace par la bonne. Toute autre
+// adresse saisie par l'équipe est respectée.
+const WRONG_TEAM_EMAILS = ['nicolas@influmedia.digital'];
 function applyTeamDefaults(list){
   if(!Array.isArray(list)) return list;
   list.forEach(m=>{
     const d=DEFAULT_TEAM.find(x=>x.id===m.id);
     if(!d) return;
-    if(!String(m.email||'').trim()) m.email=d.email;
+    const mail=String(m.email||'').trim().toLowerCase();
+    if(!mail || WRONG_TEAM_EMAILS.indexOf(mail)>=0) m.email=d.email;
     if(!m.color) m.color=d.color;
     // Nom encore bouche-trou (« Membre 4 ») ou vide → on remet le vrai nom
     const nom=String(m.name||'').trim();
