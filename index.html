@@ -4622,15 +4622,49 @@ function updateNavTaskBadge(){
 }
 
 // ╔══════════════════════════════════════════════════════════════
-// ║ TEAM MEMBERS (placeholder — éditable dans Paramètres)
+// ║ TEAM MEMBERS — roster de référence
+// ║ Les vrais noms vivent dans Firestore, MAIS Firestore est illisible
+// ║ tant qu'on n'est pas connecté (les règles exigent un compte autorisé).
+// ║ Résultat, sur un appareil neuf (ou cache vidé, navigation privée,
+// ║ autre navigateur) l'écran de connexion affichait les placeholders
+// ║ « Membre 2/3/4 » et personne ne retrouvait son profil.
+// ║ → Le roster réel est donc écrit en dur ici. Il ne sert que de valeur
+// ║   de départ : dès la connexion, la version cloud reprend la main.
 // ╚══════════════════════════════════════════════════════════════
-let teamMembers = Storage.get('influ_team', [
-  {id:'nicolas', name:'Nicolas Bianconi', role:'admin', initials:'NB', color:'#116776'},
-  {id:'marina',  name:'Marina',           role:'team',  initials:'MA', color:'#9b59b6'},
-  {id:'membre2', name:'Membre 2',         role:'team',  initials:'M2', color:'#e67e22'},
-  {id:'membre3', name:'Membre 3',         role:'team',  initials:'M3', color:'#27ae60'},
-  {id:'membre4', name:'Membre 4',         role:'team',  initials:'M4', color:'#3498db'}
-]);
+const DEFAULT_TEAM = [
+  {id:'nicolas', name:'Niko Ctly',    role:'admin', initials:'NC', color:'#116776', email:'contact@influmedia.digital'},
+  {id:'marina',  name:'Marina',       role:'team',  initials:'MA', color:'#9b59b6', email:'marina@influmedia.digital'},
+  {id:'membre2', name:'Léonie',       role:'team',  initials:'LE', color:'#e67e22', email:'leonie@influmedia.digital'},
+  {id:'membre3', name:'Sara',         role:'team',  initials:'SA', color:'#27ae60', email:'sara@influmedia.digital'},
+  {id:'membre4', name:'Nicolas J&M',  role:'team',  initials:'NJ', color:'#3498db', email:'nicolas@influmedia.digital'}
+];
+let teamMembers = Storage.get('influ_team', DEFAULT_TEAM.map(m=>Object.assign({}, m)));
+
+// Le document cloud `influ_team` peut être plus ancien que ce roster (adresses
+// jamais renseignées dans Paramètres → Équipe). On complète alors les champs
+// manquants à partir du roster de référence, sans jamais écraser ce qui existe
+// déjà côté cloud : le nom saisi dans l'app reste toujours prioritaire.
+// Seule exception : les anciens noms bouche-trous restés dans le cache de
+// certains appareils, qu'on remplace par le vrai nom.
+const LEGACY_TEAM_NAMES = ['membre 1','membre 2','membre 3','membre 4','nicolas bianconi'];
+function applyTeamDefaults(list){
+  if(!Array.isArray(list)) return list;
+  list.forEach(m=>{
+    const d=DEFAULT_TEAM.find(x=>x.id===m.id);
+    if(!d) return;
+    if(!String(m.email||'').trim()) m.email=d.email;
+    if(!m.color) m.color=d.color;
+    // Nom encore bouche-trou (« Membre 4 ») ou vide → on remet le vrai nom
+    const nom=String(m.name||'').trim();
+    if(!nom || LEGACY_TEAM_NAMES.indexOf(nom.toLowerCase())>=0){
+      m.name=d.name;
+      m.initials=d.initials;
+    }
+    if(!String(m.initials||'').trim()) m.initials=d.initials;
+  });
+  return list;
+}
+applyTeamDefaults(teamMembers);
 function saveTeam(){Storage.set('influ_team', teamMembers);}
 
 // Migration : nettoie les photos de profil dupliquées (bug avant juin 2026)
@@ -4758,7 +4792,7 @@ function _lockBusy(on){
 function _refreshTeamFromStorage(){
   try{
     const t=JSON.parse(localStorage.getItem('influ_team')||'null');
-    if(Array.isArray(t)&&t.length){ teamMembers.length=0; t.forEach(x=>teamMembers.push(x)); }
+    if(Array.isArray(t)&&t.length){ applyTeamDefaults(t); teamMembers.length=0; t.forEach(x=>teamMembers.push(x)); }
   }catch(e){}
 }
 
@@ -7524,7 +7558,7 @@ function applyExternalUpdate(key){
       if(tab==='contacts') renderContacts();
       break;
     case 'influ_team':
-      teamMembers = parsed;
+      teamMembers = applyTeamDefaults(parsed);
       if(tab==='settings') renderSettings();
       else if(tab==='home') renderHome();
       else if(tab==='todo') renderTodo();
