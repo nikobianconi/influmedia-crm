@@ -2172,10 +2172,10 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
     <p class="lock-sub">Connectez-vous à votre espace Influmedia</p>
     <div class="lock-form-wrap">
       <div id="lockError" class="lock-error" style="display:none"></div>
-      <form class="lock-login-form" id="lockForm" onsubmit="return false">
+      <form class="lock-login-form" id="lockForm" onsubmit="attemptLogin(); return false">
         <div class="lock-field"><input type="email" id="lockEmail" placeholder="votre@email.com" required autocomplete="email"></div>
         <div class="lock-field"><input type="password" id="lockPwd" placeholder="Mot de passe" required autocomplete="current-password"></div>
-        <button type="button" id="lockBtn" class="lock-btn-submit">Se connecter</button>
+        <button type="button" id="lockBtn" class="lock-btn-submit" onclick="attemptLogin()">Se connecter</button>
         <div class="lock-forgot"><a id="lockForgotLink" href="#">Mot de passe oublié ?</a></div>
       </form>
     </div>
