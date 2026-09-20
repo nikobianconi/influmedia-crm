@@ -663,41 +663,37 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 @media(max-width:520px){.chat-widget{width:calc(100vw - 24px);right:12px;bottom:12px;height:calc(100vh - 90px)}.chat-fab{bottom:14px;right:14px}}
 
 /* ===== LOCK SCREEN / PAGE DE CONNEXION ===== */
-.lock-screen{position:fixed;inset:0;z-index:9999;background:linear-gradient(165deg,#0d1f24 0%,#15323b 55%,#0d1f24 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
-.lock-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 30%,rgba(17,103,118,.25) 0%,transparent 65%);pointer-events:none}
-.lock-screen.hidden{display:none}
-.lock-card{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:1;animation:lockIn .4s ease}
-@keyframes lockIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.lock-avatar{width:118px;height:118px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-light));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:40px;color:white;box-shadow:0 8px 30px rgba(0,0,0,.45),0 0 0 4px rgba(255,255,255,.06);overflow:hidden}
-.lock-avatar img{width:100%;height:100%;object-fit:cover}
-.lock-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:var(--cream);letter-spacing:.5px}
-.lock-role{font-size:11px;color:var(--teal-light);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-top:-8px}
-.lock-question{font-family:'Barlow',sans-serif;font-style:italic;font-size:14px;color:var(--teal-light);text-align:center;max-width:320px;margin:6px auto 0;line-height:1.4}
-.lock-question.success{color:var(--green);font-style:normal;font-weight:600}
-.lock-actions-row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:2px}
-.lock-pwd2{margin-top:6px}
-.lock-pwd-wrap{display:flex;gap:8px;margin-top:8px}
-.lock-pwd-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:18px;padding:13px 18px;outline:none;width:200px;text-align:center;letter-spacing:6px;transition:all .2s}
-.lock-pwd-input::placeholder{letter-spacing:normal;font-size:14px;color:var(--muted)}
-.lock-pwd-input:focus{border-color:var(--teal-light);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(17,103,118,.25)}
-.lock-pwd-input.shake{animation:lockShake .4s}
-@keyframes lockShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.lock-btn{background:var(--teal);color:white;border:none;border-radius:12px;width:52px;font-size:20px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center}
-.lock-btn:hover{background:var(--teal-light)}
-.lock-error{font-size:12px;color:var(--coral);font-weight:600;height:16px;text-align:center}
-.lock-switch{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'Barlow',sans-serif;transition:color .15s}
-.lock-switch:hover{color:var(--teal-light)}
-.lock-user-list{display:flex;flex-direction:column;gap:4px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:12px;padding:6px;width:260px;max-height:240px;overflow-y:auto}
-.lock-user-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s}
-.lock-user-item:hover{background:rgba(255,255,255,.06)}
-.lock-user-item.active{background:rgba(17,103,118,.3)}
-.lock-user-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;flex-shrink:0;overflow:hidden}
-.lock-user-name{font-size:13px;color:var(--cream);font-weight:500}
-.lock-user-role{font-size:10px;color:var(--muted)}
-.lock-footer{position:relative;z-index:1;font-size:11px;color:var(--muted);letter-spacing:.5px}
-.sidebar-lock-btn{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;background:rgba(255,255,255,.05);color:var(--muted);margin-bottom:6px;transition:all .2s}
-.sidebar-lock-btn:hover{background:rgba(231,76,60,.15);color:var(--coral)}
-
+/* ===== LOCK SCREEN ===== */
+#lockScreen{position:fixed;inset:0;z-index:9999;background:#0d1f24;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#lockScreen.hidden{display:none}
+.lock-bg-rings{position:absolute;inset:0;pointer-events:none;transform:perspective(1200px) rotateX(15deg);transform-origin:center bottom}
+.lock-ring-wrapper{position:absolute;inset:0}
+.lock-ring{position:absolute;top:50%;left:50%}
+.lock-gradient-overlay{position:absolute;inset:0;z-index:10;pointer-events:none;background:linear-gradient(to top,#0d1f24 10%,rgba(13,31,36,.82) 42%,transparent 100%)}
+.lock-content{position:relative;z-index:20;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:80px;gap:16px;height:100vh;animation:lockFadeUp .6s ease both}
+@keyframes lockFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lockSpinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes lockSpinReverse{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+.lock-spin-slow{animation:lockSpinSlow 60s linear infinite}
+.lock-spin-reverse{animation:lockSpinReverse 60s linear infinite}
+.lock-logo-wrap{width:64px;height:64px;border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.4);margin-bottom:4px}
+.lock-logo-wrap img{width:100%;height:100%;object-fit:cover}
+.lock-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2.2rem,5vw,3.6rem);text-align:center;letter-spacing:-.5px;color:#fff;text-transform:uppercase;line-height:1.05}
+.lock-title span{color:#FF5F5F}
+.lock-sub{font-size:.95rem;font-weight:500;color:rgba(244,242,237,.55);letter-spacing:.02em}
+.lock-form-wrap{width:100%;max-width:420px;padding:0 20px;margin-top:6px}
+.lock-login-form{display:flex;flex-direction:column;gap:10px}
+.lock-field input{width:100%;height:52px;padding:0 20px;border-radius:999px;border:none;outline:none;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);color:#fff;font-family:'Barlow',sans-serif;font-size:.95rem;transition:box-shadow .2s}
+.lock-field input::placeholder{color:rgba(244,242,237,.35)}
+.lock-field input:focus{box-shadow:inset 0 0 0 1px #116776,0 0 0 3px rgba(17,103,118,.25)}
+.lock-btn-submit{width:100%;height:52px;border-radius:999px;background:#116776;color:#fff;font-family:'Barlow',sans-serif;font-weight:600;font-size:1rem;border:none;cursor:pointer;transition:filter .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2px}
+.lock-btn-submit:hover{filter:brightness(1.15)}
+.lock-btn-submit:active{transform:scale(.97)}
+.lock-btn-submit:disabled{filter:none;cursor:wait;opacity:.7}
+.lock-forgot{text-align:center;margin-top:4px}
+.lock-forgot a{color:rgba(244,242,237,.4);font-size:.82rem;text-decoration:none;transition:color .2s}
+.lock-forgot a:hover{color:#FF5F5F}
+.lock-error{background:rgba(255,95,95,.12);border:1px solid rgba(255,95,95,.3);border-radius:10px;padding:10px 16px;font-size:.88rem;color:#FF5F5F;text-align:center;margin-bottom:4px}
 /* ===== AGENDA STYLE APPLE CALENDAR ===== */
 .gcal{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:0;overflow:hidden}
 .gcal-head{display:grid;grid-template-columns:repeat(7,1fr);background:rgba(0,0,0,.15);border-bottom:1px solid var(--border)}
@@ -2149,100 +2145,42 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 <body>
 
 <!-- LOCK SCREEN / PAGE DE CONNEXION -->
-<div id="lockScreen" class="lock-screen">
-  <div class="lock-bg-mesh" aria-hidden="true"></div>
-  <div class="lock-bg-grid" aria-hidden="true"></div>
-  <div class="lock-orb lock-orb-1" aria-hidden="true"></div>
-  <div class="lock-orb lock-orb-2" aria-hidden="true"></div>
-  <div class="lock-orb lock-orb-3" aria-hidden="true"></div>
-  <div class="lock-orb lock-orb-4" aria-hidden="true"></div>
-  <div class="lock-particles" aria-hidden="true">
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
-  <div class="lock-brand">
-    <div class="lock-brand-logo">⚡</div>
-    <div class="lock-brand-name">INFLUMEDIA</div>
-    <div class="lock-brand-tag">CRM · v2.0</div>
-  </div>
-  <div class="lock-card">
-    <div class="lock-avatar" id="lockAvatar">NB</div>
-    <div class="lock-name" id="lockName">Nicolas Bianconi</div>
-    <div class="lock-role" id="lockRole">Admin · Influmedia</div>
-    <div class="lock-question" id="lockQuestion" style="display:none">🤔 Qui est le plus Bg du monde ?</div>
-    <input type="email" id="lockEmail" class="lock-pwd-input" placeholder="Adresse e-mail" style="display:none;margin-bottom:8px" onkeydown="if(event.key==='Enter')lockSubmit()">
-    <div class="lock-pwd-wrap">
-      <input type="password" id="lockPwd" class="lock-pwd-input" placeholder="Mot de passe" maxlength="32" inputmode="numeric" onkeydown="lockPwdKeydown(event)">
-      <button class="lock-btn" id="lockBtn" onclick="lockSubmit()" title="Valider">→</button>
+<div id="lockScreen">
+  <div class="lock-bg-rings">
+    <div class="lock-ring-wrapper lock-spin-slow">
+      <div class="lock-ring" style="width:2000px;height:2000px;transform:translate(-50%,-50%) rotate(279deg)">
+        <img src="https://cdn.21st.dev/assets/mirror/c6/c66b4f0c389b961a3676312892ca1387d7f8bd1973f44a33c7d47840d297633f.png" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.4">
+      </div>
     </div>
-    <input type="password" id="lockPwd2" class="lock-pwd-input lock-pwd2" placeholder="Confirmer le nouveau mot de passe" maxlength="32" style="display:none" onkeydown="if(event.key==='Enter')lockSubmit()">
-    <div class="lock-error" id="lockError"></div>
-    <div class="lock-actions-row">
-      <button class="lock-switch" id="lockBackLink" onclick="lockBackToLogin()" style="display:none">← Retour</button>
-      <button class="lock-switch" id="lockSwitchLink" onclick="toggleLockUserList()">Changer de profil</button>
-      <button class="lock-switch" id="lockEmailLink" onclick="lockShowEmailMode()">Mon profil n'est pas listé</button>
-      <button class="lock-switch" id="lockForgotLink" onclick="lockShowForgot()">Mot de passe oublié ?</button>
+    <div class="lock-ring-wrapper lock-spin-reverse">
+      <div class="lock-ring" style="width:1000px;height:1000px;transform:translate(-50%,-50%) rotate(304deg)">
+        <img src="https://cdn.21st.dev/assets/mirror/75/75f75d84f07a61893dc2a16aad0c781c32b9e758c8f0adda2a8b252c431fdd82.png" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.5">
+      </div>
     </div>
-    <div class="lock-user-list" id="lockUserList" style="display:none"></div>
-  </div>
-  <div class="lock-footer">Influmedia · SaaS Agence — 🔒 Espace sécurisé</div>
-</div>
-
-<!-- Toggle mode jour / nuit (per-profile, top-right) -->
-<button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Basculer mode jour / nuit" style="display:none">
-  <span id="themeIcon">🌙</span>
-</button>
-
-<!-- Modal Mentions légales & RGPD -->
-<div class="overlay" id="legalOverlay" onclick="closeBg(event,'legalOverlay')">
-  <div class="modal" style="max-width:720px;max-height:88vh;overflow-y:auto">
-    <h2>🛡️ Mentions légales & RGPD</h2>
-    <div style="font-size:13px;line-height:1.6;color:var(--cream)">
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Éditeur</h3>
-      <p>Influmedia · Agence de communication · CRM interne v2.0 — usage strictement professionnel.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Hébergement & données</h3>
-      <p>L'application est hébergée sur <strong>GitHub Pages</strong> (Microsoft Corp., USA). Les données sont synchronisées via <strong>Google Firebase / Firestore</strong> en région <strong>europe-west1 (Belgique)</strong>. Aucune donnée n'est transférée en dehors de l'Union Européenne pour son stockage opérationnel.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Données traitées</h3>
-      <p>Le SaaS traite : données de l'équipe (nom, rôle, photo, présence, messages, agenda), données clients & prospects (raison sociale, contacts, prélèvements, prestations), documents commerciaux (devis, factures, présentations), notes internes et fichiers attachés.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Base légale (RGPD art. 6)</h3>
-      <p>• <strong>Équipe</strong> : exécution du contrat de travail<br>• <strong>Clients</strong> : exécution du contrat de prestation<br>• <strong>Prospects / Leads</strong> : intérêt légitime de l'agence (prospection commerciale B2B)</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Durées de conservation</h3>
-      <p>• Données opérationnelles client : pendant la durée du contrat + 5 ans (obligation comptable)<br>• Données prospect : 3 ans à compter du dernier contact<br>• Données équipe : durée du contrat de travail + 5 ans (bulletins, etc.)<br>• Messages internes : 2 ans glissants</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Vos droits</h3>
-      <p>Tout collaborateur peut, à tout moment, demander l'accès, la rectification, l'effacement ou la portabilité de ses données via la page <strong>Paramètres &gt; 🛡 Mes données &amp; RGPD</strong>. Les clients et prospects peuvent exercer ces droits en écrivant à <strong>rgpd@influmedia.com</strong>.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Sécurité</h3>
-      <p>Les mots de passe sont stockés hashés (SHA-256 + sel). L'application est accessible par identifiant et mot de passe. Les données sensibles (RIB, KBIS, pièces d'identité) devraient être hébergées sur Google Drive / Dropbox plutôt qu'embarquées en clair dans le CRM.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Cookies & stockage local</h3>
-      <p>Seul le <code>localStorage</code> du navigateur est utilisé pour les préférences personnelles (thème jour/nuit, dispositions, état de sidebar). Aucun cookie tiers, aucun traceur publicitaire, aucun analytics externe.</p>
-      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;margin-top:14px">Contact DPO</h3>
-      <p>Pour toute question : <strong>rgpd@influmedia.com</strong> · Réclamation possible auprès de la CNIL (cnil.fr).</p>
-      <p style="margin-top:18px;font-style:italic;color:var(--muted);font-size:11px">Document interne · à jour juin 2026 · version 1.0</p>
+    <div class="lock-ring-wrapper lock-spin-slow">
+      <div class="lock-ring" style="width:800px;height:800px;transform:translate(-50%,-50%) rotate(48deg)">
+        <img src="https://cdn.21st.dev/assets/mirror/e0/e08cdf40df3bedc96255e0e30240d7583b0a309da36bcd8a760d3c35cc67a286.png" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.7">
+      </div>
     </div>
-    <div class="modal-actions"><button class="btn-primary" onclick="closeModal('legalOverlay')" style="background:var(--teal)">J'ai lu</button></div>
   </div>
-</div>
-
-<!-- Modal RGPD : Mes données -->
-<div class="overlay" id="rgpdOverlay" onclick="closeBg(event,'rgpdOverlay')">
-  <div class="modal" style="max-width:580px">
-    <h2>🛡️ Mes données &amp; RGPD</h2>
-    <div id="rgpdBody"></div>
-  </div>
-</div>
-
-<!-- Confirmation suppression post-it To-Do -->
-<div class="overlay" id="todoConfirmOverlay" onclick="closeBg(event,'todoConfirmOverlay')">
-  <div class="modal" style="max-width:420px;text-align:center">
-    <div style="font-size:42px;margin-bottom:8px">🗑️</div>
-    <h2 style="margin-bottom:6px">Êtes-vous sûr de vouloir supprimer cette note ?</h2>
-    <div id="todoConfirmTitle" style="color:var(--muted);font-style:italic;margin-bottom:18px;word-break:break-word"></div>
-    <div class="modal-actions" style="justify-content:center;gap:14px">
-      <button class="btn-cancel" onclick="todoConfirmNo()" style="min-width:110px">Non</button>
-      <button class="btn-primary" onclick="todoConfirmYes()" style="min-width:110px;background:var(--green)">Oui, supprimer</button>
+  <div class="lock-gradient-overlay"></div>
+  <div class="lock-content">
+    <div class="lock-logo-wrap">
+      <img src="https://influmedia.digital/images/logo_influmedia.webp" alt="Influmedia" onerror="this.style.display='none';this.parentElement.style.background='#116776'">
+    </div>
+    <h1 class="lock-title">Bienvenue.<br><span>Espace client</span></h1>
+    <p class="lock-sub">Connectez-vous à votre espace Influmedia</p>
+    <div class="lock-form-wrap">
+      <div id="lockError" class="lock-error" style="display:none"></div>
+      <form class="lock-login-form" id="lockForm" onsubmit="return false">
+        <div class="lock-field"><input type="email" id="lockEmail" placeholder="votre@email.com" required autocomplete="email"></div>
+        <div class="lock-field"><input type="password" id="lockPwd" placeholder="Mot de passe" required autocomplete="current-password"></div>
+        <button type="button" id="lockBtn" class="lock-btn-submit">Se connecter</button>
+        <div class="lock-forgot"><a id="lockForgotLink" href="#">Mot de passe oublié ?</a></div>
+      </form>
     </div>
   </div>
 </div>
-
 <div class="app">
 <aside class="sidebar">
   <div class="sidebar-logo">
