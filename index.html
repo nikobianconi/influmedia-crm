@@ -2181,6 +2181,17 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
     </div>
   </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  try{
+    var m=teamMembers&&teamMembers.find(function(x){return x.id===lockUserId});
+    if(m&&m.avatar){
+      var img=document.querySelector('#lockScreen .lock-logo-wrap img');
+      if(img){img.src=m.avatar;img.onerror=function(){this.style.display='none';this.parentElement.style.background=m.color||'#116776';};}
+    }
+  }catch(e){}
+});
+</script>
 <div class="app">
 <aside class="sidebar">
   <div class="sidebar-logo">
@@ -4721,7 +4732,7 @@ function _attemptLoginFail(msg){
   const inp=document.getElementById('lockPwd');
   inp.classList.add('shake');
   setTimeout(()=>inp.classList.remove('shake'),400);
-  document.getElementById('lockError').textContent=msg||'Mot de passe incorrect';
+  const errEl=document.getElementById('lockError');errEl.style.display='block';errEl.textContent=msg||'Mot de passe incorrect';
   inp.value='';inp.focus();
 }
 
