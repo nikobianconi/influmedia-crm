@@ -10020,6 +10020,32 @@ updateNavChatBadge();
 // appelé par startCloudAfterLogin(), une fois la connexion réussie.
 // ── INTERFACE MOBILE : rendre l'app simplifiée sur téléphone ──
 renderMobile();
+// ── RESTER CONNECTÉ ──
+// Firebase garde la session dans ce navigateur jusqu'à « Verrouiller la session ».
+// Au chargement, si elle est toujours là, on rouvre directement le CRM au lieu
+// de redemander le mot de passe. Sans session, l'écran de connexion reste.
+(function resterConnecte(){
+  Auth.ready().then(pret=>{
+    if(!pret) return;
+    let fait=false;
+    const stop=firebase.auth().onAuthStateChanged(u=>{
+      if(fait) return; fait=true;
+      try{ stop(); }catch(e){}
+      if(!u || !u.email) return;
+      const email=String(u.email).trim().toLowerCase();
+      const btn=document.getElementById('lockBtn');
+      if((btn && btn.disabled) || Cloud.enabled) return; // connexion manuelle déjà en cours
+      startCloudAfterLogin().then(()=>{
+        const ecran=document.getElementById('lockScreen');
+        if(!ecran || ecran.classList.contains('hidden')) return; // déjà ouvert à la main
+        const m=teamMembers.find(x=>authEmailFor(x)===email);
+        if(!m) return; // profil introuvable : connexion normale
+        lockUserId=m.id;
+        doUnlock(m);
+      });
+    });
+  }).catch(e=>console.error('Rester connecté', e));
+})();
 // ── LOCK SCREEN : page de connexion avant d'accéder au CRM ──
 renderLockScreen();
 setTimeout(()=>{const lp=document.getElementById('lockPwd');if(lp)lp.focus();},150);
