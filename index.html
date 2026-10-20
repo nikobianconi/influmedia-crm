@@ -185,6 +185,48 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .alert-banner.hidden{display:none}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
 .dash-card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:18px}
+/* ── v2 : onglets de page (pages regroupées sous une même entrée du menu) ── */
+.page-tabs{display:flex;gap:4px;flex-wrap:wrap;margin:-6px 0 18px;padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--dark2);width:fit-content;max-width:100%}
+.page-tabs[hidden]{display:none}
+.page-tab{border:none;background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;padding:7px 13px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s,color .15s}
+.page-tab:hover{color:var(--cream);background:rgba(17,103,118,.12)}
+.page-tab.active{background:rgba(17,103,118,.28);color:var(--teal-light)}
+.page-tab-badge{display:none;background:var(--teal);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px}
+.nav-btn .nav-lock{margin-left:auto;font-size:10px;opacity:.55}
+/* ── v2 : pastilles client (production, retard, fin d'engagement, responsable) ── */
+.cx-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.cx-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;white-space:nowrap;border:1px solid var(--border);color:var(--muted);background:transparent;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+/* le contenu ne pousse plus la page en largeur : le tableau des clients défile dans son cadre */
+.main{min-width:0}
+#tab-clients .table-wrap{overflow-x:auto}
+#clientsBody td.client-cell{min-width:170px;max-width:240px}
+.cx-chip.red{color:var(--red);border-color:rgba(231,76,60,.45);background:rgba(231,76,60,.10)}
+.cx-chip.orange{color:var(--orange);border-color:rgba(243,156,18,.45);background:rgba(243,156,18,.10)}
+.cx-resp{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:18px;padding:0 5px;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;color:#fff}
+.cx-focus{display:inline-flex;align-items:center;gap:8px;padding:5px 6px 5px 12px;border-radius:20px;border:1px solid var(--teal-light);color:var(--teal-light);background:rgba(17,103,118,.12);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px}
+.cx-focus button{border:none;background:rgba(17,103,118,.25);color:inherit;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:20px;padding:0}
+/* ── v2 : Dashboard (4 chiffres, exceptions, à traiter) ── */
+#tab-dashboard .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#tab-dashboard .kpi.clk{cursor:pointer;transition:border-color .15s,transform .15s}
+#tab-dashboard .kpi.clk:hover{border-color:rgba(17,103,118,.45);transform:translateY(-1px)}
+.dash-chips{display:flex;flex-wrap:wrap;gap:8px;margin:-8px 0 18px}
+.dash-chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:20px;border:1px solid var(--border);background:var(--dark2);color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s}
+.dash-chip b{font-size:15px}
+.dash-chip.red{border-color:rgba(231,76,60,.5)}.dash-chip.red b{color:var(--red)}
+.dash-chip.orange{border-color:rgba(243,156,18,.5)}.dash-chip.orange b{color:var(--orange)}
+.dash-chip:hover{background:rgba(17,103,118,.12)}
+.dash-chips-ok{font-size:13px;color:var(--green);font-weight:600;padding:6px 2px}
+.dash-todo{margin-bottom:22px}
+.dash-todo h3,.dash-card h3{margin-bottom:12px}
+.dt-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
+.dt-row:first-child{border-top:0}
+.dt-dot{width:9px;height:9px;border-radius:50%;background:var(--grey)}
+.dt-dot.red{background:var(--red)}.dt-dot.orange{background:var(--orange)}
+.dt-what{font-size:13.5px;color:var(--cream);font-weight:600;overflow-wrap:anywhere}
+.dt-why{font-size:12px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.dash-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:4px 0 10px}
+.postit-link{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:9px;background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)}
+@media(max-width:1100px){#tab-dashboard .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .dash-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
 .ca-bar{margin-bottom:8px}
 .ca-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
@@ -2248,6 +2290,7 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 </aside><main class="main">
+<div class="page-tabs" id="pageTabs" hidden></div>
 
 <!-- ACCUEIL PERSONNALISABLE -->
 <div id="tab-home" class="tab-content active">
@@ -2269,19 +2312,22 @@ document.addEventListener('DOMContentLoaded',function(){
     <div style="font-size:12px;color:var(--muted)" id="dashDate"></div>
   </div>
   <div class="kpi-grid" id="kpiGrid"></div>
+  <div class="dash-chips" id="dashChips"></div>
+  <div class="dash-card dash-todo"><h3>🎯 À traiter aujourd'hui</h3><div id="dashTodoList"></div></div>
+  <div class="dash-section-title">Analyse</div>
   <div class="dash-grid">
     <div class="dash-card"><h3>🏆 Top clients CA</h3><div id="topClients"></div></div>
     <div class="dash-card"><h3>🎯 Funnel prospection</h3><div id="funnelChart"></div></div>
     <div class="dash-card"><h3 id="payTitle">📅 Suivi paiements</h3><div id="paymentStatus"></div></div>
     <div class="dash-card"><h3>📈 CA encaissé — évolution</h3><div id="caEvo"></div></div>
-    <div class="dash-card" style="grid-column:1/-1"><h3 style="display:flex;justify-content:space-between;align-items:center"><span>📅 Prochaines échéances</span><button class="btn-mini" onclick="openTaskModal()">＋ Ajouter</button></h3><div id="upcomingTasks"></div></div>
+    <div class="dash-card" style="grid-column:1/-1"><h3 style="display:flex;justify-content:space-between;align-items:center"><span>📅 Prochaines échéances</span><button class="btn-mini" onclick="openTodoModal()">＋ Ajouter</button></h3><div id="upcomingTasks"></div></div>
   </div>
 </div>
 
 <!-- CLIENTS -->
 <div id="tab-clients" class="tab-content">
   <div class="page-header">
-    <div class="page-title">👥 <span>Clients actifs</span></div>
+    <div class="page-title">👥 <span>Clients actifs</span> <small id="clientsCount" style="font-size:13px;color:var(--muted);font-weight:600;margin-left:8px"></small></div>
     <button class="btn-primary" onclick="openClientModal()">＋ Nouveau client</button>
   </div>
   <div class="toolbar">
@@ -2726,6 +2772,15 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="fg"><label>CA mensuel (€)</label><input id="c_ca" type="number" placeholder="Ex: 1240"></div>
       <div class="fg"><label>Prélèvement</label><input id="c_prel" placeholder="Ex: 1 du mois"></div>
     </div>
+    <div class="fg-row">
+      <div class="fg"><label>Début des prestations</label><input id="c_start" type="date"></div>
+      <div class="fg"><label>Fin d'engagement</label><input id="c_end" type="date"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Responsable</label><select id="c_resp"></select></div>
+      <div class="fg"><label>Statut de production</label><select id="c_prod" onchange="toggleProdNote()"><option value="">En cours</option><option value="attente">Attente validation client</option><option value="bloque">Bloqué</option></select></div>
+    </div>
+    <div class="fg" id="c_prodNoteRow" style="display:none"><label id="c_prodNoteLabel">Ce qu'on attend</label><input id="c_prodNote" placeholder="Ex : validation des maquettes"></div>
     <div class="fg"><label>Accompagnement</label>
       <select id="c_accomp" multiple style="height:85px"><option>Com complète</option><option>Social média</option><option>Google Ads</option><option>Meta Ads</option><option>Création contenu</option><option>Autre</option></select>
       <div style="font-size:10px;color:var(--muted);margin-top:3px">Cmd/Ctrl+clic pour plusieurs</div>
@@ -2827,6 +2882,7 @@ document.addEventListener('DOMContentLoaded',function(){
         <option value="">— Personne —</option>
       </select></div>
     </div>
+    <div class="fg"><label>Lié à</label><select id="td_link"><option value="">— Aucun —</option></select></div>
     <div class="fg">
       <label>Détails</label>
       <textarea id="td_notes" rows="5" placeholder="Un point par ligne.&#10;Commence une ligne par [ ] pour en faire une case à cocher."></textarea>
@@ -3795,69 +3851,178 @@ function isActive(c){return c.status==='Prestations en cours'||c.status==='En di
 // Un mois est "vraiment payé" seulement si === 1 (état "pending"=2 = facture envoyée, en attente)
 // États d'un mois : 0 à faire · 1 payé · 2 facture envoyée (en attente) · 3 sans facturation (pause, rien à facturer)
 function isSettled(v){return v===1||v===3;}
-function isLate(c){return isActive(c)&&c.ca>0&&!isSettled(c.months[CUR_M])&&!isSettled(c.months[PREV_M]);}
+// ── Retard de paiement : UNE seule définition, identique à Influ City (unpaidMonths) ──
+// Premier mois dû cette année = mois de début des prestations (start) s'il est rempli,
+// sinon le premier mois coché. Un mois est impayé s'il n'est ni « payé » (1) ni « sans
+// facturation » (3). Le mois en cours ne compte qu'à partir du jour de prélèvement + 3 jours.
+function parisTodayISO(){
+  try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Paris',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
+  catch(e){ return localISO(new Date()); }
+}
+function prelDayOf(c){const d=parseInt(String((c&&c.prel)||'').replace(/\D+/g,' ').trim().split(' ')[0],10);return d>0&&d<=31?d:1;}
+function firstDueIdx(c){
+  if(c&&c.start){
+    const y=+String(c.start).slice(0,4),m=+String(c.start).slice(5,7)-1,cy=+parisTodayISO().slice(0,4);
+    if(y<cy) return 0; if(y>cy) return 99; return m;
+  }
+  let f=-1; MONTHS.forEach((m,i)=>{ if(f<0&&c&&c.months&&c.months[m]>=1) f=i; }); return f;
+}
+function unpaidMonths(c){
+  if(!c||!c.months) return [];
+  const t=parisTodayISO(),mi=parseInt(t.slice(5,7),10)-1,day=parseInt(t.slice(8,10),10),first=firstDueIdx(c),out=[];
+  if(first<0) return out;
+  MONTHS.forEach((m,i)=>{ if(i<first||i>mi) return; if(i===mi&&day<prelDayOf(c)+3) return; if(c.months[m]!==1&&c.months[m]!==3) out.push(m); });
+  return out;
+}
+function isLate(c){return isActive(c)&&(c.ca||0)>0&&unpaidMonths(c).length>0;}
+function amountDue(c){return isLate(c)?(c.ca||0)*unpaidMonths(c).length:0;}
+
+// ── Statut de production, responsable, fin d'engagement (champs partagés avec Influ City) ──
+const PROD_LABEL={'':'En cours',attente:'Attente validation client',bloque:'Bloqué'};
+function prodOf(c){return c&&(c.prod==='attente'||c.prod==='bloque')?c.prod:'';}
+function inProduction(c){return !!c&&c.status!=='Fin de contrat';}
+function daysSinceISO(iso){ if(!iso) return null; const t=parisTodayISO(); const a=Date.parse(t+'T00:00:00Z'), b=Date.parse(String(iso).slice(0,10)+'T00:00:00Z'); return isNaN(b)?null:Math.round((a-b)/86400000); }
+function endSoon(c){ if(!isActive(c)||!c.end) return null; const s=daysSinceISO(c.end); if(s===null) return null; const d=-s; return (d>=0&&d<=30)?d:null; }
+const RESP_EXTRA=[{id:'fadi',name:'Fadi',initials:'FA',color:'#4F7FD9'},{id:'amir',name:'Amir',initials:'AM',color:'#6BBF8E'}];
+function respInfo(id){
+  if(!id) return null;
+  const m=(typeof teamMembers!=='undefined'?teamMembers:[]).find(x=>x.id===id)||RESP_EXTRA.find(x=>x.id===id);
+  if(!m) return {name:id,initials:String(id).slice(0,2).toUpperCase(),color:'var(--grey)'};
+  return {name:m.name,initials:m.initials||String(m.name||'?').slice(0,2).toUpperCase(),color:m.color||'var(--teal)'};
+}
+function fillRespOptions(selected){
+  const sel=document.getElementById('c_resp'); if(!sel) return;
+  const team=teamMembers.filter(m=>m.id!=='membre3'||m.id===selected);
+  let html='<option value="">— Personne —</option>';
+  team.forEach(m=>{ html+=`<option value="${m.id}"${selected===m.id?' selected':''}>${escapeHtml(m.name)}${m.id==='membre3'?' (partie)':''}</option>`; });
+  RESP_EXTRA.forEach(m=>{ html+=`<option value="${m.id}"${selected===m.id?' selected':''}>${escapeHtml(m.name)}</option>`; });
+  if(selected&&!team.some(m=>m.id===selected)&&!RESP_EXTRA.some(m=>m.id===selected)) html+=`<option value="${escapeHtml(selected)}" selected>${escapeHtml(selected)}</option>`;
+  sel.innerHTML=html;
+}
+function toggleProdNote(){
+  const v=(document.getElementById('c_prod')||{}).value||'';
+  const row=document.getElementById('c_prodNoteRow'), lb=document.getElementById('c_prodNoteLabel'), inp=document.getElementById('c_prodNote');
+  if(!row) return;
+  row.style.display=v?'block':'none';
+  if(lb) lb.textContent=v==='bloque'?'Motif du blocage':"Ce qu'on attend du client";
+  if(inp) inp.placeholder=v==='bloque'?'Ex : accès au CMS':'Ex : validation des maquettes';
+}
+// Pastilles d'une ligne client (desktop et mobile)
+function clientChipsHtml(c){
+  const out=[];
+  const p=prodOf(c);
+  if(p&&inProduction(c)){
+    const since=daysSinceISO(c.prodSince);
+    const sinceTxt=since!==null&&since>=0?' · depuis '+since+' j':'';
+    if(p==='bloque') out.push(`<span class="cx-chip red" title="${escapeHtml(c.prodNote||'')}">⛔ Bloqué${c.prodNote?' · '+escapeHtml(c.prodNote):''}</span>`);
+    else out.push(`<span class="cx-chip orange" title="${escapeHtml(c.prodNote||'')}">⏳ Attente validation${sinceTxt}</span>`);
+  }
+  if(isLate(c)) out.push(`<span class="cx-chip red">Retard : ${unpaidMonths(c).join(', ')}</span>`);
+  const es=endSoon(c);
+  if(es!==null) out.push(`<span class="cx-chip orange">Fin d'engagement ${es===0?"aujourd'hui":'dans '+es+' j'}</span>`);
+  const r=respInfo(c.resp);
+  if(r) out.push(`<span class="cx-resp" style="background:${r.color}" title="Responsable : ${escapeHtml(r.name)}">${escapeHtml(r.initials)}</span>`);
+  return out.length?`<div class="cx-chips">${out.join('')}</div>`:'';
+}
+// Filtres « exception » partagés par le Dashboard et la page Clients actifs
+const CLIENT_FOCUS={
+  late:{label:'Retard de paiement',test:c=>isLate(c)},
+  attente:{label:'Attente validation',test:c=>inProduction(c)&&prodOf(c)==='attente'},
+  bloque:{label:'Bloqués',test:c=>inProduction(c)&&prodOf(c)==='bloque'},
+  end30:{label:"Fins d'engagement ≤ 30 j",test:c=>endSoon(c)!==null}
+};
+let clientFocus=null;
+function focusClients(k){clientFocus=CLIENT_FOCUS[k]?k:null;clientFilter='all';showTab('clients');}
+function clearClientFocus(){clientFocus=null;renderClients();}
 
 // ╔══════════════════════════════════════════════════════════════
 // ║ SIDEBAR — Apple-style groups, role-aware
 // ╚══════════════════════════════════════════════════════════════
-const NAV_GROUPS = [
-  {id:'gestion', label:'Gestion client', lock:true, adminOnly:true, items:[
-    {tab:'dashboard',  icon:'📊', label:'Dashboard'},
-    {tab:'clients',    icon:'👥', label:'Clients actifs'},
-    {tab:'fins',       icon:'📁', label:'Fins de contrat'},
-    {tab:'prospection',icon:'🎯', label:'Prospection'},
-    {tab:'tasks',      icon:'📌', label:'Tâches & Relances', badge:'navTaskBadge'},
-    {tab:'contacts',   icon:'📞', label:'Fiches contacts'}
+const ADMIN_TABS=['dashboard','clients','fins','prospection','tasks','contacts','quotes','invoices'];
+function pageAllowed(p){return isAdmin()||ADMIN_TABS.indexOf(p)===-1;}
+// Toutes les pages (aucune n'est supprimée : « Tâches & Relances » reste en archive, hors menu)
+const NAV_PAGES={
+  home:{icon:'🏠',label:'Accueil'},
+  dashboard:{icon:'📊',label:'Dashboard'},
+  clients:{icon:'👥',label:'Clients actifs'},
+  fins:{icon:'📁',label:'Fins de contrat'},
+  contacts:{icon:'📞',label:'Fiches contacts'},
+  services:{icon:'🛍️',label:'Services par client'},
+  avis:{icon:'⭐',label:'Avis Google'},
+  todo:{icon:'✅',label:'To-Do'},
+  agenda:{icon:'📆',label:'Agenda équipe'},
+  trips:{icon:'🚗',label:'Déplacements',badge:'navTripBadge'},
+  cnotes:{icon:'📝',label:'Notes idées clients'},
+  prospection:{icon:'🎯',label:'Prospection'},
+  leads:{icon:'🚀',label:'Leads prospects'},
+  leadstats:{icon:'🏆',label:'Mes stats & trophées'},
+  adshow:{icon:'🎮',label:'AD Show Game'},
+  settings:{icon:'⚙️',label:'Mon compte & rôles'},
+  tasks:{icon:'📌',label:'Tâches & Relances (archive)'}
+};
+// Le menu : 5 rubriques, 8 entrées. Une entrée ouvre sa première page autorisée ;
+// les pages sœurs s'affichent en onglets en haut du contenu.
+const NAV_MENU=[
+  {id:'pilotage',label:'Pilotage',entries:[
+    {id:'home',label:'Accueil',icon:'🏠',pages:['home']},
+    {id:'dashboard',label:'Dashboard',icon:'📊',pages:['dashboard']}
   ]},
-  {id:'production', label:'Production · équipe', lock:false, adminOnly:false, items:[
-    {tab:'todo',     icon:'✅', label:'To-Do (Perso/Équipe)', badge:'navTodoBadge'},
-    {tab:'agenda',   icon:'📆', label:'Agenda commun équipe'},
-    {tab:'cnotes',   icon:'📝', label:'Notes idées clients'},
-    {tab:'trips',    icon:'🚗', label:'Déplacements terrain', badge:'navTripBadge'},
-    {tab:'services', icon:'🛍️', label:'Services par client'},
-    {tab:'avis',     icon:'⭐', label:'Avis Google'}
+  {id:'clients',label:'Clients',entries:[
+    {id:'clients',label:'Clients',icon:'👥',pages:['clients','fins','contacts','services']},
+    {id:'avis',label:'Avis Google',icon:'⭐',pages:['avis']}
   ]},
-  {id:'commerce', label:'Commerce', lock:false, adminOnly:false, items:[
-    {tab:'leads',         icon:'🚀', label:'Leads prospects'},
-    {tab:'leadstats',     icon:'🏆', label:'Mes stats & trophées'}
+  {id:'production',label:'Production',entries:[
+    {id:'todo',label:'To-Do',icon:'✅',pages:['todo','agenda','trips','cnotes'],badge:'navTodoBadge'}
   ]},
-  {id:'detente', label:'Détente', lock:false, adminOnly:false, items:[
-    {tab:'adshow',  icon:'🏆', label:'AD Show Game'}
+  {id:'commerce',label:'Commerce',entries:[
+    {id:'prospection',label:'Prospection',icon:'🎯',pages:['prospection','leads']},
+    {id:'stats',label:'Mes stats',icon:'🏆',pages:['leadstats','adshow']}
   ]},
-  {id:'settings', label:'Paramètres', lock:false, adminOnly:false, items:[
-    {tab:'settings', icon:'⚙️', label:'Mon compte & rôles'}
+  {id:'compte',label:'Compte',entries:[
+    {id:'settings',label:'Mon compte & rôles',icon:'⚙️',pages:['settings']}
   ]}
 ];
-
-// Items standalone tout en haut de la sidebar (hors groupes)
-const NAV_TOP = [
-  {tab:'home', icon:'🏠', label:'Accueil'}
-];
+function entryPages(e){return e.pages.filter(pageAllowed);}
+function entryForPage(p){for(const g of NAV_MENU)for(const e of g.entries)if(e.pages.indexOf(p)!==-1)return e;return null;}
+function entryLabel(e){const ps=entryPages(e);return ps.length===1&&e.pages.length>1?(NAV_PAGES[ps[0]]||{}).label||e.label:e.label;}
+function entryIcon(e){const ps=entryPages(e);return ps.length===1&&e.pages.length>1?(NAV_PAGES[ps[0]]||{}).icon||e.icon:e.icon;}
+function renderPageTabs(name){
+  const el=document.getElementById('pageTabs'); if(!el) return;
+  const ent=entryForPage(name); const pages=ent?entryPages(ent):[];
+  if(!ent||pages.length<2||pages.indexOf(name)===-1){ el.innerHTML=''; el.hidden=true; return; }
+  el.hidden=false;
+  el.innerHTML=pages.map(p=>{
+    const pg=NAV_PAGES[p]||{icon:'',label:p};
+    const badge=pg.badge?`<span class="page-tab-badge" id="${pg.badge}"></span>`:'';
+    return `<button class="page-tab${p===name?' active':''}" onclick="showTab('${p}')"><span>${pg.icon}</span><span>${escapeHtml(pg.label)}</span>${badge}</button>`;
+  }).join('');
+  if(typeof updateNavTripBadge==='function') updateNavTripBadge();
+}
 
 function buildSidebar(){
   const nav=document.getElementById('sidebarNav');
   if(!nav) return;
   const collapsed=Storage.get('influ_sidebar_collapsed', {});
-  // Items du haut (Accueil…)
-  let topHtml=`<div class="nav-top">`+NAV_TOP.map(it=>
-    `<button class="nav-btn nav-btn-top" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${escapeHtml(it.label)}</span></button>`
-  ).join('')+`</div>`;
-  nav.innerHTML=topHtml+NAV_GROUPS.filter(g=>!g.adminOnly||isAdmin()).map(g=>{
+  nav.innerHTML=NAV_MENU.map(g=>{
+    const entries=g.entries.filter(e=>entryPages(e).length);
+    if(!entries.length) return '';
     const isCol=collapsed[g.id]?'collapsed':'';
-    const items=g.items.map(it=>{
-      const badge=it.badge?`<span class="badge-mini" id="${it.badge}" style="margin-left:auto;background:var(--coral);color:white;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;display:none"></span>`:'';
-      return `<button class="nav-btn" data-tab="${it.tab}" onclick="showTab('${it.tab}',this)"><span class="icon">${it.icon}</span><span class="nav-text">${escapeHtml(it.label)}</span>${badge}</button>`;
+    const items=entries.map(e=>{
+      const first=entryPages(e)[0];
+      const adminOnly=e.pages.every(p=>ADMIN_TABS.indexOf(p)!==-1);
+      const badge=e.badge?`<span class="badge-mini" id="${e.badge}" style="margin-left:auto;background:var(--coral);color:white;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;display:none"></span>`:(adminOnly?'<span class="nav-lock" title="Réservé à l\'admin">🔒</span>':'');
+      return `<button class="nav-btn" data-entry="${e.id}" data-tab="${first}" onclick="showTab('${first}',this)"><span class="icon">${entryIcon(e)}</span><span class="nav-text">${escapeHtml(entryLabel(e))}</span>${badge}</button>`;
     }).join('');
     return `<div class="nav-group ${isCol}" data-group="${g.id}">
       <div class="nav-group-header" onclick="toggleNavGroup('${g.id}')">
-        ${g.lock?'<span class="lock">🔒</span>':''}<span class="grp-label">${escapeHtml(g.label)}</span><span class="chev">▾</span>
+        <span class="grp-label">${escapeHtml(g.label)}</span><span class="chev">▾</span>
       </div>
       <div class="nav-group-items">${items}</div>
     </div>`;
   }).join('');
   // Re-mark active
   const cur=document.querySelector('.tab-content.active')?.id?.replace('tab-','');
-  if(cur){const b=nav.querySelector(`.nav-btn[data-tab="${cur}"]`);if(b)b.classList.add('active');}
+  if(cur){const ent=entryForPage(cur);const b=ent&&nav.querySelector(`.nav-btn[data-entry="${ent.id}"]`);if(b)b.classList.add('active');}
   // User pill — avatar (image ou initiales)
   const av=document.getElementById('userAvatar');
   if(currentUser.avatar){
@@ -3881,12 +4046,15 @@ function toggleNavGroup(id){
 }
 
 function showTab(name,btn){
+  // Un compte équipe n'ouvre jamais une page admin, quel que soit le chemin
+  if(!name||!pageAllowed(name)) name='home';
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const tabEl=document.getElementById('tab-'+name);
   if(tabEl) tabEl.classList.add('active');
-  if(btn) btn.classList.add('active');
-  else {const b=document.querySelector(`.nav-btn[data-tab="${name}"]`);if(b)b.classList.add('active');}
+  const ent=entryForPage(name);
+  if(ent){const b=document.querySelector(`.nav-btn[data-entry="${ent.id}"]`);if(b)b.classList.add('active');}
+  renderPageTabs(name);
   if(name==='home') renderHome();
   if(name==='dashboard') renderDashboard();
   if(name==='clients') renderClients();
@@ -3918,14 +4086,19 @@ function renderClients(){
   const fCls={'all':'','Prestations en cours':'f-green','En difficulté CA':'f-red','A venir':'f-grey'};
 
   const activeClients=clients.filter(c=>activeStatuses.includes(c.status));
+  // Une seule définition de « clients actifs » (isActive) partout ; « A venir » compté à part
+  const cntEl=document.getElementById('clientsCount');
+  if(cntEl){const na=clients.filter(isActive).length,nv=clients.filter(c=>c.status==='A venir').length;cntEl.textContent=`${na} actif${na>1?'s':''}${nv?' · '+nv+' à venir':''}`;}
 
-  document.getElementById('clientFilters').innerHTML=statuses.map(s=>{
+  const focusHtml=(clientFocus&&CLIENT_FOCUS[clientFocus])?`<span class="cx-focus">Filtre : ${escapeHtml(CLIENT_FOCUS[clientFocus].label)} <button onclick="clearClientFocus()" title="Retirer le filtre">✕</button></span>`:'';
+  document.getElementById('clientFilters').innerHTML=focusHtml+statuses.map(s=>{
     const act=clientFilter===s?'active '+(fCls[s]||''):'';
     const cnt=s==='all'?activeClients.length:activeClients.filter(c=>c.status===s).length;
     return `<button class="pill ${act}" onclick="setClientFilter('${s}')">${s==='all'?'Tous':s} (${cnt})</button>`;
   }).join('');
 
   let filtered=activeClients;
+  if(clientFocus&&CLIENT_FOCUS[clientFocus]) filtered=filtered.filter(CLIENT_FOCUS[clientFocus].test);
   if(clientFilter!=='all') filtered=filtered.filter(c=>c.status===clientFilter);
   if(search) filtered=filtered.filter(c=>c.name.toLowerCase().includes(search)||(c.notes||'').toLowerCase().includes(search));
   filtered=[...filtered].sort((a,b)=>{
@@ -3948,11 +4121,12 @@ function renderClients(){
   tbody.innerHTML=filtered.map((c,idx)=>{
     const late=isLate(c);
     const unpaidNow=isActive(c)&&!isSettled(c.months[CUR_M]);
+    const lateList=late?unpaidMonths(c):[];
     const mCells=MONTHS.map(m=>{
-      const pastUnpaid=isActive(c)&&!c.months[m]&&MONTHS.indexOf(m)<CM;
+      const pastUnpaid=lateList.indexOf(m)!==-1;
       const monthCls = monthClass(c.months[m]);
-      const titleTxt = c.months[m]===3?'Sans facturation (pause)':(c.months[m]===2?'Facture envoyée — en attente de paiement':(c.months[m]===1?'Payé':(pastUnpaid?'En retard':'À faire')));
-      return `<td style="text-align:center;padding:8px 3px" class="${m===CUR_M?'td-current':''}"><div class="month-check ${monthCls} ${pastUnpaid&&!c.months[m]?'late-month':''}" onclick="toggleMonth(${c.id},'${m}',event)" title="${titleTxt}"></div></td>`;
+      const titleTxt = c.months[m]===3?'Sans facturation (pause)':(c.months[m]===2?(pastUnpaid?'Facture envoyée — en retard de paiement':'Facture envoyée — en attente de paiement'):(c.months[m]===1?'Payé':(pastUnpaid?'En retard':'À faire')));
+      return `<td style="text-align:center;padding:8px 3px" class="${m===CUR_M?'td-current':''}"><div class="month-check ${monthCls} ${pastUnpaid&&c.months[m]!==2?'late-month':''}" onclick="toggleMonth(${c.id},'${m}',event)" title="${titleTxt}"></div></td>`;
     }).join('');
     const noteRow=openNoteId===c.id?`<tr class="inline-note-row"><td colspan="20"><div class="inline-note-form"><input id="ni_${c.id}" value="${escapeHtml(c.notes)}" placeholder="Note rapide..." onkeydown="if(event.key==='Enter')saveNote(${c.id})"><button style="background:var(--teal);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700" onclick="saveNote(${c.id})">Sauver</button><button style="background:rgba(255,255,255,.07);color:var(--muted);border:none;border-radius:6px;padding:5px 10px;cursor:pointer" onclick="openNoteId=null;renderClients()">✕</button></div></td></tr>`:'';
     return `<tr class="${late?'late-row':''}" draggable="true" data-id="${c.id}"
@@ -3963,7 +4137,7 @@ function renderClients(){
       ondragend="dragEnd(event)">
       <td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
       <td>${bdg(cStatusMap,c.status)}</td>
-      <td><span class="client-name">${escapeHtml(c.name)}</span>${unpaidNow?`<span class="unpaid-dot" title="${CUR_MF} non payé"></span>`:''} ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${escapeHtml(c.notes)}</div>`:''}</td>
+      <td class="client-cell"><span class="client-name">${escapeHtml(c.name)}</span>${unpaidNow?`<span class="unpaid-dot" title="${CUR_MF} non payé"></span>`:''}${clientChipsHtml(c)} ${c.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${escapeHtml(c.notes)}</div>`:''}</td>
       <td>${c.ca?`<span class="ca-val">${c.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td>
       <td>${tgs(c.accomp)}</td>
       <td style="font-size:12px;color:var(--muted)">${c.prel||'—'}</td>
@@ -4208,7 +4382,6 @@ function renderDashboard(){
   const actifs=clients.filter(c=>c.status==='Prestations en cours');
   const enDiff=clients.filter(c=>c.status==='En difficulté CA');
   const caTotal=([...actifs,...enDiff]).reduce((s,c)=>s+(c.ca||0),0);
-  const caAvenir=clients.filter(c=>c.status==='A venir').reduce((s,c)=>s+(c.ca||0),0);
   const late=clients.filter(isLate);
   const activeAll=[...actifs,...enDiff];
   const paidNow=activeAll.filter(c=>c.months[CUR_M]===1);
@@ -4218,43 +4391,18 @@ function renderDashboard(){
   const diff=caTotal-prevCa;
   const diffHtml=diff>=0?`<span style="color:var(--green)">▲ +${diff.toLocaleString('fr-FR')} € vs ${PREV_M}</span>`:`<span style="color:var(--red)">▼ ${Math.abs(diff).toLocaleString('fr-FR')} € vs ${PREV_M}</span>`;
 
-  const tasksOverdue=tasks.filter(t=>!t.done&&getTaskBucket(t)==='overdue').length;
-  const tasksToday=tasks.filter(t=>!t.done&&getTaskBucket(t)==='today').length;
-  const tasksOpenTotal=tasks.filter(t=>!t.done).length;
-
+  const nActifs=clients.filter(isActive).length;
+  const nAvenir=clients.filter(c=>c.status==='A venir').length;
+  const due=late.reduce((s,c)=>s+amountDue(c),0);
+  const prospEnCours=prospects.filter(p=>p.status!=='blocage');
+  const prospSigned=prospects.filter(p=>p.status==='Devis signé'||p.status==='Accord verbal').length;
   document.getElementById('kpiGrid').innerHTML=`
-    <div class="kpi k-green"><div class="kpi-icon">💰</div><div class="kpi-val">${caTotal.toLocaleString('fr-FR')} €</div><div class="kpi-label">CA mensuel</div><div class="kpi-sub">${diffHtml}</div></div>
-    <div class="kpi k-teal"><div class="kpi-icon">✅</div><div class="kpi-val">${actifs.length}</div><div class="kpi-label">Clients actifs</div><div class="kpi-sub" style="color:var(--muted)">${taux}% ont payé ce mois</div></div>
-    <div class="kpi k-coral"><div class="kpi-icon">⚠️</div><div class="kpi-val">${enDiff.length}</div><div class="kpi-label">En difficulté</div><div class="kpi-sub" style="color:var(--muted)">${enDiff.reduce((s,c)=>s+(c.ca||0),0).toLocaleString('fr-FR')} € à risque</div></div>
-    <div class="kpi k-orange"><div class="kpi-icon">🎯</div><div class="kpi-val">${prospects.length}</div><div class="kpi-label">Prospects</div></div>
-    <div class="kpi k-purple"><div class="kpi-icon">🚀</div><div class="kpi-val">${caAvenir.toLocaleString('fr-FR')} €</div><div class="kpi-label">CA potentiel</div><div class="kpi-sub" style="color:var(--muted)">clients "A venir"</div></div>
-    <div class="kpi k-blue"><div class="kpi-icon">🔴</div><div class="kpi-val">${late.length}</div><div class="kpi-label">Retards paiement</div></div>
-    <div class="kpi k-coral" style="cursor:pointer" onclick="goToTasks()"><div class="kpi-icon">📅</div><div class="kpi-val">${tasksOverdue+tasksToday}</div><div class="kpi-label">Tâches urgentes</div><div class="kpi-sub" style="color:var(--muted)">${tasksOverdue} en retard · ${tasksToday} aujourd'hui · ${tasksOpenTotal} ouvertes</div></div>
-    ${(function(){
-      // Auto-recompute overdue invoices
-      invoices.forEach(inv=>{const ns=autoComputeStatus(inv);if(ns!==inv.status)inv.status=ns;});
-      const overdueInv=invoices.filter(i=>i.status==='overdue');
-      const sentInv=invoices.filter(i=>i.status==='sent');
-      const toRecover=[...overdueInv,...sentInv].reduce((s,i)=>s+quoteTotals(i).ttc,0);
-      return `<div class="kpi k-orange" style="cursor:pointer" onclick="goToInvoices()"><div class="kpi-icon">🧾</div><div class="kpi-val">${fmtEUR(toRecover)}</div><div class="kpi-label">À encaisser</div><div class="kpi-sub" style="color:var(--muted)">${overdueInv.length} en retard · ${sentInv.length} en attente</div></div>`;
-    })()}
-    ${(function(){
-      const cur=currentMonthKey();
-      const upcoming=trips.filter(t=>t.monthYear&&t.monthYear>=cur).length;
-      const thisMonth=trips.filter(t=>t.monthYear===cur).length;
-      const conf=trips.filter(t=>t.monthYear===cur&&t.status==='confirmed').length;
-      return `<div class="kpi k-teal" style="cursor:pointer" onclick="goToTrips()"><div class="kpi-icon">🚗</div><div class="kpi-val">${thisMonth}</div><div class="kpi-label">Déplacements ce mois</div><div class="kpi-sub" style="color:var(--muted)">${conf} confirmé(s) · ${upcoming} à venir</div></div>`;
-    })()}
-    ${(function(){
-      // FIX timezone : utilise todayISO() — même clé que celle utilisée par l'agenda
-      const tk=todayISO();
-      const office=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='office').length;
-      const remote=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='remote').length;
-      const off=teamMembers.filter(m=>(agenda[m.id]||{})[tk]==='off').length;
-      return `<div class="kpi k-blue" style="cursor:pointer" onclick="goToAgenda()"><div class="kpi-icon">📆</div><div class="kpi-val">${office}/${teamMembers.length}</div><div class="kpi-label">Au bureau aujourd'hui</div><div class="kpi-sub" style="color:var(--muted)">🏠 ${remote} TT · 🏖 ${off} congé</div></div>`;
-    })()}
+    <div class="kpi k-green"><div class="kpi-icon">💰</div><div class="kpi-val">${caTotal.toLocaleString('fr-FR')} €</div><div class="kpi-label">CA mensuel HT</div><div class="kpi-sub">${diffHtml}</div></div>
+    <div class="kpi k-teal clk" onclick="clientFocus=null;clientFilter='all';showTab('clients')"><div class="kpi-icon">👥</div><div class="kpi-val">${nActifs}</div><div class="kpi-label">Clients actifs</div><div class="kpi-sub" style="color:var(--muted)">${nAvenir?'+ '+nAvenir+' à venir':'aucun à venir'}</div></div>
+    <div class="kpi ${due>0?'k-coral':'k-green'} clk" onclick="focusClients('late')"><div class="kpi-icon">🧾</div><div class="kpi-val">${due.toLocaleString('fr-FR')} €</div><div class="kpi-label">À encaisser (retards)</div><div class="kpi-sub" style="color:var(--muted)">${late.length} client${late.length>1?'s':''} en retard</div></div>
+    <div class="kpi k-orange clk" onclick="showTab('prospection')"><div class="kpi-icon">🎯</div><div class="kpi-val">${prospEnCours.length}</div><div class="kpi-label">Prospects en cours</div><div class="kpi-sub" style="color:var(--muted)">${prospSigned} devis signé${prospSigned>1?'s':''} / accord${prospSigned>1?'s':''}</div></div>
   `;
-
+  renderDashExceptions();
   const top=[...actifs,...enDiff].sort((a,b)=>(b.ca||0)-(a.ca||0)).slice(0,7);
   const maxCa=top[0]?.ca||1;
   document.getElementById('topClients').innerHTML=top.map(c=>`<div class="ca-bar"><div class="ca-bar-label"><span class="nm">${escapeHtml(c.name)}</span><span class="vl">${(c.ca||0).toLocaleString('fr-FR')} €</span></div><div class="ca-bar-track"><div class="ca-bar-fill" style="width:${Math.round((c.ca||0)/maxCa*100)}%"></div></div></div>`).join('');
@@ -4318,7 +4466,7 @@ function renderDashboard(){
   // Upcoming tasks card
   const upEl=document.getElementById('upcomingTasks');
   if(upEl){
-    const upcoming=tasks.filter(t=>!t.done).sort((a,b)=>{
+    const upcoming=todos.filter(t=>todoVisibleToMe(t)&&todoState(t)!=='done').sort((a,b)=>{
       if(!a.due&&!b.due) return 0;if(!a.due) return 1;if(!b.due) return -1;
       return a.due.localeCompare(b.due);
     }).slice(0,6);
@@ -4330,7 +4478,7 @@ function renderDashboard(){
         const ent=findEntity(t.linkedTo);
         const linkHtml=ent?` <span style="color:var(--teal-light);font-size:11px">· ${escapeHtml(ent.name)}</span>`:'';
         return `<div class="dash-task-row">
-          <span class="dash-task-name"><span class="task-prio p-${t.prio||'normal'}" style="margin-right:6px">${PRIO_LABEL[t.prio||'normal']}</span>${escapeHtml(t.title)}${linkHtml}</span>
+          <span class="dash-task-name" style="cursor:pointer" onclick="editTodo('${t.id}')"><span class="task-prio p-${t.prio||'normal'}" style="margin-right:6px">${PRIO_LABEL[t.prio||'normal']}</span>${escapeHtml(t.title||'')}${linkHtml}</span>
           <span class="dash-task-due ${due.cls}" style="color:${due.cls==='overdue'?'var(--red)':due.cls==='today'?'var(--orange)':due.cls==='soon'?'var(--teal-light)':'var(--muted)'}">${due.txt}</span>
         </div>`;
       }).join('');
@@ -4339,7 +4487,39 @@ function renderDashboard(){
   updateNavTaskBadge();
 }
 
-function goToTasks(){const navBtn=document.querySelector(`.nav-btn[data-tab="tasks"]`);if(navBtn) showTab('tasks',navBtn);else showTab('tasks');}
+// ── Dashboard : exceptions (pastilles cliquables) + « À traiter aujourd'hui » ──
+function todoOverdue(t){return todoState(t)!=='done'&&!!t.due&&daysFromToday(t.due)<0;}
+function myOverdueTodos(){return todos.filter(t=>todoVisibleToMe(t)&&todoOverdue(t));}
+function urgentTodos(){return todos.filter(t=>todoVisibleToMe(t)&&todoState(t)!=='done'&&((t.due&&daysFromToday(t.due)<=0)||t.prio==='urgent'||t.prio==='high'));}
+function renderDashExceptions(){
+  const chipsEl=document.getElementById('dashChips'), listEl=document.getElementById('dashTodoList');
+  const n=k=>clients.filter(CLIENT_FOCUS[k].test).length;
+  const overdue=myOverdueTodos();
+  const chips=[
+    {k:'late',label:'Retard de paiement',n:n('late'),cls:'red',go:"focusClients('late')"},
+    {k:'attente',label:'Attente validation',n:n('attente'),cls:'orange',go:"focusClients('attente')"},
+    {k:'bloque',label:'Bloqués',n:n('bloque'),cls:'red',go:"focusClients('bloque')"},
+    {k:'end30',label:"Fins d'engagement ≤ 30 j",n:n('end30'),cls:'orange',go:"focusClients('end30')"},
+    {k:'todo',label:'Tâches en retard',n:overdue.length,cls:'red',go:"focusTodos('overdue')"}
+  ].filter(c=>c.n>0);
+  if(chipsEl) chipsEl.innerHTML=chips.length?chips.map(c=>`<button class="dash-chip ${c.cls}" onclick="${c.go}"><b>${c.n}</b>${escapeHtml(c.label)}</button>`).join(''):'<div class="dash-chips-ok">✓ Aucune exception : pas de retard, rien de bloqué.</div>';
+  if(!listEl) return;
+  // Une ligne par client (les motifs d'un même client sont réunis), une par tâche
+  const rows=[],byKey={};
+  const add=(key,r)=>{const o=byKey[key];if(o){o.why+=' · '+r.why;o.rk=Math.min(o.rk,r.rk);if(r.cls==='red')o.cls='red';}else{byKey[key]=r;rows.push(r);}};
+  const fmtD=iso=>new Date(iso+'T00:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+  clients.filter(CLIENT_FOCUS.bloque.test).forEach(c=>add('c'+c.id,{rk:0,cls:'red',what:c.name,why:'Bloqué'+(c.prodNote?' · '+c.prodNote:'')+(daysSinceISO(c.prodSince)>0?' · depuis '+daysSinceISO(c.prodSince)+' j':''),btn:'Ouvrir',go:`editClient(${c.id})`}));
+  clients.filter(isLate).sort((a,b)=>amountDue(b)-amountDue(a)).forEach(c=>add('c'+c.id,{rk:1,cls:'red',what:c.name,why:'Retard de paiement · '+unpaidMonths(c).join(', ')+' · '+amountDue(c).toLocaleString('fr-FR')+' €',btn:'Ouvrir',go:`editClient(${c.id})`}));
+  clients.filter(c=>CLIENT_FOCUS.attente.test(c)&&(daysSinceISO(c.prodSince)||0)>3).forEach(c=>add('c'+c.id,{rk:2,cls:'orange',what:c.name,why:'Attente validation client depuis '+daysSinceISO(c.prodSince)+' j'+(c.prodNote?' · '+c.prodNote:''),btn:'Ouvrir',go:`editClient(${c.id})`}));
+  overdue.sort((a,b)=>String(a.due).localeCompare(String(b.due))).forEach(t=>{const ent=findEntity(t.linkedTo);add('t'+t.id,{rk:3,cls:'red',what:t.title||'(sans titre)',why:'Tâche en retard · échéance '+fmtD(t.due)+(ent?' · '+ent.name:''),btn:'Ouvrir',go:`editTodo('${t.id}')`});});
+  clients.filter(CLIENT_FOCUS.end30.test).sort((a,b)=>endSoon(a)-endSoon(b)).forEach(c=>add('c'+c.id,{rk:4,cls:'orange',what:c.name,why:"Fin d'engagement "+(endSoon(c)===0?"aujourd'hui":'dans '+endSoon(c)+' j')+' ('+fmtD(c.end)+')',btn:'Ouvrir',go:`editClient(${c.id})`}));
+  rows.sort((a,b)=>a.rk-b.rk);
+  const shown=rows.slice(0,8);
+  listEl.innerHTML=shown.length?shown.map(r=>`<div class="dt-row"><span class="dt-dot ${r.cls}"></span><div style="min-width:0"><div class="dt-what">${escapeHtml(r.what)}</div><div class="dt-why">${escapeHtml(r.why)}</div></div><button class="btn-mini" onclick="${r.go}">${r.btn}</button></div>`).join('')+(rows.length>8?`<div class="dt-why" style="text-align:center;margin-top:8px">+ ${rows.length-8} autre${rows.length-8>1?'s':''} — utilise les pastilles ci-dessus</div>`:'')
+    :'<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px">🎉 Rien à traiter aujourd\'hui.</div>';
+}
+
+function goToTasks(){showTab('todo');}
 function goToInvoices(){const navBtn=document.querySelector(`.nav-btn[data-tab="invoices"]`);if(navBtn) showTab('invoices',navBtn);else showTab('invoices');}
 function goToTrips(){const navBtn=document.querySelector(`.nav-btn[data-tab="trips"]`);if(navBtn) showTab('trips',navBtn);else showTab('trips');}
 function goToAgenda(){const navBtn=document.querySelector(`.nav-btn[data-tab="agenda"]`);if(navBtn) showTab('agenda',navBtn);else showTab('agenda');}
@@ -4348,17 +4528,20 @@ function monthToggleCls(v){return v===1?'on':(v===2?'st2':(v===3?'st3':''));}
 function buildMonthsGrid(sel){document.getElementById('clientMonthsGrid').innerHTML=MONTHS.map(m=>{const v=sel[m]||0;return `<div class="month-toggle ${monthToggleCls(v)}" onclick="pickModalMonth(this,event)" data-month="${m}" data-state="${v}" title="${v===3?'Sans facturation (pause)':(v===2?'Facture envoyée':(v===1?'Payé':'À faire'))}">${m}</div>`;}).join('');}
 function pickModalMonth(el,ev){const cur=parseInt(el.dataset.state||'0',10)||0;openMonthMenu(el,cur,'Mois · '+el.dataset.month,v=>{el.dataset.state=v;el.className='month-toggle '+monthToggleCls(v);el.title=v===3?'Sans facturation (pause)':(v===2?'Facture envoyée':(v===1?'Payé':'À faire'));});}
 
-function openClientModal(){editClientId=null;document.getElementById('clientModalTitle').textContent='👥 Nouveau client';document.getElementById('clientSaveLabel').textContent='Enregistrer';['c_name','c_ca','c_prel','c_notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('c_status').value='Prestations en cours';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=false);buildMonthsGrid({});document.getElementById('clientOverlay').classList.add('open');}
+function openClientModal(){editClientId=null;document.getElementById('clientModalTitle').textContent='👥 Nouveau client';document.getElementById('clientSaveLabel').textContent='Enregistrer';['c_name','c_ca','c_prel','c_notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('c_status').value='Prestations en cours';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=false);buildMonthsGrid({});['c_start','c_end','c_prodNote'].forEach(id=>document.getElementById(id).value='');fillRespOptions('');document.getElementById('c_prod').value='';toggleProdNote();document.getElementById('clientOverlay').classList.add('open');}
 
-function editClient(id){const c=clients.find(c=>c.id===id);editClientId=id;document.getElementById('clientModalTitle').textContent='✏️ Modifier le client';document.getElementById('clientSaveLabel').textContent='Mettre à jour';document.getElementById('c_name').value=c.name;document.getElementById('c_status').value=c.status;document.getElementById('c_ca').value=c.ca||'';document.getElementById('c_prel').value=c.prel||'';document.getElementById('c_notes').value=c.notes||'';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=(c.accomp||[]).includes(o.value));buildMonthsGrid(c.months||{});document.getElementById('clientOverlay').classList.add('open');}
+function editClient(id){const c=clients.find(c=>c.id===id);editClientId=id;document.getElementById('clientModalTitle').textContent='✏️ Modifier le client';document.getElementById('clientSaveLabel').textContent='Mettre à jour';document.getElementById('c_name').value=c.name;document.getElementById('c_status').value=c.status;document.getElementById('c_ca').value=c.ca||'';document.getElementById('c_prel').value=c.prel||'';document.getElementById('c_notes').value=c.notes||'';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=(c.accomp||[]).includes(o.value));buildMonthsGrid(c.months||{});document.getElementById('c_start').value=c.start||'';document.getElementById('c_end').value=c.end||'';fillRespOptions(c.resp||'');document.getElementById('c_prod').value=prodOf(c);document.getElementById('c_prodNote').value=c.prodNote||'';toggleProdNote();document.getElementById('clientOverlay').classList.add('open');}
 
 function saveClient(){
   const name=document.getElementById('c_name').value.trim();if(!name){alert('Nom requis');return;}
   const accomp=Array.from(document.getElementById('c_accomp').selectedOptions).map(o=>o.value);
   const months={};document.querySelectorAll('#clientMonthsGrid .month-toggle').forEach(el=>months[el.dataset.month]=parseInt(el.dataset.state||'0',10)||0);
-  const data={name,status:document.getElementById('c_status').value,ca:parseFloat(document.getElementById('c_ca').value)||0,prel:document.getElementById('c_prel').value.trim(),accomp,months,notes:document.getElementById('c_notes').value.trim()};
-  if(editClientId!==null){const i=clients.findIndex(c=>c.id===editClientId);clients[i]={...clients[i],...data};toast('Client mis à jour ✓');}
-  else{clients.push({id:clientId++,...data});toast('Client ajouté ✓');}
+  const prod=document.getElementById('c_prod').value||'';
+  const data={name,status:document.getElementById('c_status').value,ca:parseFloat(document.getElementById('c_ca').value)||0,prel:document.getElementById('c_prel').value.trim(),accomp,months,notes:document.getElementById('c_notes').value.trim(),
+    start:document.getElementById('c_start').value||'',end:document.getElementById('c_end').value||'',resp:document.getElementById('c_resp').value||'',
+    prod,prodNote:prod?document.getElementById('c_prodNote').value.trim():''};
+  if(editClientId!==null){const i=clients.findIndex(c=>c.id===editClientId);if(prodOf(clients[i])!==prod) data.prodSince=parisTodayISO();clients[i]={...clients[i],...data};toast('Client mis à jour ✓');}
+  else{if(prod) data.prodSince=parisTodayISO();clients.push({id:clientId++,...data});toast('Client ajouté ✓');}
   saveData();closeModal('clientOverlay');renderClients();renderDashboard();
 }
 
@@ -4432,8 +4615,8 @@ function findEntity(linkId){
   return null;
 }
 
-function fillLinkOptions(selectedVal){
-  const sel=document.getElementById('t_link');
+function fillLinkOptions(selectedVal,selId){
+  const sel=document.getElementById(selId||'t_link');
   if(!sel) return;
   let html='<option value="">— Aucun —</option>';
   const actives=clients.filter(c=>c.status!=='Fin de contrat').sort((a,b)=>a.name.localeCompare(b.name,'fr'));
@@ -4442,7 +4625,8 @@ function fillLinkOptions(selectedVal){
     actives.forEach(c=>{html+=`<option value="c:${c.id}"${selectedVal===`c:${c.id}`?' selected':''}>${escapeHtml(c.name)}</option>`;});
     html+='</optgroup>';
   }
-  const sortedP=[...prospects].sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+  // Les prospects restent réservés à l'admin (page Prospection admin)
+  const sortedP=isAdmin()?[...prospects].sort((a,b)=>a.name.localeCompare(b.name,'fr')):[];
   if(sortedP.length){
     html+='<optgroup label="🎯 Prospects">';
     sortedP.forEach(p=>{html+=`<option value="p:${p.id}"${selectedVal===`p:${p.id}`?' selected':''}>${escapeHtml(p.name)}</option>`;});
@@ -4547,11 +4731,9 @@ function goToEntity(linkId){
     const id=parseInt(linkId.slice(2));
     const c=clients.find(c=>c.id===id);if(!c) return;
     const tab=c.status==='Fin de contrat'?'fins':'clients';
-    const navBtn=document.querySelector(`.nav-btn[onclick*="'${tab}'"]`);
-    if(navBtn) showTab(tab,navBtn);
+    showTab(tab);
   } else if(linkId.startsWith('p:')){
-    const navBtn=document.querySelector(`.nav-btn[onclick*="'prospection'"]`);
-    if(navBtn) showTab('prospection',navBtn);
+    showTab('prospection');
   }
 }
 
@@ -4749,12 +4931,15 @@ function renderLockScreen(){
   const m=teamMembers.find(x=>x.id===lockUserId)||teamMembers[0];
   if(!m) return;
   const av=document.getElementById('lockAvatar');
-  if(m.avatar){av.innerHTML=`<img src="${m.avatar}" alt="">`;}
-  else{av.innerHTML=m.initials||'?';av.style.background='linear-gradient(135deg,'+(m.color||'#116776')+','+(m.color||'#1a8fa3')+')';}
-  document.getElementById('lockName').textContent=m.name;
-  document.getElementById('lockRole').textContent=(m.role==='admin'?'Admin':'Équipe')+' · Influmedia';
-  document.getElementById('lockError').textContent='';
-  document.getElementById('lockPwd').value='';
+  if(av){
+    if(m.avatar){av.innerHTML=`<img src="${m.avatar}" alt="">`;}
+    else{av.innerHTML=m.initials||'?';av.style.background='linear-gradient(135deg,'+(m.color||'#116776')+','+(m.color||'#1a8fa3')+')';}
+  }
+  const setTxt=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  setTxt('lockName',m.name);
+  setTxt('lockRole',(m.role==='admin'?'Admin':'Équipe')+' · Influmedia');
+  setTxt('lockError','');
+  const pw=document.getElementById('lockPwd'); if(pw) pw.value='';
 }
 
 function renderLockUserList(){
@@ -5116,6 +5301,8 @@ function doUnlock(member){
   buildSidebar();
   const defaultTab='home';
   showTab(defaultTab);
+  // Une seule liste de tâches : migration unique après connexion (et après lecture du cloud)
+  setTimeout(maybeMigrateTasks,600);
   // Messagerie : afficher la bulle flottante + demander les notifications
   const fab=document.getElementById('chatFab');
   if(fab) fab.classList.add('visible');
@@ -5235,7 +5422,39 @@ function lockApp(){
 // ║ TO-DO LIST (Perso + Équipe)
 // ╚══════════════════════════════════════════════════════════════
 let todos = Storage.get('influ_todos', []);
-let todoBucket='perso',todoFilter='open',editTodoId=null;
+let todoBucket='perso',todoFilter='open',editTodoId=null,todoFocus=null;
+function focusTodos(k){todoFocus=k||null;showTab('todo');}
+function clearTodoFocus(){todoFocus=null;renderTodo();}
+// ── Une seule liste de tâches : les « Tâches & Relances » (influ_tasks3) sont recopiées
+// UNE fois dans To-Do (perso de l'admin). influ_tasks3 n'est jamais modifié : il reste en archive.
+// Idempotent : une tâche déjà recopiée (todo.fromTask === task.id) n'est jamais recopiée deux fois.
+// Ne tourne qu'après lecture du cloud (sinon on risquerait d'écraser les to-do des autres).
+function maybeMigrateTasks(){
+  try{
+    if(!isAdmin()) return 0;
+    if(typeof Cloud!=='undefined'&&Cloud.enabled&&!Cloud._pullConfirmed) return 0;
+    const src=Array.isArray(tasks)?tasks:[];
+    if(!src.length) return 0;
+    const have=new Set(todos.filter(t=>t.fromTask!=null).map(t=>String(t.fromTask)));
+    let n=0;
+    src.forEach(tk=>{
+      if(!tk||tk.id==null||have.has(String(tk.id))) return;
+      todos.push({id:newTodoId(),title:tk.title||'(sans titre)',bucket:'perso',prio:tk.prio||'normal',
+        state:tk.done?'done':'todo',done:!!tk.done,due:tk.due||'',assignee:'',notes:tk.notes||'',
+        owner:'nicolas',linkedTo:tk.linkedTo||'',type:tk.type||'',createdAt:tk.createdAt||new Date().toISOString(),
+        completedAt:tk.completedAt||null,fromTask:tk.id});
+      have.add(String(tk.id)); n++;
+    });
+    if(n){
+      Storage.set('influ_todos',todos);
+      updateNavTodoBadge();
+      const tab=activeTabName();
+      if(tab==='todo') renderTodo(); else if(tab==='dashboard') renderDashboard(); else if(tab==='home') renderHome();
+      toast('📌 '+n+' tâche'+(n>1?'s':'')+' de « Tâches & Relances » rangée'+(n>1?'s':'')+' dans To-Do');
+    }
+    return n;
+  }catch(e){ console.error('Migration des tâches', e); return 0; }
+}
 // ── FIX collision IDs : normalise tous les IDs existants en string pour qu'ils
 // ne rentrent jamais en conflit avec les IDs numériques générés par un autre
 // appareil. Toutes les nouvelles todos auront un ID globalement unique.
@@ -5306,7 +5525,7 @@ function renderTodo(){
   }
 
   // Si onglet Perso + masqué → placeholder, on n'affiche rien
-  if(todoBucket==='perso'&&todoPersoHidden){
+  if(todoBucket==='perso'&&todoPersoHidden&&!todoFocus){
     document.getElementById('todoFilters').innerHTML='';
     document.getElementById('todoBody').innerHTML=`<div class="todo-perso-masked">
       <div class="ic">🙈</div>
@@ -5320,11 +5539,13 @@ function renderTodo(){
 
   const search=(document.getElementById('todoSearch')?.value||'').toLowerCase();
   // Perso = seulement les miennes ; Équipe = partagées
-  const list=todos.filter(t=>t.bucket===todoBucket && todoVisibleToMe(t));
+  const list=todoFocus==='overdue'
+    ? todos.filter(t=>todoVisibleToMe(t)&&todoOverdue(t)&&!(todoPersoHidden&&t.bucket==='perso'))
+    : todos.filter(t=>t.bucket===todoBucket && todoVisibleToMe(t));
 
-  // Plus de filtres / catégories : tout est affiché ensemble
+  // Plus de filtres / catégories : tout est affiché ensemble (sauf filtre venu du Dashboard)
   const fEl=document.getElementById('todoFilters');
-  if(fEl) fEl.innerHTML='';
+  if(fEl) fEl.innerHTML=todoFocus==='overdue'?`<span class="cx-focus">Filtre : Tâches en retard (perso + équipe) <button onclick="clearTodoFocus()" title="Retirer le filtre">✕</button></span>`:'';
 
   let filtered=[...list];
   if(search) filtered=filtered.filter(t=>(t.title||'').toLowerCase().includes(search)||(t.notes||'').toLowerCase().includes(search));
@@ -5347,6 +5568,8 @@ function renderTodo(){
     const assignee=teamMembers.find(m=>m.id===t.assignee);
     const asgHtml=assignee?`<span class="postit-assignee" title="Assigné à ${escapeHtml(assignee.name)}">👤 ${escapeHtml((assignee.name||'').split(' ')[0])}</span>`:'';
     const owner=teamMembers.find(m=>m.id===t.owner);
+    const ent=findEntity(t.linkedTo);
+    const linkHtml=ent?`<span class="postit-link"${isAdmin()?` onclick="event.stopPropagation();goToEntity('${t.linkedTo}')" style="cursor:pointer"`:''} title="Lié à ${escapeHtml(ent.name)}">${ent.type==='client'?'👥':'🎯'} ${escapeHtml(ent.name)}</span>`:'';
     const ownerHtml=(todoBucket==='team' && owner)?`<span class="postit-assignee" style="background:rgba(17,103,118,.18);color:var(--teal-light,#16a085)" title="Créée par ${escapeHtml(owner.name)}">✏️ ${escapeHtml((owner.name||'').split(' ')[0])}</span>`:'';
     const cls=st==='done'?'done':(st==='in_progress'?'in-progress':'');
     const stBtnCls=st==='in_progress'?'in-progress':(st==='done'?'done':'');
@@ -5371,6 +5594,7 @@ function renderTodo(){
       <div class="postit-meta">
         <span class="postit-due ${due.cls}">${due.txt}</span>
         ${progHtml}
+        ${linkHtml}
         ${ownerHtml}
         ${asgHtml}
       </div>
@@ -5525,6 +5749,7 @@ function openTodoModal(){
   document.getElementById('td_due').value=todayISO();
   document.getElementById('td_notes').value='';
   fillAssigneeOptions(document.getElementById('td_assignee'),'');
+  fillLinkOptions('','td_link');
   // Cache le champ propriétaire en mode création (le créateur est automatiquement propriétaire)
   const ownerRow=document.getElementById('td_owner_row');
   if(ownerRow) ownerRow.style.display='none';
@@ -5548,6 +5773,7 @@ function editTodo(id){
   document.getElementById('td_due').value=t.due||'';
   document.getElementById('td_notes').value=t.notes||'';
   fillAssigneeOptions(document.getElementById('td_assignee'),t.assignee||'');
+  fillLinkOptions(t.linkedTo||'','td_link');
   // Champ propriétaire visible uniquement pour l'admin
   const ownerRow=document.getElementById('td_owner_row');
   const ownerSel=document.getElementById('td_owner');
@@ -5574,6 +5800,7 @@ function saveTodo(){
     done:st==='done',
     due:document.getElementById('td_due').value||'',
     assignee:document.getElementById('td_assignee').value||'',
+    linkedTo:(document.getElementById('td_link')||{}).value||'',
     notes:document.getElementById('td_notes').value.trim()
   };
   if(editTodoId!==null){
@@ -6700,8 +6927,10 @@ let homeNote = Storage.get('influ_home_note', '');
 // Pages accessibles en raccourci (filtrées par rôle)
 function homeShortcutTargets(){
   const all=[];
-  NAV_TOP.forEach(it=>{if(it.tab!=='home')all.push(it);});
-  NAV_GROUPS.filter(g=>!g.adminOnly||isAdmin()).forEach(g=>g.items.forEach(it=>all.push(it)));
+  NAV_MENU.forEach(g=>g.entries.forEach(e=>entryPages(e).forEach(p=>{
+    if(p==='home'||p==='tasks') return;
+    const pg=NAV_PAGES[p]; if(pg) all.push({tab:p,icon:pg.icon,label:pg.label});
+  })));
   return all;
 }
 
@@ -6714,18 +6943,20 @@ const WIDGET_CATALOG = {
     ).join('')}</div>`;
   }},
   'kpi-ca':{name:'CA mensuel',icon:'💰',desc:'Chiffre d\'affaires du mois',adminOnly:true,render(){
-    const actifs=clients.filter(c=>c.status==='Prestations en cours'||c.status==='En difficulté CA');
+    const actifs=clients.filter(isActive);
     const ca=actifs.reduce((s,c)=>s+(c.ca||0),0);
-    return `<div class="hw-kpi-val green">${ca.toLocaleString('fr-FR')} €</div><div class="hw-kpi-sub">${actifs.length} clients facturés ce mois</div>`;
+    return `<div class="hw-kpi-val green">${ca.toLocaleString('fr-FR')} €</div><div class="hw-kpi-sub">${actifs.length} clients actifs (HT / mois)</div>`;
   }},
   'kpi-clients':{name:'Clients actifs',icon:'👥',desc:'Nombre de clients actifs',adminOnly:true,render(){
-    const n=clients.filter(c=>c.status==='Prestations en cours').length;
-    return `<div class="hw-kpi-val teal">${n}</div><div class="hw-kpi-sub">clients en prestation</div>`;
+    const n=clients.filter(isActive).length;
+    const nv=clients.filter(c=>c.status==='A venir').length;
+    return `<div class="hw-kpi-val teal">${n}</div><div class="hw-kpi-sub">clients actifs${nv?' · + '+nv+' à venir':''}</div>`;
   }},
-  'kpi-tasks':{name:'Tâches urgentes',icon:'📌',desc:'Tâches en retard / du jour',render(){
-    const od=tasks.filter(t=>!t.done&&getTaskBucket(t)==='overdue').length;
-    const td=tasks.filter(t=>!t.done&&getTaskBucket(t)==='today').length;
-    return `<div class="hw-kpi-val coral">${od+td}</div><div class="hw-kpi-sub">${od} en retard · ${td} aujourd'hui</div>`;
+  'kpi-tasks':{name:'Tâches urgentes',icon:'📌',desc:'To-Do en retard, du jour ou prioritaires',render(){
+    const u=urgentTodos();
+    const od=u.filter(todoOverdue).length;
+    const td=u.filter(t=>t.due&&daysFromToday(t.due)===0).length;
+    return `<div class="hw-kpi-val coral" style="cursor:pointer" onclick="${od?"focusTodos('overdue')":"showTab('todo')"}">${u.length}</div><div class="hw-kpi-sub">${od} en retard · ${td} aujourd'hui · ${u.length-od-td} prioritaire${u.length-od-td>1?'s':''}</div>`;
   }},
   'kpi-trips':{name:'Déplacements ce mois',icon:'🚗',desc:'Missions terrain du mois',render(){
     const cur=currentMonthKey();
@@ -9863,11 +10094,13 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 const M_TABS=[
   {k:'home',ic:'🏠',label:'Accueil'},
   {k:'clients',ic:'👥',label:'Clients'},
-  {k:'todo',ic:'✅',label:'Tâches'},
-  {k:'trips',ic:'🚗',label:'Déplac.'},
-  {k:'agenda',ic:'📅',label:'Agenda'},
+  {k:'todo',ic:'✅',label:'To-Do'},
   {k:'chat',ic:'💬',label:'Chat'}
 ];
+// Même regroupement que le menu desktop : To-Do regroupe To-Do, Agenda, Déplacements et Notes
+const M_GROUP={todo:'todo',agenda:'todo',trips:'todo',notes:'todo'};
+const M_SUB=[{k:'todo',label:'✅ To-Do'},{k:'agenda',label:'📅 Agenda'},{k:'trips',label:'🚗 Déplac.'},{k:'notes',label:'📝 Notes'}];
+function mSubTabs(){return `<div class="m-toggle">${M_SUB.map(s=>`<button class="${mCurrentTab===s.k?'active':''}" onclick="mGoTab('${s.k}')">${s.label}</button>`).join('')}</div>`;}
 let mCurrentTab='home', mTodoBucket='perso', mClientSearch='';
 function isMobileView(){ return window.matchMedia('(max-width:760px)').matches; }
 function mFmt(n){ return (n||0).toLocaleString('fr-FR')+' €'; }
@@ -9892,7 +10125,7 @@ function mRenderNav(){
   const nav=document.getElementById('mNav'); if(!nav) return;
   const unread=typeof chatTotalUnread==='function'?chatTotalUnread():0;
   nav.innerHTML=M_TABS.map(t=>{
-    const act=mCurrentTab===t.k?'active':'';
+    const act=(M_GROUP[mCurrentTab]||mCurrentTab)===t.k?'active':'';
     const badge=(t.k==='chat'&&unread>0)?`<span class="m-tab-badge">${unread>9?'9+':unread}</span>`:'';
     return `<button class="m-tab ${act}" onclick="mGoTab('${t.k}')"><span class="ic">${t.ic}</span><span>${escapeHtml(t.label)}</span>${badge}</button>`;
   }).join('');
@@ -9917,19 +10150,20 @@ function mRenderScreen(){
     case 'agenda': html=mScreenAgenda(); break;
     case 'notes': html=mScreenNotes(); break;
   }
+  if(M_GROUP[mCurrentTab]) html=mSubTabs()+html;
   el.innerHTML=html;
 }
 function mScreenHome(){
-  const actifs=clients.filter(c=>c.status==='Prestations en cours');
-  const caMonth=clients.filter(c=>c.status==='Prestations en cours'||c.status==='En difficulté CA').reduce((s,c)=>s+(c.ca||0),0);
-  const retards=actifs.filter(c=>(c.ca||0)>0 && (!c.months || !isSettled(c.months[CUR_M]))).length;
+  const actifs=clients.filter(isActive);
+  const caMonth=actifs.reduce((s,c)=>s+(c.ca||0),0);
+  const retards=clients.filter(isLate).length;
   const tk=todayISO();
   const teamPres=teamMembers.map(m=>{const st=(agenda[m.id]||{})[tk];return {m,info:AGENDA_STATUS.find(s=>s.k===st)};});
   const myTodos=todos.filter(t=>todoVisibleToMe(t)&&todoState(t)!=='done'&&(t.due===tk||(t.due&&t.due<tk))).slice(0,5);
   return `
     <div class="m-kpis">
       <div class="m-kpi"><span class="m-kpi-label">CA mensuel</span><span class="m-kpi-val">${mFmt(caMonth)}</span><span class="m-kpi-sub">${actifs.length} clients actifs</span></div>
-      <div class="m-kpi ${retards>0?'warn':'good'}"><span class="m-kpi-label">Retards paie.</span><span class="m-kpi-val">${retards}</span><span class="m-kpi-sub">non payé ${CUR_MF}</span></div>
+      <div class="m-kpi ${retards>0?'warn':'good'}"><span class="m-kpi-label">Retards paie.</span><span class="m-kpi-val">${retards}</span><span class="m-kpi-sub">${retards?(retards>1?'clients en retard de paiement':'client en retard de paiement'):'aucun retard'}</span></div>
     </div>
     <div class="m-card">
       <div class="m-card-title">📆 Qui est là aujourd'hui</div>
@@ -9945,7 +10179,7 @@ function mScreenHome(){
       <div class="m-shortcuts">
         <div class="m-shortcut" onclick="mGoTab('clients')"><div class="ic">👥</div><div class="lb">Clients</div></div>
         <div class="m-shortcut" onclick="mGoTab('agenda')"><div class="ic">📅</div><div class="lb">Agenda</div></div>
-        <div class="m-shortcut" onclick="mCurrentTab='notes';mRenderScreen();mRenderNav()"><div class="ic">📝</div><div class="lb">Notes</div></div>
+        <div class="m-shortcut" onclick="mGoTab('notes')"><div class="ic">📝</div><div class="lb">Notes</div></div>
       </div>
     </div>
     <!-- AD Show Game (détente) -->
@@ -9964,7 +10198,7 @@ function mScreenClients(){
   return `
     <div class="m-search"><span style="color:var(--muted)">🔍</span><input type="text" placeholder="Rechercher..." value="${escapeHtml(mClientSearch)}" oninput="mClientSearchChange(this.value)"></div>
     <div style="display:flex;flex-direction:column;gap:8px">
-    ${list.length?list.map(c=>{const st=(c.months&&c.months[CUR_M])||0;const lbl=st===1?'✓ Payé':st===2?'🔴 En attente':st===3?'⏸ Sans facturation':'✕ Non payé';const cls=st===1?'':(st===2?'pend':(st===3?'pause':'un'));return `<div class="m-client"><div class="ci"><div class="cn">${escapeHtml(c.name||'')}</div><div class="cs">${mStatusPill(c.status)}${c.prel?'<span>· '+escapeHtml(c.prel)+'</span>':''}</div></div><div class="cm"><div class="ca">${mFmt(c.ca)}</div><button class="m-paybtn ${cls}" onclick="mTogglePay('${c.id}',event)" title="Clic pour choisir : payé · facture envoyée · sans facturation · à faire">${lbl}</button></div></div>`;}).join(''):'<div class="m-empty">Aucun client</div>'}
+    ${list.length?list.map(c=>{const st=(c.months&&c.months[CUR_M])||0;const lbl=st===1?'✓ Payé':st===2?'🔴 En attente':st===3?'⏸ Sans facturation':'✕ Non payé';const cls=st===1?'':(st===2?'pend':(st===3?'pause':'un'));return `<div class="m-client"><div class="ci"><div class="cn">${escapeHtml(c.name||'')}</div><div class="cs">${mStatusPill(c.status)}${c.prel?'<span>· '+escapeHtml(c.prel)+'</span>':''}</div>${clientChipsHtml(c)}</div><div class="cm"><div class="ca">${mFmt(c.ca)}</div><button class="m-paybtn ${cls}" onclick="mTogglePay('${c.id}',event)" title="Clic pour choisir : payé · facture envoyée · sans facturation · à faire">${lbl}</button></div></div>`;}).join(''):'<div class="m-empty">Aucun client</div>'}
     </div>`;
 }
 function mTogglePay(id,ev){ const c=clients.find(x=>String(x.id)===String(id)); if(!c) return; const cur=(c.months&&c.months[CUR_M])||0; openMonthMenu(ev&&ev.currentTarget?ev.currentTarget:null,cur,(c.name||'')+' · '+CUR_M,v=>{ if(!c.months) c.months={}; c.months[CUR_M]=v; if(typeof saveData==='function') saveData(); mRenderScreen(); }); }
