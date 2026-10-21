@@ -203,6 +203,21 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 .cx-chip.red{color:var(--red);border-color:rgba(231,76,60,.45);background:rgba(231,76,60,.10)}
 .cx-chip.orange{color:var(--orange);border-color:rgba(243,156,18,.45);background:rgba(243,156,18,.10)}
 .cx-resp{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:18px;padding:0 5px;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;color:#fff}
+.lch{margin-bottom:13px;border:1px solid var(--border);border-radius:10px}
+.lch>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:9px 13px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.lch>summary::-webkit-details-marker{display:none}
+.lch>summary::after{content:'▾';margin-left:auto;transition:transform .2s}
+.lch[open]>summary::after{transform:rotate(180deg)}
+.lch-count{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:0;color:var(--teal-light)}
+.lch-rows{display:flex;flex-direction:column;gap:6px;padding:2px 13px 8px}
+.lch-row{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:center}
+.lch-row label{display:flex;align-items:center;gap:8px;min-width:0;margin:0;cursor:pointer;font-size:13px;font-weight:600;color:var(--cream)}
+.lch-row input[type=checkbox]{width:16px;height:16px;margin:0;flex:none;accent-color:var(--teal)}
+.lch-row input[type=date]{width:100%;min-width:0;background:var(--dark);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--cream);font-family:'Barlow',sans-serif;font-size:12px;padding:6px 9px;outline:none}
+.lch-row input[type=date]:focus{border-color:var(--teal)}
+.lch-auto{padding:0 13px 11px;font-size:11px;color:var(--muted);line-height:1.4}
+.cx-chip.launch{color:var(--teal-light);border-color:rgba(26,143,163,.45);background:rgba(17,103,118,.10)}
+@media(max-width:520px){.lch-row{grid-template-columns:minmax(0,1fr) 128px}}
 .cx-focus{display:inline-flex;align-items:center;gap:8px;padding:5px 6px 5px 12px;border-radius:20px;border:1px solid var(--teal-light);color:var(--teal-light);background:rgba(17,103,118,.12);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px}
 .cx-focus button{border:none;background:rgba(17,103,118,.25);color:inherit;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:20px;padding:0}
 /* ── v2 : Dashboard (4 chiffres, exceptions, à traiter) ── */
@@ -2766,7 +2781,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <h2 id="clientModalTitle">👥 Nouveau client</h2>
     <div class="fg-row">
       <div class="fg"><label>Nom *</label><input id="c_name" placeholder="Ex: Ouiglass France"></div>
-      <div class="fg"><label>Statut *</label><select id="c_status"><option>Prestations en cours</option><option>En difficulté CA</option><option>Fin de contrat</option><option>A venir</option></select></div>
+      <div class="fg"><label>Statut *</label><select id="c_status" onchange="onClientStatusChange()"><option>Prestations en cours</option><option>En difficulté CA</option><option>Fin de contrat</option><option>A venir</option></select></div>
     </div>
     <div class="fg-row">
       <div class="fg"><label>CA mensuel (€)</label><input id="c_ca" type="number" placeholder="Ex: 1240"></div>
@@ -2781,6 +2796,10 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="fg"><label>Statut de production</label><select id="c_prod" onchange="toggleProdNote()"><option value="">En cours</option><option value="attente">Attente validation client</option><option value="bloque">Bloqué</option></select></div>
     </div>
     <div class="fg" id="c_prodNoteRow" style="display:none"><label id="c_prodNoteLabel">Ce qu'on attend</label><input id="c_prodNote" placeholder="Ex : validation des maquettes"></div>
+    <details class="lch" id="c_launch"><summary>Lancement (étapes de Mia) <span class="lch-count" id="c_launchCount"></span></summary>
+      <div class="lch-rows" id="c_launchRows"></div>
+      <div class="lch-auto">Automatiques : « Fiche client dans le SaaS » (fait) et « Prestations démarrées » (statut Prestations en cours). La 1re facture se lit dans les mois payés.</div>
+    </details>
     <div class="fg"><label>Accompagnement</label>
       <select id="c_accomp" multiple style="height:85px"><option>Com complète</option><option>Social média</option><option>Google Ads</option><option>Meta Ads</option><option>Création contenu</option><option>Autre</option></select>
       <div style="font-size:10px;color:var(--muted);margin-top:3px">Cmd/Ctrl+clic pour plusieurs</div>
@@ -3907,6 +3926,58 @@ function toggleProdNote(){
   if(lb) lb.textContent=v==='bloque'?'Motif du blocage':"Ce qu'on attend du client";
   if(inp) inp.placeholder=v==='bloque'?'Ex : accès au CMS':'Ex : validation des maquettes';
 }
+// v3 — étapes de lancement de Mia, datées (Influ City les lit : launch = {id: 'AAAA-MM-JJ'})
+const LAUNCH_STEPS_SAAS=[['ident','Identité juridique vérifiée'],['contrat','Contrat et devis préparés'],['signature','Contrat signé'],['pennylane','Fiche Pennylane créée'],['mail','Mail de bienvenue envoyé'],['mandat','Mandat de prélèvement signé'],['acces','Accès réseaux et fiche Google reçus']];
+const LAUNCH_TOTAL=LAUNCH_STEPS_SAAS.length+2; // + fiche SaaS (toujours faite) + prestations démarrées
+let launchExtra={}, launchHadKey=false;
+function launchDone(v){return v===true||(typeof v==='string'&&v.trim()!=='');}
+function launchCount(c){
+  const l=(c&&c.launch&&typeof c.launch==='object')?c.launch:{};
+  let n=1; LAUNCH_STEPS_SAAS.forEach(([k])=>{if(launchDone(l[k]))n++;});
+  if(c&&c.status==='Prestations en cours') n++;
+  return n;
+}
+function buildLaunchRows(c){
+  const l=(c&&c.launch&&typeof c.launch==='object')?c.launch:{};
+  launchHadKey=!!(c&&c.launch&&typeof c.launch==='object');
+  launchExtra={}; Object.keys(l).forEach(k=>{if(!LAUNCH_STEPS_SAAS.some(([id])=>id===k)) launchExtra[k]=l[k];});
+  const box=document.getElementById('c_launchRows'); if(!box) return;
+  box.innerHTML=LAUNCH_STEPS_SAAS.map(([id,t])=>{
+    const v=l[id], done=launchDone(v), date=(typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v))?v:'';
+    return `<div class="lch-row" data-step="${id}" data-legacy="${v===true?'1':''}"><label><input type="checkbox"${done?' checked':''} onchange="launchTick(this)"> <span>${escapeHtml(t)}</span></label><input type="date" value="${date}" onchange="launchDate(this)" aria-label="Date : ${escapeHtml(t)}"></div>`;
+  }).join('');
+  const det=document.getElementById('c_launch'); if(det) det.open=!!(c&&c.status==='A venir');
+  launchRefreshCount();
+}
+function launchTick(cb){
+  const row=cb.closest('.lch-row'), d=row.querySelector('input[type=date]');
+  if(cb.checked){ if(!d.value) d.value=parisTodayISO(); }
+  else { d.value=''; row.dataset.legacy=''; }
+  launchRefreshCount();
+}
+function launchDate(d){
+  const row=d.closest('.lch-row'), cb=row.querySelector('input[type=checkbox]');
+  if(d.value) cb.checked=true; else { cb.checked=false; row.dataset.legacy=''; }
+  launchRefreshCount();
+}
+function readLaunch(){
+  const out=Object.assign({},launchExtra);
+  document.querySelectorAll('#c_launchRows .lch-row').forEach(row=>{
+    const id=row.dataset.step, cb=row.querySelector('input[type=checkbox]'), d=row.querySelector('input[type=date]');
+    if(cb.checked) out[id]=d.value||(row.dataset.legacy==='1'?true:parisTodayISO());
+  });
+  return out;
+}
+function launchRefreshCount(){
+  const el=document.getElementById('c_launchCount'); if(!el) return;
+  const st=(document.getElementById('c_status')||{}).value||'';
+  el.textContent=launchCount({status:st,launch:readLaunch()})+'/'+LAUNCH_TOTAL;
+}
+function onClientStatusChange(){
+  const st=(document.getElementById('c_status')||{}).value||'', det=document.getElementById('c_launch');
+  if(det&&st==='A venir') det.open=true;
+  launchRefreshCount();
+}
 // Pastilles d'une ligne client (desktop et mobile)
 function clientChipsHtml(c){
   const out=[];
@@ -3920,6 +3991,7 @@ function clientChipsHtml(c){
   if(isLate(c)) out.push(`<span class="cx-chip red">Retard : ${unpaidMonths(c).join(', ')}</span>`);
   const es=endSoon(c);
   if(es!==null) out.push(`<span class="cx-chip orange">Fin d'engagement ${es===0?"aujourd'hui":'dans '+es+' j'}</span>`);
+  if(c.status==='A venir') out.push(`<span class="cx-chip launch" title="Étapes de lancement de Mia">Lancement ${launchCount(c)}/${LAUNCH_TOTAL}</span>`);
   const r=respInfo(c.resp);
   if(r) out.push(`<span class="cx-resp" style="background:${r.color}" title="Responsable : ${escapeHtml(r.name)}">${escapeHtml(r.initials)}</span>`);
   return out.length?`<div class="cx-chips">${out.join('')}</div>`:'';
@@ -4528,9 +4600,9 @@ function monthToggleCls(v){return v===1?'on':(v===2?'st2':(v===3?'st3':''));}
 function buildMonthsGrid(sel){document.getElementById('clientMonthsGrid').innerHTML=MONTHS.map(m=>{const v=sel[m]||0;return `<div class="month-toggle ${monthToggleCls(v)}" onclick="pickModalMonth(this,event)" data-month="${m}" data-state="${v}" title="${v===3?'Sans facturation (pause)':(v===2?'Facture envoyée':(v===1?'Payé':'À faire'))}">${m}</div>`;}).join('');}
 function pickModalMonth(el,ev){const cur=parseInt(el.dataset.state||'0',10)||0;openMonthMenu(el,cur,'Mois · '+el.dataset.month,v=>{el.dataset.state=v;el.className='month-toggle '+monthToggleCls(v);el.title=v===3?'Sans facturation (pause)':(v===2?'Facture envoyée':(v===1?'Payé':'À faire'));});}
 
-function openClientModal(){editClientId=null;document.getElementById('clientModalTitle').textContent='👥 Nouveau client';document.getElementById('clientSaveLabel').textContent='Enregistrer';['c_name','c_ca','c_prel','c_notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('c_status').value='Prestations en cours';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=false);buildMonthsGrid({});['c_start','c_end','c_prodNote'].forEach(id=>document.getElementById(id).value='');fillRespOptions('');document.getElementById('c_prod').value='';toggleProdNote();document.getElementById('clientOverlay').classList.add('open');}
+function openClientModal(){editClientId=null;document.getElementById('clientModalTitle').textContent='👥 Nouveau client';document.getElementById('clientSaveLabel').textContent='Enregistrer';['c_name','c_ca','c_prel','c_notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('c_status').value='Prestations en cours';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=false);buildMonthsGrid({});['c_start','c_end','c_prodNote'].forEach(id=>document.getElementById(id).value='');fillRespOptions('');document.getElementById('c_prod').value='';toggleProdNote();buildLaunchRows(null);document.getElementById('clientOverlay').classList.add('open');}
 
-function editClient(id){const c=clients.find(c=>c.id===id);editClientId=id;document.getElementById('clientModalTitle').textContent='✏️ Modifier le client';document.getElementById('clientSaveLabel').textContent='Mettre à jour';document.getElementById('c_name').value=c.name;document.getElementById('c_status').value=c.status;document.getElementById('c_ca').value=c.ca||'';document.getElementById('c_prel').value=c.prel||'';document.getElementById('c_notes').value=c.notes||'';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=(c.accomp||[]).includes(o.value));buildMonthsGrid(c.months||{});document.getElementById('c_start').value=c.start||'';document.getElementById('c_end').value=c.end||'';fillRespOptions(c.resp||'');document.getElementById('c_prod').value=prodOf(c);document.getElementById('c_prodNote').value=c.prodNote||'';toggleProdNote();document.getElementById('clientOverlay').classList.add('open');}
+function editClient(id){const c=clients.find(c=>c.id===id);editClientId=id;document.getElementById('clientModalTitle').textContent='✏️ Modifier le client';document.getElementById('clientSaveLabel').textContent='Mettre à jour';document.getElementById('c_name').value=c.name;document.getElementById('c_status').value=c.status;document.getElementById('c_ca').value=c.ca||'';document.getElementById('c_prel').value=c.prel||'';document.getElementById('c_notes').value=c.notes||'';Array.from(document.getElementById('c_accomp').options).forEach(o=>o.selected=(c.accomp||[]).includes(o.value));buildMonthsGrid(c.months||{});document.getElementById('c_start').value=c.start||'';document.getElementById('c_end').value=c.end||'';fillRespOptions(c.resp||'');document.getElementById('c_prod').value=prodOf(c);document.getElementById('c_prodNote').value=c.prodNote||'';toggleProdNote();buildLaunchRows(c);document.getElementById('clientOverlay').classList.add('open');}
 
 function saveClient(){
   const name=document.getElementById('c_name').value.trim();if(!name){alert('Nom requis');return;}
@@ -4540,6 +4612,7 @@ function saveClient(){
   const data={name,status:document.getElementById('c_status').value,ca:parseFloat(document.getElementById('c_ca').value)||0,prel:document.getElementById('c_prel').value.trim(),accomp,months,notes:document.getElementById('c_notes').value.trim(),
     start:document.getElementById('c_start').value||'',end:document.getElementById('c_end').value||'',resp:document.getElementById('c_resp').value||'',
     prod,prodNote:prod?document.getElementById('c_prodNote').value.trim():''};
+  const launch=readLaunch(); if(Object.keys(launch).length||launchHadKey) data.launch=launch;
   if(editClientId!==null){const i=clients.findIndex(c=>c.id===editClientId);if(prodOf(clients[i])!==prod) data.prodSince=parisTodayISO();clients[i]={...clients[i],...data};toast('Client mis à jour ✓');}
   else{if(prod) data.prodSince=parisTodayISO();clients.push({id:clientId++,...data});toast('Client ajouté ✓');}
   saveData();closeModal('clientOverlay');renderClients();renderDashboard();
