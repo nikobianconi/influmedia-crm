@@ -2489,6 +2489,31 @@ document.addEventListener('DOMContentLoaded',function(){
 <!-- ═══════════════════════════════════════════════════════════════
      COMMERCE — Stats & trophées du commercial (motivation)
      ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-pipeline" class="tab-content">
+<style>
+.pipeline-board{display:flex;gap:12px;overflow-x:auto;padding:16px 0;min-height:calc(100vh - 200px)}
+.pipeline-col{min-width:200px;flex:0 0 200px;background:var(--dark2,#0d2027);border-radius:14px;border:1px solid var(--border,rgba(255,255,255,.08));display:flex;flex-direction:column}
+.pipeline-col-header{padding:12px 14px;border-bottom:2px solid var(--stage-color,#116776);display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem;color:#fff}
+.pipeline-count{margin-left:auto;background:rgba(255,255,255,.1);border-radius:99px;padding:2px 8px;font-size:.78rem}
+.pipeline-col-body{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto}
+.pipeline-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .2s}
+.pipeline-card:hover{background:rgba(255,255,255,.1)}
+.pipeline-card-name{font-weight:600;font-size:.88rem;color:#f4f2ed;margin-bottom:4px}
+.pipeline-card-tag{display:inline-block;font-size:.72rem;background:rgba(17,103,118,.3);color:#7dd3e0;border-radius:6px;padding:1px 7px;margin-bottom:4px}
+.pipeline-card-notes{font-size:.75rem;color:rgba(244,242,237,.45);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pipeline-card-move{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;border-top:1px solid rgba(255,255,255,.07);padding-top:6px}
+.pmove-btn{background:rgba(255,255,255,.07);border:none;border-radius:6px;padding:3px 7px;font-size:.72rem;color:rgba(244,242,237,.6);cursor:pointer;transition:background .15s}
+.pmove-btn:hover{background:rgba(17,103,118,.5);color:#fff}
+</style>
+<div class="page-header">
+  <div class="page-title">📊 <span>Pipeline Commercial</span></div>
+  <div class="page-actions">
+    <button class="btn-primary btn-sm" onclick="showTab('prospection')">Voir liste</button>
+  </div>
+</div>
+<div class="pipeline-board" id="pipelineBoard"></div>
+</div>
+
 <div id="tab-leadstats" class="tab-content">
   <div class="page-header">
     <div class="page-title">🏆 <span>Mes stats & trophées</span></div>
@@ -4026,6 +4051,7 @@ const NAV_PAGES={
   trips:{icon:'🚗',label:'Déplacements',badge:'navTripBadge'},
   cnotes:{icon:'📝',label:'Notes idées clients'},
   prospection:{icon:'🎯',label:'Prospection'},
+  pipeline:{icon:'📊',label:'Pipeline Cial'},
   leads:{icon:'🚀',label:'Leads prospects'},
   leadstats:{icon:'🏆',label:'Mes stats & trophées'},
   adshow:{icon:'🎮',label:'AD Show Game'},
@@ -4048,6 +4074,7 @@ const NAV_MENU=[
   ]},
   {id:'commerce',label:'Commerce',entries:[
     {id:'prospection',label:'Prospection',icon:'🎯',pages:['prospection','leads']},
+    {id:'pipeline',label:'Pipeline Cial',icon:'📊',pages:['pipeline']},
     {id:'stats',label:'Mes stats',icon:'🏆',pages:['leadstats','adshow']}
   ]},
   {id:'compte',label:'Compte',entries:[
@@ -4377,6 +4404,34 @@ function saveNote(id){
   toast('Note sauvegardée ✓');
 }
 
+/* ===== PIPELINE COMMERCIAL ===== */
+var PIPELINE_STAGES=[
+  {id:'A prospecter',label:'A prospecter',color:'#4a9eda'},
+  {id:'R1 à venir',label:'R1 à venir',color:'#f39c12'},
+  {id:'R1 fait',label:'R1 fait',color:'#8e44ad'},
+  {id:'R2 à venir',label:'R2 à venir',color:'#e67e22'},
+  {id:'Accord verbal',label:'Accord verbal',color:'#27ae60'},
+  {id:'Signé',label:'Signé',color:'#116776'},
+  {id:'blocage',label:'Bloqué',color:'#c0392b'}
+];
+function renderPipeline(){
+  var board=document.getElementById('pipelineBoard');
+  if(!board)return;
+  board.innerHTML=PIPELINE_STAGES.map(function(stage){
+    var cards=(prospects||[]).filter(function(p){return p.status===stage.id;});
+    var cardsHtml=cards.map(function(p){return '<div class="pipeline-card" onclick="editProspect('+p.id+')"><div class="pipeline-card-name">'+p.name+'</div>'+(p.secteur?'<div class="pipeline-card-tag">'+p.secteur+'</div>':'')+'<div class="pipeline-card-move">'+PIPELINE_STAGES.filter(function(s){return s.id!==stage.id;}).map(function(s){return '<button class="pmove-btn" onclick="movePipeline(event,'+p.id+',&quot;'+s.id+'&quot;)">→ '+s.label+'</button>';}).join('')+'</div></div>';}).join('');
+    return '<div class="pipeline-col"><div class="pipeline-col-header" style="--stage-color:'+stage.color+'">'+stage.label+'<span class="pipeline-count">'+cards.length+'</span></div><div class="pipeline-col-body">'+cardsHtml+'</div></div>';
+  }).join('');
+}
+function movePipeline(event,id,newStatus){
+  event.stopPropagation();
+  var p=(prospects||[]).find(function(x){return x.id===id;});
+  if(!p)return;
+  p.status=newStatus;
+  if(typeof saveProspect==='function')saveProspect(p,true);
+  renderPipeline();
+  if(typeof renderProspects==='function')renderProspects();
+}
 function renderProspects(){
   const search=(document.getElementById('prospSearch')?.value||'').toLowerCase();
   const sort=document.getElementById('prospSortSel')?.value||'manual';
