@@ -5275,7 +5275,7 @@ function _attemptLoginFail(msg){
 // Bouton "→" pendant la connexion au cloud
 function _lockBusy(on){
   const b=document.getElementById('lockBtn');
-  if(b){ b.disabled=!!on; b.textContent=on?'…':'→'; }
+  if(b){ b.disabled=!!on; b.textContent=on?'…':'Se connecter'; }
 }
 
 // Recharge la liste des membres depuis le cache local (après un pull cloud)
@@ -6918,7 +6918,7 @@ function renderSettings(){
         <button class="btn-mini" onclick="openPwdModal('${currentUser.id}')">Modifier mon mot de passe</button>
       </div>
       <div class="settings-row">
-        <div><div class="settings-label">🔐 Mot de passe oublié</div><div class="settings-sub">Depuis l'écran de connexion, clique sur « Mot de passe oublié ? » : tu recevras un lien par e-mail pour en choisir un nouveau.</div></div>
+        <div><div class="settings-label">🔐 Mot de passe oublié</div><div class="settings-sub">Sur l'écran de connexion, tape ton adresse puis clique sur « Mot de passe oublié ? » : un lien arrive par e-mail pour en choisir un nouveau. Un admin peut aussi te l'envoyer depuis Équipe › 🔑.</div></div>
       </div>
       <div class="settings-row">
         <div><div class="settings-label">Mon rôle</div><div class="settings-sub">${admin?'🔐 Admin · accès complet à toutes les pages':'👤 Équipe · accès aux pages de production'}</div></div>
@@ -6948,7 +6948,7 @@ function renderSettings(){
               <option value="team"${m.role!=='admin'?' selected':''}>Équipe</option>
               <option value="admin"${m.role==='admin'?' selected':''}>Admin</option>
             </select>
-            <button class="btn-mini" onclick="openPwdModal('${m.id}')" title="Définir / réinitialiser le mot de passe">🔑</button>
+            <button class="btn-mini" onclick="openPwdModal('${m.id}')" title="Mot de passe : envoyer un lien pour en choisir un nouveau">🔑</button>
             ${m.id!==currentUser.id?`<button class="act-btn act-del" onclick="removeTeamMember('${m.id}')">✕</button>`:'<span style="font-size:11px;color:var(--teal-light);padding:0 6px">Toi</span>'}
           </div>
         </div>
@@ -6978,7 +6978,7 @@ function renderSettings(){
     <div class="settings-section">
       <h3>ℹ️ À propos</h3>
       <div style="font-size:13px;color:var(--muted);line-height:1.7">
-        <strong style="color:var(--teal-light)">Influmedia · SaaS v3.2</strong><br>
+        <strong style="color:var(--teal-light)">Influmedia · SaaS v3.3</strong><br>
         Outil de gestion d'agence — CRM + Production équipe + Messagerie + Cloud<br>
         Hébergé sur GitHub Pages · synchronisation Firebase Firestore
       </div>
@@ -10855,6 +10855,221 @@ renderMobile(true);
 // ── LOCK SCREEN : page de connexion avant d'accéder au CRM ──
 renderLockScreen();
 setTimeout(()=>{const lp=document.getElementById('lockPwd');if(lp)lp.focus();},150);
+</script>
+<!-- ═══ v3.3 · Mots de passe en libre-service (26/10/2026) ═══
+     - « Mot de passe oublié ? » marche enfin : lien Firebase en français, retour au CRM
+     - la connexion utilise l'adresse tapée (et plus le dernier profil de l'appareil)
+     - l'admin envoie le lien depuis Équipe › 🔑, au lieu de passer par la console Firebase
+     - « Se déconnecter » ne plante plus sur des éléments de l'ancien écran -->
+<style>
+.lock-error.ok{background:rgba(46,204,113,.12);border-color:rgba(46,204,113,.35);color:#86E5AE;line-height:1.45}
+.lock-forgot a.busy{pointer-events:none;opacity:.6}
+.pwd-or{display:flex;align-items:center;gap:10px;margin:2px 0 12px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pwd-or::before,.pwd-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.1)}
+.pwd-reset{margin:0 0 14px;padding:12px 14px;border-radius:10px;border:1px solid rgba(17,103,118,.35);background:rgba(17,103,118,.10)}
+.pwd-reset p{margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--cream)}
+.pwd-reset .row{display:flex;gap:8px;flex-wrap:wrap}
+.pwd-reset .row button{flex:1 1 auto}
+.pwd-reset #pwdCopyBtn{color:var(--cream);background:rgba(255,255,255,.09)}
+.pwd-reset #pwdCopyBtn[hidden]{display:none}
+.pwd-reset .msg{margin-top:10px;font-size:12.5px;line-height:1.5}
+.pwd-reset .msg:empty{display:none}
+.pwd-reset .msg.ok{color:var(--green)}
+.pwd-reset .msg.err{color:#FF5F5F}
+[data-theme="day"] .pwd-reset p{color:inherit}
+</style>
+<script>
+(function(){
+  if (typeof Auth === 'undefined') return;
+  var CRM_URL = 'https://nikobianconi.github.io/influmedia-crm/';
+  var COOL = 60000, sentAt = {};
+
+  function okMail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e || ''); }
+  function low(v){ return String(v || '').trim().toLowerCase(); }
+  function $(id){ return document.getElementById(id); }
+  function backUrl(){ try { return /^https?:$/.test(location.protocol) ? location.origin + location.pathname : CRM_URL; } catch (e) { return CRM_URL; } }
+  function hhmm(){ var d = new Date(); return ('0' + d.getHours()).slice(-2) + 'h' + ('0' + d.getMinutes()).slice(-2); }
+
+  /* 1 · Le lien de réinitialisation : mail en français, bouton « Continuer » qui ramène au CRM */
+  Auth._sendReset = function(email){
+    var a = firebase.auth();
+    try { a.languageCode = 'fr'; } catch (e) {}
+    return a.sendPasswordResetEmail(email, { url: backUrl() })
+      .catch(function(e){
+        var c = (e && e.code) || '';
+        if (/continue-uri|unauthorized-domain/.test(c)) return a.sendPasswordResetEmail(email);
+        throw e;
+      })
+      .then(function(){ sentAt[email] = Date.now(); return { ok: true }; })
+      .catch(function(e){ return { ok: false, code: (e && e.code) || '', message: Auth._friendly(e && e.code) }; });
+  };
+  function notFound(r){ return r.code === 'auth/user-not-found' || r.code === 'auth/invalid-credential'; }
+
+  /* 2 · Écran de connexion */
+  function lockMsg(t, ok){
+    var e = $('lockError'); if (!e) return;
+    e.textContent = t || ''; e.style.display = t ? 'block' : 'none'; e.classList.toggle('ok', !!ok);
+  }
+  var oldFail = window._attemptLoginFail;
+  window._attemptLoginFail = function(msg){ var e = $('lockError'); if (e) e.classList.remove('ok'); return oldFail(msg); };
+
+  function forgot(ev){
+    if (ev) ev.preventDefault();
+    var em = $('lockEmail'), link = $('lockForgotLink'), email = low(em && em.value);
+    if (!email){ lockMsg('Tape ton adresse e-mail dans le premier champ, puis clique à nouveau sur « Mot de passe oublié ? ».'); if (em) em.focus(); return; }
+    if (!okMail(email)){ lockMsg("Adresse e-mail invalide — vérifie l'orthographe."); if (em) em.focus(); return; }
+    if (sentAt[email] && Date.now() - sentAt[email] < COOL){ lockMsg('Le lien vient de partir à ' + email + ' : regarde ta boîte mail, et les spams.', true); return; }
+    link.classList.add('busy'); link.textContent = 'Envoi du lien…';
+    Auth.sendResetEmail(email).then(function(r){
+      if (r.ok) lockMsg('✅ Lien envoyé à ' + email + '. Ouvre le mail (regarde aussi les spams), choisis ton nouveau mot de passe, puis reviens te connecter ici avec ton adresse.', true);
+      else lockMsg(notFound(r) ? "Aucun compte avec cette adresse — vérifie l'orthographe ou demande à Niko." : (r.message || 'Envoi impossible'));
+    }).catch(function(){ lockMsg('Envoi impossible — réessaie dans un instant.'); })
+      .then(function(){ link.classList.remove('busy'); link.textContent = 'Mot de passe oublié ?'; });
+  }
+  var fl = $('lockForgotLink'); if (fl) fl.addEventListener('click', forgot);
+  /* Entrée dans l'un des deux champs = « Se connecter » */
+  ['lockEmail', 'lockPwd'].forEach(function(id){
+    var x = $(id); if (!x) return;
+    x.addEventListener('keydown', function(e){
+      if (e.key !== 'Enter' || e.isComposing) return;
+      e.preventDefault();
+      if (id === 'lockEmail' && !low($('lockPwd').value)){ $('lockPwd').focus(); return; }
+      var b = $('lockBtn'); if (b && !b.disabled) window.attemptLogin();
+    });
+  });
+
+  /* Ces deux fonctions visaient des éléments de l'ancien écran (question, liste des profils…) :
+     elles plantaient, et « Se déconnecter » s'arrêtait avant de fermer la session Firebase. */
+  window.lockBackToLogin = function(){
+    lockMode = 'login';
+    try { _pendingAuthEmail = null; } catch (e) {}
+    var pw = $('lockPwd'); if (pw){ pw.type = 'password'; pw.value = ''; pw.style.display = ''; if (pw.parentElement) pw.parentElement.style.display = ''; }
+    var em = $('lockEmail'); if (em) em.style.display = '';
+    var f = $('lockForgotLink'); if (f){ f.style.display = ''; f.classList.remove('busy'); f.textContent = 'Mot de passe oublié ?'; }
+    ['lockQuestion', 'lockPwd2', 'lockUserList', 'lockBackLink'].forEach(function(id){ var x = $(id); if (x) x.style.display = 'none'; });
+    lockMsg('');
+  };
+  window.lockShowEmailMode = function(){
+    lockMode = 'login';
+    var em = $('lockEmail'); if (em){ em.style.display = ''; em.focus(); }
+    lockMsg('Indique ton adresse e-mail dans le premier champ.');
+  };
+
+  /* La connexion part de l'adresse tapée. Avant, elle prenait le dernier profil ouvert sur
+     l'appareil : sur un ordinateur où Niko s'était connecté, Léonie se connectait « en Niko »
+     avec son propre mot de passe, et échouait. */
+  var oldAttempt = window.attemptLogin;
+  window.attemptLogin = function(){
+    var e = $('lockError'); if (e){ e.classList.remove('ok'); e.style.display = 'none'; }
+    var email = low($('lockEmail') && $('lockEmail').value);
+    if (!email) return oldAttempt();
+    if (!okMail(email)){ _attemptLoginFail('Adresse e-mail invalide'); return; }
+    var m = teamMembers.find(function(x){ return low(authEmailFor(x)) === email; });
+    if (m){ lockUserId = m.id; return oldAttempt(); }
+    return emailLogin(email);
+  };
+  function emailLogin(email){
+    var pw = $('lockPwd'), entered = pw ? pw.value : '';
+    if (!entered){ _attemptLoginFail('Saisis ton mot de passe'); return; }
+    _lockBusy(true);
+    return Auth.signInEmail(email, entered).then(function(res){
+      if (!res.ok){ _lockBusy(false); _attemptLoginFail(res.offline ? 'Pas de connexion internet' : res.message); return; }
+      return startCloudAfterLogin().then(function(){
+        var m = teamMembers.find(function(x){ return low(authEmailFor(x)) === email; });
+        if (!m){
+          _lockBusy(false); lockApp();
+          _attemptLoginFail("Ton compte existe, mais aucun profil de l'équipe ne porte l'adresse " + email + " : demande à Niko de la renseigner (Paramètres › Équipe › 🔑).");
+          return;
+        }
+        lockUserId = m.id;
+        return hashPwdSecure(entered).then(function(h){
+          if (m.pwd !== h){ m.pwd = h; try { saveTeam(); } catch (e) {} }
+          _lockBusy(false); doUnlock(m);
+        });
+      });
+    }).catch(function(err){ _lockBusy(false); console.error('emailLogin', err); _attemptLoginFail('Connexion impossible'); });
+  }
+
+  /* 3 · Fenêtre « Mot de passe » : l'admin envoie le lien, la personne choisit elle-même */
+  function box(){
+    var b = $('pwdResetBox'); if (b) return b;
+    var modal = document.querySelector('#pwdOverlay .modal'), acts = modal.querySelector('.modal-actions');
+    var or = document.createElement('div'); or.className = 'pwd-or'; or.id = 'pwdOr'; or.textContent = 'ou';
+    b = document.createElement('div'); b.className = 'pwd-reset'; b.id = 'pwdResetBox';
+    b.innerHTML = '<p id="pwdResetTxt"></p><div class="row">'
+      + '<button type="button" class="btn-save" id="pwdResetBtn"></button>'
+      + '<button type="button" class="btn-cancel" id="pwdCopyBtn" hidden>Copier le message à lui envoyer</button>'
+      + '</div><div class="msg" id="pwdResetMsg" role="status" aria-live="polite"></div>';
+    modal.insertBefore(or, acts); modal.insertBefore(b, acts);
+    $('pwdResetBtn').addEventListener('click', sendFor);
+    $('pwdCopyBtn').addEventListener('click', copyFor);
+    return b;
+  }
+  function member(){ return teamMembers.find(function(x){ return x.id === pwdEditMemberId; }); }
+  function first(m){ return String((m && m.name) || '').split(/\s+/)[0] || 'toi'; }
+  function rmsg(t, cls){ var x = $('pwdResetMsg'); x.textContent = t || ''; x.className = 'msg' + (cls ? ' ' + cls : ''); }
+  function btnLabel(isMe, again){ return again ? '📧 Renvoyer le lien' : (isMe ? "📧 M'envoyer un lien" : '📧 Envoyer le lien'); }
+
+  var oldOpen = window.openPwdModal;
+  window.openPwdModal = function(memberId){
+    oldOpen(memberId);
+    if (!$('pwdOverlay').classList.contains('open')) return;
+    var m = member(), isMe = memberId === currentUser.id, name = (m && m.name) || 'ce membre';
+    box();
+    $('pwd_new').closest('.fg').style.display = isMe ? '' : 'none';
+    $('pwd_confirm').closest('.fg').style.display = isMe ? '' : 'none';
+    $('pwdOr').style.display = isMe ? '' : 'none';
+    $('pwdModalSub').textContent = isMe
+      ? 'Choisis ton nouveau mot de passe ci-dessous, ou reçois un lien par e-mail.'
+      : "C'est " + name + " qui choisit son nouveau mot de passe : un lien lui est envoyé à l'adresse ci-dessous.";
+    $('pwdResetTxt').textContent = isMe
+      ? "Un lien arrive à ton adresse ; tu y choisis ton nouveau mot de passe. Pratique si la page te demande de te reconnecter."
+      : "Le lien arrive par e-mail et reste valable 1 heure. " + first(m) + " clique dessus, choisit son mot de passe, puis se connecte avec cette adresse.";
+    $('pwdResetBtn').textContent = btnLabel(isMe, false); $('pwdResetBtn').disabled = false;
+    $('pwdCopyBtn').hidden = true;
+    rmsg('');
+    var save = document.querySelector('#pwdOverlay .modal-actions .btn-save');
+    if (save) save.textContent = isMe ? 'Enregistrer' : "Enregistrer l'adresse";
+    if (!isMe) setTimeout(function(){ var b = $('pwdResetBtn'); if (b) b.focus(); }, 60);
+  };
+
+  function sendFor(){
+    var m = member(); if (!m) return;
+    var isMe = m.id === currentUser.id, emEl = $('pwd_email'), em = low(emEl.value);
+    if (!okMail(em)){ rmsg("Renseigne d'abord une adresse e-mail valide.", 'err'); emEl.focus(); return; }
+    if (sentAt[em] && Date.now() - sentAt[em] < COOL){ rmsg('Le lien vient de partir à ' + em + '. Attends une minute avant de le renvoyer.', 'ok'); return; }
+    if (em !== low(m.email)){ m.email = em; try { saveTeam(); renderSettings(); } catch (e) {} }
+    var b = $('pwdResetBtn'); b.disabled = true; b.textContent = 'Envoi…'; rmsg('');
+    Auth.sendResetEmail(em).then(function(r){
+      if (r.ok){
+        rmsg('✅ Lien envoyé à ' + em + ' à ' + hhmm() + (isMe ? '. Regarde ta boîte mail, et les spams.' : '. Dis à ' + first(m) + ' de regarder sa boîte mail, et les spams.'), 'ok');
+        $('pwdCopyBtn').hidden = isMe;
+        toast('📧 Lien de mot de passe envoyé à ' + em);
+      } else {
+        rmsg(notFound(r) ? "Aucun compte de connexion avec l'adresse " + em + ". Vérifie l'adresse : c'est celle avec laquelle " + (isMe ? 'tu te connectes' : first(m) + ' se connecte') + '.' : (r.message || 'Envoi impossible'), 'err');
+      }
+    }).catch(function(){ rmsg('Envoi impossible — réessaie dans un instant.', 'err'); })
+      .then(function(){ b.disabled = false; b.textContent = btnLabel(isMe, !!sentAt[em]); });
+  }
+
+  function copyFor(){
+    var m = member(); if (!m) return;
+    var em = low($('pwd_email').value);
+    var t = 'Salut ' + first(m) + ' ! Je viens de t\'envoyer un lien pour choisir ton nouveau mot de passe du CRM Influmedia.\n'
+      + '1. Ouvre le mail reçu sur ' + em + ' (regarde aussi dans les spams) et clique sur le lien.\n'
+      + '2. Choisis ton nouveau mot de passe (6 caractères minimum).\n'
+      + '3. Connecte-toi sur ' + CRM_URL + ' avec ' + em + ' et ce mot de passe.\n'
+      + 'Le lien est valable 1 heure. S\'il a expiré : sur l\'écran de connexion, tape ton adresse puis clique « Mot de passe oublié ? ».';
+    function done(){ toast('📋 Message copié — colle-le-lui par SMS ou WhatsApp'); }
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { rmsg(t, ''); }
+      document.body.removeChild(ta);
+    }
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (e) { fallback(); }
+  }
+})();
 </script>
 </body>
 </html>
