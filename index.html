@@ -2666,7 +2666,6 @@ document.addEventListener('DOMContentLoaded',function(){
   <div class="page-header">
     <div class="page-title">🚀 <span>Mes leads</span></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-cancel" onclick="importAutoecoles()" style="background:rgba(17,103,118,.18);color:var(--teal-light);font-weight:700">📥 Importer annuaire Orléans (50)</button>
       <button class="btn-primary" onclick="openLeadEdit(null)">＋ Nouveau lead</button>
     </div>
   </div>
@@ -8702,6 +8701,7 @@ function _doImportAutoecoles(silent){
 
 // Auto-seed à la 1ère visite (un seul fois par profil, sync cloud)
 function maybeAutoSeedAutoecoles(){
+  return; // Désactivé le 13/11/2026 à la demande de Niko : plus d'import automatique des auto-écoles
   if(!currentUser || !currentUser.id) return;
   if(autoecolesSeededUsers.includes(currentUser.id)) return;
   const added=_doImportAutoecoles(true);
