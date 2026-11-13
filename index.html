@@ -2022,6 +2022,17 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 
 .lead-next-soon{color:var(--orange);font-weight:700}
 .lead-next-late{color:var(--coral);font-weight:800}
+/* Édition directe dans le tableau Mes leads (statut, contacter le, prochaine action) */
+select.lead-inline-st{appearance:none;-webkit-appearance:none;border:none;cursor:pointer;padding:4px 22px 4px 9px;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:calc(100% - 11px) 52%,calc(100% - 7px) 52%;background-size:4px 4px,4px 4px;background-repeat:no-repeat;outline:none}
+select.lead-inline-st option{color:#0F172A;background:#fff;text-transform:none;font-family:inherit;font-weight:600}
+.lead-inline-date,.lead-inline-text{font:inherit;font-size:12px;color:inherit;background:transparent;border:1px solid var(--border);border-radius:8px;padding:5px 7px;outline:none;color-scheme:light dark}
+.lead-inline-date{width:128px;cursor:pointer}
+.lead-inline-text{width:100%;min-width:130px}
+.lead-inline-date:hover,.lead-inline-text:hover{border-color:var(--teal-light)}
+.lead-inline-date:focus,.lead-inline-text:focus{border-color:var(--teal-light);box-shadow:0 0 0 2px rgba(26,143,163,.18)}
+.lead-inline-date.lead-next-late{color:var(--coral);border-color:rgba(255,95,95,.45)}
+.lead-inline-date.lead-next-soon{color:var(--orange);border-color:rgba(243,156,18,.45)}
+.lead-next-hint{font-size:10px;margin-top:3px}
 
 /* Notes / Historique du lead — grande zone esthétique */
 .lead-notes-fg{margin-top:6px}
@@ -2783,8 +2794,9 @@ document.addEventListener('DOMContentLoaded',function(){
           <option value="Autre">📦 Autre</option>
         </select>
       </div>
-      <div class="fg"><label>Prochaine action (date)</label><input id="le_next" type="date"></div>
+      <div class="fg"><label>📅 Contacter le</label><input id="le_next" type="date"></div>
     </div>
+    <div class="fg"><label>➡️ Prochaine action</label><input id="le_nextStep" placeholder="Ex. rappeler pour le devis, envoyer la plaquette…"></div>
     <div class="fg"><label>📅 Date de finalisation (signature &amp; paiement) <span style="color:var(--muted);font-weight:400;font-size:11px">à remplir quand le contrat est signé</span></label><input id="le_signDate" type="date"></div>
     <div class="fg lead-notes-fg">
       <label>📒 Notes / Historique <span style="color:var(--muted);font-weight:400;font-size:11px">compte-rendus d'appels, prochaines étapes…</span></label>
@@ -8760,6 +8772,7 @@ function renderLeads(){
   const curMonth = today.getMonth(), curYear = today.getFullYear();
   const contratsPotentiels = my.filter(l=>l.status!=='perdu' && l.status!=='signe').length;
   const totalSignes = my.filter(l=>l.status==='signe').length;
+  const totalPerdus = my.filter(l=>l.status==='perdu').length;
   const signesMois = my.filter(l=>{
     if(l.status!=='signe' || !l.signDate) return false;
     const d=new Date(l.signDate+'T00:00:00');
@@ -8770,6 +8783,7 @@ function renderLeads(){
     <div class="lead-kpi"><span class="lbl">Pipeline actif</span><span class="val">${my.filter(l=>l.status!=='perdu'&&l.status!=='signe').length}</span></div>
     <div class="lead-kpi"><span class="lbl">🚀 Contrats potentiels</span><span class="val" style="color:var(--teal-light)">${contratsPotentiels}</span></div>
     <div class="lead-kpi"><span class="lbl">✅ Total signés</span><span class="val" style="color:var(--green)">${totalSignes}</span></div>
+    <div class="lead-kpi"><span class="lbl">❌ Total perdus</span><span class="val" style="color:var(--coral)">${totalPerdus}</span></div>
     <div class="lead-kpi"><span class="lbl">🗓 Signés en ${monthLabel}</span><span class="val" style="color:var(--green)">${signesMois}</span></div>
   `;
 
@@ -8780,6 +8794,7 @@ function renderLeads(){
     (l.company||'').toLowerCase().includes(search) ||
     (l.contact||'').toLowerCase().includes(search) ||
     (l.notes||'').toLowerCase().includes(search) ||
+    (l.nextStep||'').toLowerCase().includes(search) ||
     (l.email||'').toLowerCase().includes(search)
   );
   // Tri : prochaine action ↑ puis création ↓
@@ -8790,7 +8805,7 @@ function renderLeads(){
   });
 
   document.getElementById('leadHead').innerHTML = `
-    <th style="width:32px;text-align:center" title="Cocher = marquer comme Contacté">✓</th><th>Entreprise</th><th>Contact</th><th>Statut</th><th>Source</th><th>📅 Finalisé le</th><th>Prochaine action</th><th>Note</th><th></th>
+    <th style="width:32px;text-align:center" title="Cocher = marquer comme Contacté">✓</th><th>Entreprise</th><th>Contact</th><th>Statut</th><th>📅 Contacter le</th><th>Prochaine action</th><th>Note</th><th></th>
   `;
   const body=document.getElementById('leadBody');
   if(!list.length){
@@ -8799,7 +8814,7 @@ function renderLeads(){
   }
   body.innerHTML = list.map(l=>{
     const st = LEAD_STATUSES.find(s=>s.k===l.status) || LEAD_STATUSES[0];
-    let nextHtml = '—';
+    let nextHtml = '—'; let nextCls = ''; let nextHint = '';
     if(l.nextAction){
       const d = new Date(l.nextAction+'T00:00:00');
       const today = new Date(); today.setHours(0,0,0,0);
@@ -8810,6 +8825,7 @@ function renderLeads(){
       else if(diff===0){cls='lead-next-soon';prefix="📌 Aujourd'hui · ";}
       else if(diff<=3){cls='lead-next-soon';prefix='Dans '+diff+'j · ';}
       nextHtml = `<span class="${cls}">${prefix}${dateStr}</span>`;
+      nextCls = cls; nextHint = prefix.replace(/ · $/,'');
     }
     const contactInfo = [l.contact, l.phone].filter(Boolean).join(' · ');
     let signHtml='<span style="color:var(--muted)">—</span>';
@@ -8834,10 +8850,9 @@ function renderLeads(){
       <td style="text-align:center;padding:8px 4px"><div onclick="event.stopPropagation();toggleLeadContacted('${l.id}')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;transition:all .15s;${checkColor}" title="${advancedStatus?'Décocher (revenir à Nouveau)':'Cocher = marquer comme Contacté'}">${advancedStatus?'✓':''}</div></td>
       <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}</td>
       <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${escapeHtml(l.email)}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
-      <td><span class="lead-st ${st.cls}">${st.l}</span></td>
-      <td style="font-size:12px;color:var(--muted)">${escapeHtml(l.source||'—')}</td>
-      <td style="font-size:12px">${signHtml}</td>
-      <td style="font-size:12px">${nextHtml}</td>
+      <td><select class="lead-st lead-inline-st ${st.cls}" title="Changer le statut" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','status',this.value)">${LEAD_STATUSES.map(s=>`<option value="${s.k}"${s.k===st.k?' selected':''}>${s.l}</option>`).join('')}</select></td>
+      <td style="font-size:12px"><input type="date" class="lead-inline-date ${nextCls}" value="${escapeHtml(l.nextAction||'')}" title="Date à laquelle recontacter" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','nextAction',this.value)">${nextHint?`<div class="lead-next-hint ${nextCls}">${nextHint}</div>`:''}</td>
+      <td style="font-size:12px"><input type="text" class="lead-inline-text" value="${escapeHtml(l.nextStep||'')}" placeholder="—" title="Prochaine action (Entrée pour valider)" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){this.blur();}" onchange="setLeadField('${l.id}','nextStep',this.value.trim())"></td>
       <td style="font-size:11px;color:var(--muted);max-width:200px">${notePreview}</td>
       <td><div class="actions-cell">
         <button class="act-btn" onclick="event.stopPropagation();quickNoteLead('${l.id}')" title="Note rapide" style="background:rgba(243,156,18,.18);color:#f39c12">📝</button>
@@ -8846,6 +8861,27 @@ function renderLeads(){
       </div></td>
     </tr>`;
   }).join('');
+}
+
+// Édition directe depuis le tableau (statut, contacter le, prochaine action)
+function setLeadField(id, field, value){
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  if((l[field]||'')===(value||'')) return;
+  l[field]=value;
+  let msg='Enregistré ✓';
+  if(field==='status'){
+    const st=LEAD_STATUSES.find(s=>s.k===value);
+    if(value==='signe' && !l.signDate){ l.signDate=todayISO(); msg='🎉 Vente enregistrée — stats à jour !'; }
+    else msg='Statut : '+(st?st.l:value);
+  } else if(field==='nextAction'){
+    msg = value ? '📅 À contacter le '+new Date(value+'T00:00:00').toLocaleDateString('fr-FR') : 'Date retirée';
+  } else if(field==='nextStep'){
+    msg='Prochaine action enregistrée ✓';
+  }
+  l.updatedAt=new Date().toISOString();
+  Storage.set('influ_leads', leads);
+  refreshLeadViews();
+  toast(msg);
 }
 
 function setLeadFilter(k){ leadFilter=k; renderLeads(); }
@@ -8888,6 +8924,7 @@ function openLeadEdit(id){
   document.getElementById('le_source').value = l?.source || '';
   document.getElementById('le_presta').value = l?.prestation || '';
   document.getElementById('le_next').value = l?.nextAction || '';
+  document.getElementById('le_nextStep').value = l?.nextStep || '';
   document.getElementById('le_signDate').value = l?.signDate || '';
   document.getElementById('le_notes').value = l?.notes || '';
   document.getElementById('le_delBtn').style.display = id ? 'inline-flex' : 'none';
@@ -8907,6 +8944,7 @@ function saveLead(){
     source:document.getElementById('le_source').value,
     prestation:document.getElementById('le_presta').value||'',
     nextAction:document.getElementById('le_next').value||'',
+    nextStep:document.getElementById('le_nextStep').value.trim(),
     signDate:document.getElementById('le_signDate').value||'',
     notes:document.getElementById('le_notes').value.trim()
   };
@@ -10752,7 +10790,7 @@ function mListLeads(){
     const na=l.nextAction?String(l.nextAction).slice(0,10):'';
     const late=na&&na<tk&&l.status!=='signe'&&l.status!=='perdu';
     const tel=mTel(l.phone);
-    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}</div>${na?`<div class="m-note ${late?'red':''}">${late?'⚠️ Relance en retard · ':na===tk?'⏰ Relance aujourd\'hui · ':'Prochaine action · '}${mEsc(mDateFr(na))}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
+    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}</div>${na?`<div class="m-note ${late?'red':''}">${late?'⚠️ Relance en retard · ':na===tk?'⏰ Relance aujourd\'hui · ':'À contacter le · '}${mEsc(mDateFr(na))}</div>`:''}${l.nextStep?`<div class="m-note">➡️ ${mEsc(l.nextStep)}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
   }).join('');
 }
 
