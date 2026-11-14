@@ -11506,6 +11506,65 @@ html[data-skin="studio"][data-theme="night"] .hw-shortcut:hover{background:rgba(
 }
 
 </style>
+<style id="design-apps-pass">
+/* =========================================================
+   v12 — passe « Design des applis » (14/11/2026)
+   Règles : skill design-apps-influmedia. Même design ; on corrige
+   la lisibilité, les contrastes et les cibles au doigt sur téléphone.
+   Préfixe html[data-theme]:not(...):not(...) = même poids que les règles Studio, placé après : il passe devant.
+   ========================================================= */
+
+/* 1 · Contrastes (4,5:1 minimum) */
+html[data-skin="studio"][data-theme="day"]{ --muted:#52666B; --st-muted:#52666B; --teal-light:#116776; }
+html[data-theme="day"]:not([data-dap1]):not([data-dap2]) .m-toggle button:not(.active){ color:#475569 !important; }
+html[data-theme="night"]:not([data-dap1]):not([data-dap2]) .m-tab.active,
+html[data-theme="night"]:not([data-dap1]):not([data-dap2]) .m-link{ color:#5FD4E6 !important; }
+html[data-theme="day"]:not([data-dap1]):not([data-dap2]) .av-status-badge.av-st-active{ color:#18733A !important; }
+/* boutons corail : texte foncé, le corail de la charte reste le même (blanc sur corail = 2,97:1) */
+html[data-theme]:not([data-dap1]):not([data-dap2]) .btn-primary{ color:#0D1F24 !important; }
+
+/* 2 · Plus rien sous 11 px */
+html[data-theme]:not([data-dap1]):not([data-dap2]) .m-tab{ font-size:11px !important; }
+html[data-theme]:not([data-dap1]):not([data-dap2]) .m-tab .m-tab-badge,
+html[data-theme]:not([data-dap1]):not([data-dap2]) .m-shortcut .lb,
+html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-section,
+html[data-theme]:not([data-dap1]):not([data-dap2]) th span,
+html[data-theme]:not([data-dap1]):not([data-dap2]) .av-status-badge{ font-size:11px !important; }
+
+/* 3 · Réagir à l'appui (100 ms) */
+.m-chip,.m-filter,.m-link,.m-shortcut,.m-toggle button,.btn-primary,.btn-cancel,.act-btn,.cw-new,.cw-x,.cw-back,.m-back{ transition-property:transform,background-color,border-color,color,box-shadow,opacity; }
+.m-chip:active,.m-filter:active,.m-link:active,.m-shortcut:active,.m-toggle button:active,.btn-primary:active,.btn-cancel:active,.act-btn:active,.cw-new:active,.cw-x:active,.cw-back:active,.m-back:active{ transform:scale(.97); transition-duration:.1s; transition-timing-function:ease-out; }
+
+/* 4 · Cibles au doigt : 44 px sur téléphone et écran tactile */
+@media (max-width:760px), (pointer:coarse){
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-link{ min-height:44px; display:inline-flex; align-items:center; padding-inline:10px !important; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-chip,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-filter,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-toggle button,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .pill,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .btn-cancel,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .btn-primary{ min-height:44px !important; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-header-av,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-back,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-back,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-x,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-new,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .act-btn{ width:44px !important; height:44px !important; min-width:44px; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-section button{ position:relative; width:28px !important; height:28px !important; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .cw-section button::after{ content:""; position:absolute; inset:-8px; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) #cwSearch{ min-height:44px; font-size:16px !important; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .btn-cancel{ min-width:44px; }
+  /* le champ de recherche remplit sa boîte : on tape n'importe où dedans */
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-search,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .search-box{ padding-block:0 !important; }
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .m-search input,
+  html[data-theme]:not([data-dap1]):not([data-dap2]) .search-box input{ min-height:48px; font-size:16px !important; }
+}
+
+/* 5 · Les réglages du téléphone priment */
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; } }
+@media (prefers-reduced-transparency:reduce){ *,*::before,*::after{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; } }
+</style>
 <script>
 // Skin Studio : le mode jour devient le look par défaut, une seule fois par profil.
 // Ensuite le bouton jour/nuit garde la main (le choix de chacun est respecté).
@@ -11516,7 +11575,7 @@ html[data-skin="studio"][data-theme="night"] .hw-shortcut:hover{background:rgba(
     try{
       if(document.documentElement.getAttribute('data-skin')==='studio'){
         const k=_themeStorageKey()+'_studio';
-        if(!localStorage.getItem(k)){ localStorage.setItem(k,'1'); localStorage.setItem(_themeStorageKey(),'day'); }
+        if(!localStorage.getItem(k)){ localStorage.setItem(k,'1'); /* v12 : le premier réglage suit celui du téléphone */ localStorage.setItem(_themeStorageKey(),(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'night':'day'); }
       }
     }catch(e){}
     return _orig();
