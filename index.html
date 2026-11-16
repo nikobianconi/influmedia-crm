@@ -2642,6 +2642,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <span style="color:var(--muted)">🔍</span>
       <input type="text" id="prospSearch" placeholder="Rechercher..." oninput="renderProspects()">
     </div>
+    <div class="filter-pills" id="prospOwnerFilters"></div>
     <div class="filter-pills" id="prospFilters"></div>
     <select class="sort-sel" id="prospSortSel" onchange="renderProspects()">
       <option value="manual">Ordre manuel</option>
@@ -2664,19 +2665,20 @@ document.addEventListener('DOMContentLoaded',function(){
      ═══════════════════════════════════════════════════════════════ -->
 <div id="tab-leads" class="tab-content">
   <div class="page-header">
-    <div class="page-title">🚀 <span>Mes leads</span></div>
+    <div class="page-title">🚀 <span id="leadPageTitle">Mes leads</span></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn-primary" onclick="openLeadEdit(null)">＋ Nouveau lead</button>
     </div>
   </div>
-  <div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">
-    Ton pipeline commercial perso — invisible aux autres profils. (≠ Prospection qui est admin uniquement)
+  <div id="leadPageHint" style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+    Ton pipeline commercial perso — invisible aux autres profils.
   </div>
   <div class="toolbar">
     <div class="search-box">
       <span style="color:var(--muted)">🔍</span>
       <input type="text" id="leadSearch" placeholder="Rechercher entreprise, contact, note..." oninput="renderLeads()">
     </div>
+    <div class="filter-pills" id="leadOwnerFilters"></div>
     <div class="filter-pills" id="leadFilters"></div>
   </div>
   <div id="leadKPIs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
@@ -2733,6 +2735,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <button class="btn-primary btn-sm" onclick="showTab('prospection')">Voir liste</button>
   </div>
 </div>
+<div class="filter-pills" id="pipeOwnerFilters" style="margin-top:4px"></div>
 <div class="pipeline-board" id="pipelineBoard"></div>
 </div>
 
@@ -2750,6 +2753,7 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="overlay" id="leadEditOverlay" onclick="closeBg(event,'leadEditOverlay')">
   <div class="modal" style="max-width:600px">
     <h2 id="leadEditTitle">🚀 Nouveau lead</h2>
+    <div class="fg" id="le_ownerRow" style="display:none"><label>Responsable</label><select id="le_owner" style="width:100%"></select></div>
     <div class="fg-row">
       <div class="fg"><label>Entreprise *</label><input id="le_company" placeholder="Nom de la société"></div>
       <div class="fg"><label>Contact</label><input id="le_contact" placeholder="Prénom Nom"></div>
@@ -3073,7 +3077,10 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="fg"><label>Mois d'ouverture</label><select id="p_date"><option value="">—</option><option>JANVIER</option><option>FÉVRIER</option><option>MARS</option><option>AVRIL</option><option>MAI</option><option>JUIN</option><option>JUILLET</option><option>AOÛT</option><option>SEPTEMBRE</option><option>OCTOBRE</option><option>NOVEMBRE</option><option>DÉCEMBRE</option></select></div>
       <div class="fg"><label>CA estimé (€/mois)</label><input id="p_ca" type="number" placeholder="Optionnel"></div>
     </div>
-    <div class="fg"><label>Secteur</label><input id="p_secteur" placeholder="Ex: PPF rénovation"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Secteur</label><input id="p_secteur" placeholder="Ex: PPF rénovation"></div>
+      <div class="fg"><label>Responsable</label><select id="p_owner" style="width:100%"></select></div>
+    </div>
     <div class="fg"><label>Solutions retenues</label>
       <select id="p_solutions" multiple style="height:85px"><option>Google Ads</option><option>Meta Ads</option><option>Social média</option><option>Com complète</option><option>Création contenu</option></select>
       <div style="font-size:10px;color:var(--muted);margin-top:3px">Cmd/Ctrl+clic pour plusieurs</div>
@@ -3927,9 +3934,18 @@ const Cloud = {
 // ╔══════════════════════════════════════════════════════════════
 // ║ USER & ROLES — Phase 1: admin solo. Phase 2: vrai multi-user
 // ╚══════════════════════════════════════════════════════════════
-const ROLES = {ADMIN:'admin', TEAM:'team'};
+const ROLES = {ADMIN:'admin', TEAM:'team', SALES:'sales'};
 let currentUser = Storage.get('influ_user', {id:'nicolas',name:'Nicolas Bianconi',role:ROLES.ADMIN,initials:'NB'});
 function isAdmin(){return currentUser.role===ROLES.ADMIN;}
+// Commercial (16/11/2026) : accès production + Prospection, Pipeline et leads partagés avec l'admin
+function isSales(){return currentUser.role===ROLES.SALES;}
+function hasCommerce(){return isAdmin()||isSales();}
+function roleLabel(r){return r==='admin'?'Admin':(r==='sales'?'Commercial':'Équipe');}
+function roleSub(r){return r==='admin'?'🔐 Admin · accès complet':(r==='sales'?'💼 Commercial · production + prospection':'👤 Équipe · accès production');}
+function commerceMembers(){return (typeof teamMembers!=='undefined'?teamMembers:[]).filter(m=>m.role==='admin'||m.role==='sales');}
+function memberFirstName(id){const m=(typeof teamMembers!=='undefined'?teamMembers:[]).find(x=>x.id===id);if(!m)return '—';return String(m.name||'').split(/\s+/)[0]||m.name;}
+function defaultCommerceOwner(){const a=(typeof teamMembers!=='undefined'?teamMembers:[]).find(m=>m.role==='admin');return a?a.id:'nicolas';}
+function prospOwner(p){return (p&&p.owner)||defaultCommerceOwner();}
 function saveUser(){Storage.set('influ_user', currentUser);}
 
 const MONTHS=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
@@ -3955,6 +3971,7 @@ function nextClientId(){ clientId=Math.max(+clientId||1, Math.max(0,...clients.m
 function nextProspId(){ prospId=Math.max(+prospId||1, Math.max(0,...prospects.map(p=>+p.id||0))+1); return prospId++; }
 let taskId=tasks.length?Math.max(...tasks.map(t=>t.id))+1:1;
 let editClientId=null,editProspId=null,editTaskId=null,clientFilter='all',prospFilter='all',taskFilter='open',openNoteId=null;
+let prospOwnerFilter='all';
 
 function saveData(){
   // ── FIX : passer par Storage.set() pour déclencher l'auto-push cloud ──
@@ -4223,7 +4240,8 @@ function clearClientFocus(){clientFocus=null;renderClients();}
 // ║ SIDEBAR — Apple-style groups, role-aware
 // ╚══════════════════════════════════════════════════════════════
 const ADMIN_TABS=['dashboard','clients','fins','prospection','pipeline','tasks','contacts','quotes','invoices'];
-function pageAllowed(p){return isAdmin()||ADMIN_TABS.indexOf(p)===-1;}
+const COMMERCE_TABS=['prospection','pipeline'];
+function pageAllowed(p){return isAdmin()||ADMIN_TABS.indexOf(p)===-1||(isSales()&&COMMERCE_TABS.indexOf(p)!==-1);}
 // Toutes les pages (aucune n'est supprimée : « Tâches & Relances » reste en archive, hors menu)
 const NAV_PAGES={
   home:{icon:'🏠',label:'Accueil'},
@@ -4295,7 +4313,7 @@ function buildSidebar(){
     const isCol=collapsed[g.id]?'collapsed':'';
     const items=entries.map(e=>{
       const first=entryPages(e)[0];
-      const adminOnly=e.pages.every(p=>ADMIN_TABS.indexOf(p)!==-1);
+      const adminOnly=e.pages.every(p=>ADMIN_TABS.indexOf(p)!==-1&&COMMERCE_TABS.indexOf(p)===-1);
       const badge=e.badge?`<span class="badge-mini" id="${e.badge}" style="margin-left:auto;background:var(--coral);color:white;font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;display:none"></span>`:(adminOnly?'<span class="nav-lock" title="Réservé à l\'admin">🔒</span>':'');
       return `<button class="nav-btn" data-entry="${e.id}" data-tab="${first}" onclick="showTab('${first}',this)"><span class="icon">${entryIcon(e)}</span><span class="nav-text">${escapeHtml(entryLabel(e))}</span>${badge}</button>`;
     }).join('');
@@ -4319,7 +4337,7 @@ function buildSidebar(){
     av.innerHTML=currentUser.initials||'U';
   }
   document.getElementById('userName').textContent=currentUser.name;
-  document.getElementById('userRole').textContent=(isAdmin()?'Admin · ':'Équipe · ')+'Influmedia';
+  document.getElementById('userRole').textContent=roleLabel(currentUser.role)+' · Influmedia';
 }
 
 function toggleNavGroup(id){
@@ -4605,9 +4623,11 @@ var PIPELINE_STAGES=[
 function renderPipeline(){
   var board=document.getElementById('pipelineBoard');
   if(!board)return;
+  var pool=(prospects||[]).filter(function(p){return prospOwnerFilter==='all'||prospOwner(p)===prospOwnerFilter;});
+  renderOwnerPills('pipeOwnerFilters',(prospects||[]).map(prospOwner));
   board.innerHTML=PIPELINE_STAGES.map(function(stage){
-    var cards=(prospects||[]).filter(function(p){return p.status===stage.id;});
-    var cardsHtml=cards.map(function(p){return '<div class="pipeline-card" onclick="editProspect('+p.id+')"><div class="pipeline-card-name">'+escapeHtml(p.name||'')+'</div>'+(p.secteur?'<div class="pipeline-card-tag">'+escapeHtml(p.secteur)+'</div>':'')+'<div class="pipeline-card-move">'+PIPELINE_STAGES.filter(function(s){return s.id!==stage.id;}).map(function(s){return '<button class="pmove-btn" onclick="movePipeline(event,'+p.id+',&quot;'+s.id+'&quot;)">→ '+s.label+'</button>';}).join('')+'</div></div>';}).join('');
+    var cards=pool.filter(function(p){return p.status===stage.id;});
+    var cardsHtml=cards.map(function(p){return '<div class="pipeline-card" onclick="editProspect('+p.id+')"><div class="pipeline-card-name">'+escapeHtml(p.name||'')+'</div><div style="margin-bottom:4px">'+ownerBadge(prospOwner(p))+'</div>'+(p.secteur?'<div class="pipeline-card-tag">'+escapeHtml(p.secteur)+'</div>':'')+'<div class="pipeline-card-move">'+PIPELINE_STAGES.filter(function(s){return s.id!==stage.id;}).map(function(s){return '<button class="pmove-btn" onclick="movePipeline(event,'+p.id+',&quot;'+s.id+'&quot;)">→ '+s.label+'</button>';}).join('')+'</div></div>';}).join('');
     return '<div class="pipeline-col"><div class="pipeline-col-header" style="--stage-color:'+stage.color+'">'+stage.label+'<span class="pipeline-count">'+cards.length+'</span></div><div class="pipeline-col-body">'+cardsHtml+'</div></div>';
   }).join('');
 }
@@ -4616,7 +4636,7 @@ function movePipeline(event,id,newStatus){
   var p=(prospects||[]).find(function(x){return x.id===id;});
   if(!p)return;
   p.status=newStatus;
-  if(typeof saveProspect==='function')saveProspect(p,true);
+  saveData();
   renderPipeline();
   if(typeof renderProspects==='function')renderProspects();
 }
@@ -4631,17 +4651,19 @@ function renderProspects(){
     return `<button class="pill ${act}" onclick="setProspFilter('${s}')">${s==='all'?'Tous':s} (${cnt})</button>`;
   }).join('');
 
+  renderOwnerPills('prospOwnerFilters',prospects.map(prospOwner));
   let filtered=prospects;
+  if(prospOwnerFilter!=='all') filtered=filtered.filter(p=>prospOwner(p)===prospOwnerFilter);
   if(prospFilter!=='all') filtered=filtered.filter(p=>p.status===prospFilter);
   if(search) filtered=filtered.filter(p=>p.name.toLowerCase().includes(search)||(p.secteur||'').toLowerCase().includes(search));
   if(sort==='name') filtered=[...filtered].sort((a,b)=>a.name.localeCompare(b.name,'fr'));
   if(sort==='status') filtered=[...filtered].sort((a,b)=>a.status.localeCompare(b.status));
 
   const isManual=sort==='manual';
-  document.getElementById('prospHead').innerHTML=`<th style="width:28px"></th><th>Statut</th><th>Prospect</th><th>Mois</th><th>Secteur</th><th>Solutions</th><th>CA estimé</th><th>Notes</th><th></th>`;
+  document.getElementById('prospHead').innerHTML=`<th style="width:28px"></th><th>Statut</th><th>Prospect</th><th>Responsable</th><th>Mois</th><th>Secteur</th><th>Solutions</th><th>CA estimé</th><th>Notes</th><th></th>`;
 
   const tbody=document.getElementById('prospectsBody');
-  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" class="empty">Aucun prospect</td></tr>`;return;}
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="10" class="empty">Aucun prospect</td></tr>`;return;}
   tbody.innerHTML=filtered.map((p,idx)=>{
     return `<tr draggable="true" data-pid="${p.id}" style="cursor:default"
       ondblclick="editProspect(${p.id})"
@@ -4654,17 +4676,43 @@ function renderProspects(){
       <td style="padding:8px 6px;width:28px"><span class="drag-handle" title="Glisser pour déplacer">⠿</span></td>
       <td>${bdg(pStatusMap,p.status)}</td>
       <td><span class="client-name">${escapeHtml(p.name)}</span></td>
+      <td>${ownerBadge(prospOwner(p))}</td>
       <td><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--muted)">${p.date||'—'}</span></td>
       <td>${p.secteur||'<span style="color:var(--muted)">—</span>'}</td>
       <td>${tgs(p.solutions)}</td>
       <td>${p.ca?`<span style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700">~${p.ca.toLocaleString('fr-FR')} €</span>`:'<span style="color:var(--muted)">—</span>'}</td>
       <td style="max-width:140px;font-size:12px;color:var(--muted)">${escapeHtml(p.notes||'—')}</td>
-      <td><div class="actions-cell"><button class="act-btn act-conv" onclick="convertToClient(${p.id})" title="Convertir en client ✅">✅</button><button class="act-btn act-edit" onclick="editProspect(${p.id})" title="Modifier">✏️</button><button class="act-btn act-del" onclick="deleteProspect(${p.id})" title="Supprimer">✕</button></div></td>
+      <td><div class="actions-cell">${isAdmin()?`<button class="act-btn act-conv" onclick="convertToClient(${p.id})" title="Convertir en client ✅">✅</button>`:''}<button class="act-btn act-edit" onclick="editProspect(${p.id})" title="Modifier">✏️</button><button class="act-btn act-del" onclick="deleteProspect(${p.id})" title="Supprimer">✕</button></div></td>
     </tr>`;
   }).join('');
 }
 
 function setProspFilter(f){prospFilter=f;renderProspects();}
+function setProspOwnerFilter(f){prospOwnerFilter=f;renderProspects();if(typeof renderPipeline==='function')renderPipeline();}
+// Pastilles « Tous · Prospects Niko · Prospects Nicolas » (prospection + pipeline)
+function renderOwnerPills(elId,owners,kind){
+  const el=document.getElementById(elId); if(!el) return;
+  const isLead=kind==='lead';
+  const cur=isLead?leadOwnerFilter:prospOwnerFilter;
+  const fn=isLead?'setLeadOwnerFilter':'setProspOwnerFilter';
+  const word=isLead?'Leads':'Prospects';
+  const members=commerceMembers();
+  if(!hasCommerce()||(members.length<2&&cur==='all')){ el.innerHTML=''; return; }
+  const pills=[{k:'all',l:'👥 Tous',cnt:owners.length}].concat(members.map(m=>({k:m.id,l:word+' '+memberFirstName(m.id),cnt:owners.filter(o=>o===m.id).length})));
+  el.innerHTML=pills.map(f=>`<button class="pill ${cur===f.k?'active':''}" onclick="${fn}('${f.k}')">${escapeHtml(f.l)} (${f.cnt})</button>`).join('');
+}
+function ownerBadge(id){
+  const m=(typeof teamMembers!=='undefined'?teamMembers:[]).find(x=>x.id===id);
+  const col=(m&&m.color)||'#116776';
+  return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;background:${col}55;border:1px solid ${col};color:#f4f2ed;white-space:nowrap">👤 ${escapeHtml(memberFirstName(id))}</span>`;
+}
+function fillOwnerSelect(selId,value){
+  const sel=document.getElementById(selId); if(!sel) return;
+  const members=commerceMembers();
+  const v=value||currentUser.id;
+  const list=members.some(m=>m.id===v)?members:members.concat((typeof teamMembers!=='undefined'?teamMembers:[]).filter(m=>m.id===v));
+  sel.innerHTML=list.map(m=>`<option value="${m.id}"${m.id===v?' selected':''}>${escapeHtml(m.name)}</option>`).join('');
+}
 
 let pDragSrcId=null;
 function pDragStart(e,id){pDragSrcId=id;e.dataTransfer.effectAllowed='move';setTimeout(()=>e.target.classList.add('dragging'),0);}
@@ -4871,14 +4919,14 @@ function deleteClient(id){
   toast('Client supprimé');
 }
 
-function openProspModal(){editProspId=null;document.getElementById('prospModalTitle').textContent='🎯 Nouveau prospect';document.getElementById('prospSaveLabel').textContent='Enregistrer';['p_name','p_secteur','p_notes','p_ca'].forEach(id=>document.getElementById(id).value='');document.getElementById('p_status').value='A prospecter';document.getElementById('p_date').value='';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=false);document.getElementById('prospOverlay').classList.add('open');}
+function openProspModal(){editProspId=null;document.getElementById('prospModalTitle').textContent='🎯 Nouveau prospect';document.getElementById('prospSaveLabel').textContent='Enregistrer';['p_name','p_secteur','p_notes','p_ca'].forEach(id=>document.getElementById(id).value='');document.getElementById('p_status').value='A prospecter';document.getElementById('p_date').value='';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=false);fillOwnerSelect('p_owner',currentUser.id);document.getElementById('prospOverlay').classList.add('open');}
 
-function editProspect(id){const p=prospects.find(p=>p.id===id);editProspId=id;document.getElementById('prospModalTitle').textContent='✏️ Modifier le prospect';document.getElementById('prospSaveLabel').textContent='Mettre à jour';document.getElementById('p_name').value=p.name;document.getElementById('p_status').value=p.status;document.getElementById('p_date').value=p.date||'';document.getElementById('p_secteur').value=p.secteur||'';document.getElementById('p_ca').value=p.ca||'';document.getElementById('p_notes').value=p.notes||'';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=(p.solutions||[]).includes(o.value));document.getElementById('prospOverlay').classList.add('open');}
+function editProspect(id){const p=prospects.find(p=>p.id===id);editProspId=id;document.getElementById('prospModalTitle').textContent='✏️ Modifier le prospect';document.getElementById('prospSaveLabel').textContent='Mettre à jour';document.getElementById('p_name').value=p.name;document.getElementById('p_status').value=p.status;document.getElementById('p_date').value=p.date||'';document.getElementById('p_secteur').value=p.secteur||'';document.getElementById('p_ca').value=p.ca||'';document.getElementById('p_notes').value=p.notes||'';Array.from(document.getElementById('p_solutions').options).forEach(o=>o.selected=(p.solutions||[]).includes(o.value));fillOwnerSelect('p_owner',prospOwner(p));document.getElementById('prospOverlay').classList.add('open');}
 
 function saveProspect(){
   const name=document.getElementById('p_name').value.trim();if(!name){alert('Nom requis');return;}
   const solutions=Array.from(document.getElementById('p_solutions').selectedOptions).map(o=>o.value);
-  const data={name,status:document.getElementById('p_status').value,date:document.getElementById('p_date').value,secteur:document.getElementById('p_secteur').value.trim(),solutions,ca:parseFloat(document.getElementById('p_ca').value)||0,notes:document.getElementById('p_notes').value.trim()};
+  const data={name,status:document.getElementById('p_status').value,date:document.getElementById('p_date').value,secteur:document.getElementById('p_secteur').value.trim(),solutions,ca:parseFloat(document.getElementById('p_ca').value)||0,notes:document.getElementById('p_notes').value.trim(),owner:(document.getElementById('p_owner')||{}).value||currentUser.id};
   if(editProspId!==null){const i=prospects.findIndex(p=>p.id===editProspId);prospects[i]={...prospects[i],...data};toast('Prospect mis à jour ✓');}
   else{prospects.push({id:nextProspId(),...data});toast('Prospect ajouté ✓');}
   saveData();closeModal('prospOverlay');renderProspects();renderDashboard();
@@ -4942,7 +4990,7 @@ function fillLinkOptions(selectedVal,selId){
     html+='</optgroup>';
   }
   // Les prospects restent réservés à l'admin (page Prospection admin)
-  const sortedP=isAdmin()?[...prospects].sort((a,b)=>a.name.localeCompare(b.name,'fr')):[];
+  const sortedP=hasCommerce()?[...prospects].sort((a,b)=>a.name.localeCompare(b.name,'fr')):[];
   if(sortedP.length){
     html+='<optgroup label="🎯 Prospects">';
     sortedP.forEach(p=>{html+=`<option value="p:${p.id}"${selectedVal===`p:${p.id}`?' selected':''}>${escapeHtml(p.name)}</option>`;});
@@ -5253,7 +5301,7 @@ function renderLockScreen(){
   }
   const setTxt=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   setTxt('lockName',m.name);
-  setTxt('lockRole',(m.role==='admin'?'Admin':'Équipe')+' · Influmedia');
+  setTxt('lockRole',roleLabel(m.role)+' · Influmedia');
   setTxt('lockError','');
   const pw=document.getElementById('lockPwd'); if(pw) pw.value='';
 }
@@ -5264,7 +5312,7 @@ function renderLockUserList(){
     const av=m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover">`:escapeHtml(m.initials||'?');
     return `<div class="lock-user-item ${m.id===lockUserId?'active':''}" onclick="switchLockUser('${m.id}')">
       <div class="lock-user-av" style="background:${m.color||'#116776'}">${av}</div>
-      <div><div class="lock-user-name">${escapeHtml(m.name||'')}</div><div class="lock-user-role">${m.role==='admin'?'Admin':'Équipe'}</div></div>
+      <div><div class="lock-user-name">${escapeHtml(m.name||'')}</div><div class="lock-user-role">${roleLabel(m.role)}</div></div>
     </div>`;
   }).join('');
 }
@@ -6945,8 +6993,8 @@ function renderSettings(){
         <div><div class="settings-label">🔐 Mot de passe oublié</div><div class="settings-sub">Sur l'écran de connexion, tape ton adresse puis clique sur « Mot de passe oublié ? » : un lien arrive par e-mail pour en choisir un nouveau. Un admin peut aussi te l'envoyer depuis Équipe › 🔑.</div></div>
       </div>
       <div class="settings-row">
-        <div><div class="settings-label">Mon rôle</div><div class="settings-sub">${admin?'🔐 Admin · accès complet à toutes les pages':'👤 Équipe · accès aux pages de production'}</div></div>
-        <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:${admin?'rgba(46,204,113,.18)':'rgba(127,140,141,.18)'};color:${admin?'var(--green)':'var(--grey)'};text-transform:uppercase;letter-spacing:.5px">${admin?'Admin':'Équipe'}</span>
+        <div><div class="settings-label">Mon rôle</div><div class="settings-sub">${admin?'🔐 Admin · accès complet à toutes les pages':(isSales()?'💼 Commercial · production, Prospection, Pipeline et leads partagés':'👤 Équipe · accès aux pages de production')}</div></div>
+        <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:${admin?'rgba(46,204,113,.18)':'rgba(127,140,141,.18)'};color:${admin?'var(--green)':'var(--grey)'};text-transform:uppercase;letter-spacing:.5px">${roleLabel(currentUser.role)}</span>
       </div>
       <div class="settings-row">
         <div><div class="settings-label">Verrouiller la session</div><div class="settings-sub">Revenir à l'écran de connexion</div></div>
@@ -6964,12 +7012,13 @@ function renderSettings(){
             <div class="user-avatar" style="background:${m.color}">${m.avatar?`<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:m.initials}</div>
             <div>
               <input value="${escapeHtml(m.name)}" onblur="updateTeamName('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 10px;font-size:12px;width:180px">
-              <div class="settings-sub">${m.role==='admin'?'🔐 Admin · accès complet':'👤 Équipe · accès production'}${m.pwd===DEFAULT_PWD_HASH?' · 🔓 mdp par défaut':' · 🔑 mdp défini'}</div>
+              <div class="settings-sub">${roleSub(m.role)}${m.pwd===DEFAULT_PWD_HASH?' · 🔓 mdp par défaut':' · 🔑 mdp défini'}</div>
             </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
             <select onchange="setMemberRole('${m.id}',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;color:var(--cream);padding:5px 8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700"${m.id===currentUser.id?' title="Tu ne peux pas changer ton propre rôle"':''}>
-              <option value="team"${m.role!=='admin'?' selected':''}>Équipe</option>
+              <option value="team"${m.role!=='admin'&&m.role!=='sales'?' selected':''}>Équipe</option>
+              <option value="sales"${m.role==='sales'?' selected':''}>Commercial</option>
               <option value="admin"${m.role==='admin'?' selected':''}>Admin</option>
             </select>
             <button class="btn-mini" onclick="openPwdModal('${m.id}')" title="Mot de passe : envoyer un lien pour en choisir un nouveau">🔑</button>
@@ -7086,13 +7135,13 @@ function setMemberRole(memberId, newRole){
   // Empêcher l'admin de se rétrograder s'il est le SEUL admin
   if(memberId===currentUser.id){
     const otherAdmins=teamMembers.filter(x=>x.id!==memberId&&x.role==='admin').length;
-    if(newRole==='team' && otherAdmins===0){
+    if(newRole!=='admin' && otherAdmins===0){
       alert('Tu ne peux pas te retirer le rôle Admin tant qu\'aucun autre membre n\'est admin (sinon plus personne pour gérer l\'équipe).');
       renderSettings();return;
     }
-    if(!confirm('Modifier ton propre rôle vers "'+(newRole==='admin'?'Admin':'Équipe')+'" ?')) {renderSettings();return;}
+    if(!confirm('Modifier ton propre rôle vers "'+roleLabel(newRole)+'" ?')) {renderSettings();return;}
   } else {
-    if(!confirm('Définir '+m.name+' comme "'+(newRole==='admin'?'Admin (accès complet)':'Équipe (accès production)')+'" ?')){renderSettings();return;}
+    if(!confirm('Définir '+m.name+' comme "'+(newRole==='admin'?'Admin (accès complet)':(newRole==='sales'?'Commercial (production + prospection)':'Équipe (accès production)'))+'" ?')){renderSettings();return;}
   }
   m.role=newRole;
   saveTeam();
@@ -7101,10 +7150,10 @@ function setMemberRole(memberId, newRole){
     currentUser.role=newRole;saveUser();buildSidebar();
     const cur=document.querySelector('.tab-content.active')?.id?.replace('tab-','');
     const adminTabs=['dashboard','clients','fins','prospection','tasks','contacts','quotes','invoices'];
-    if(newRole==='team'&&adminTabs.includes(cur)) showTab('home');
+    if(newRole!=='admin'&&adminTabs.includes(cur)&&!pageAllowed(cur)) showTab('home');
   }
   renderSettings();
-  toast('🔐 Rôle mis à jour : '+m.name+' → '+(newRole==='admin'?'Admin':'Équipe'));
+  toast('🔐 Rôle mis à jour : '+m.name+' → '+roleLabel(newRole));
 }
 
 function updateTeamName(id,name){
@@ -8672,6 +8721,19 @@ function myLeads(){
   // Un lead n'est visible que par son créateur (privé par profil)
   return leads.filter(l => l.owner === currentUser.id);
 }
+// Leads affichés dans la liste (16/11/2026) : l'admin et le commercial voient
+// les leads l'un de l'autre ; les profils production ne voient que les leurs.
+let leadOwnerFilter='all';
+function sharedLeads(){
+  if(!hasCommerce()) return myLeads();
+  const ids=commerceMembers().map(m=>m.id);
+  return leads.filter(l=>l.owner===currentUser.id||ids.indexOf(l.owner)!==-1);
+}
+function visibleLeads(){
+  const all=sharedLeads();
+  return leadOwnerFilter==='all'?all:all.filter(l=>l.owner===leadOwnerFilter);
+}
+function setLeadOwnerFilter(k){ leadOwnerFilter=k; renderLeads(); }
 
 // ─── ANNUAIRE AUTO-ÉCOLES ORLÉANS (50 entreprises, import 1 clic) ───
 const AUTOECOLES_ORLEANS = [{"company":"Auto Ecole Soltani","contact":"","phone":"02 38 62 12 00","notes":"📍 26 Rue Albert 1er · 45000 Orléans · ⭐ 4,3 ★ (186) · ORLÉANS"},{"company":"Auto-école Bokréno","contact":"","phone":"02 38 76 50 85","notes":"📍 24 Rue Emile Zola · 45000 Orléans · ⭐ 4,9 ★ (218)"},{"company":"Auto-école Cassegrain (Gare)","contact":"Hicham AMRI","phone":"02 38 22 29 79","notes":"📍 4 Cours Victor Hugo · 45000 Orléans"},{"company":"Auto-école Cassegrain (Martin)","contact":"Hicham AMRI","phone":"02 38 80 08 08","notes":"📍 70 Bd Alexandre Martin · 45000 Orléans"},{"company":"Cassegrain Formation Pro","contact":"Hicham AMRI","phone":"02 38 24 80 90","notes":"📍 Rue des Balletières, ZAC Coigneau · 45100 Orléans"},{"company":"Point Conduite Orléans","contact":"","phone":"02 38 62 88 77","notes":"📍 70 Bd Alexandre Martin · 45000 Orléans · ⭐ 2,7 ★ (13)"},{"company":"Stych Auto-École Orléans","contact":"","phone":"02 38 70 66 97","notes":"📍 5 All. Anne du Bourg · 45000 Orléans · ⭐ 4,3 ★ (330)"},{"company":"Dunois Conduite","contact":"","phone":"02 38 54 33 84","notes":"📍 8 Place Dunois · 45000 Orléans · ⭐ 5,0 ★ (301)"},{"company":"Auto école de la Gare","contact":"","phone":"06 67 99 80 67","notes":"📍 8 Rue de la Gare · 45000 Orléans · ⭐ 5,0 ★ (76)"},{"company":"Saint-Marceau Conduite","contact":"","phone":"02 38 56 02 00","notes":"📍 25 Av. Saint-Fiacre · 45100 Orléans · ⭐ 4,8 ★ (66)"},{"company":"Orléans Conduite (Madeleine)","contact":"Ludovic SCHOLENT","phone":"02 38 62 90 62","notes":"📍 33 Rue du Faubourg Madeleine · 45000 Orléans · ⭐ 4,6 ★ (89)"},{"company":"Orléans Conduite (Bourgogne)","contact":"Ludovic SCHOLENT","phone":"02 38 53 80 55","notes":"📍 1 Rue du Faubourg de Bourgogne · 45000 Orléans · ⭐ 4,8 ★ (81)"},{"company":"Annabel (indépendante)","contact":"Annabel","phone":"06 23 24 42 29","notes":"📍 Allée Anne du Bourg · 45000 Orléans · ⭐ 5,0 ★ (96)"},{"company":"ECF Orléans","contact":"N/D (réseau ECF)","phone":"02 43 21 54 80","notes":"📍 52 Rue Eugène Vignat · 45000 Orléans"},{"company":"Conduite-Passion","contact":"Dany FAUNY","phone":"02 45 40 45 19","notes":"📍 146 Rue du Faubourg Bannier · 45000 Orléans"},{"company":"Auto-école des Murlins","contact":"","phone":"02 38 43 08 14","notes":"📍 223 Rue des Murlins · 45000 Orléans"},{"company":"Auto-école Soteau","contact":"Adrien ARDON","phone":"06 61 02 25 01","notes":"📍 79 Bd Marie Stuart · 45000 Orléans"},{"company":"Auto-École Campus / De la Source","contact":"Ericka CIHELKA","phone":"","notes":"📍 14 Av. Président Kennedy · 45100 Orléans"},{"company":"Conduite Plus","contact":"","phone":"","notes":"📍 56 Bd Alexandre Martin · 45000 Orléans"},{"company":"Permis Pas Cher","contact":"","phone":"","notes":"📍 5 Rue Colombier · 45000 Orléans"},{"company":"TFC Conduite","contact":"","phone":"","notes":"📍 7 Pl. de la Nouvelle Orléans · 45000 Orléans"},{"company":"Olivier Conduite","contact":"","phone":"","notes":"📍 93 Rue Eugène Turbat · 45000 Orléans"},{"company":"Auto-Ecole Serreau (Orléans)","contact":"","phone":"","notes":"📍 26 Place Gén de Gaulle · 45000 Orléans"},{"company":"Saran Conduite","contact":"","phone":"02 38 84 46 63","notes":"📍 585 Ancienne Route de Chartres · 45770 Saran"},{"company":"Auto École Serreau (Saran)","contact":"","phone":"","notes":"📍 1771 Rue Montaran · 45770 Saran"},{"company":"Wise Up École de Conduite","contact":"","phone":"02 38 83 70 28","notes":"📍 220 Rue du Bourg · 45770 Saran"},{"company":"Prélude Formations","contact":"","phone":"02 38 49 00 00","notes":"📍 45 Rue Jean Jaurès · 45400 Fleury-les-Aubrais"},{"company":"Declic Conduite","contact":"","phone":"","notes":"📍 36 Rue Abbé Pasty · 45400 Fleury-les-Aubrais"},{"company":"École de Conduite Les Aubrais","contact":"","phone":"","notes":"📍 330 Rue Faubourg Bannier · 45400 Fleury-les-Aubrais"},{"company":"AEC 2 (Fleury)","contact":"","phone":"","notes":"📍 7 Place Abbé Pasty · 45400 Fleury-les-Aubrais"},{"company":"Auto-Nome Conduite","contact":"","phone":"","notes":"📍 114 Av. Georges Clemenceau · 45140 St-Jean-de-la-Ruelle"},{"company":"Auto École Montagne Saint Jean","contact":"","phone":"","notes":"📍 66 Rue Charles Beauhaire · 45140 St-Jean-de-la-Ruelle"},{"company":"Centre Conduite Abraysien","contact":"","phone":"02 38 55 02 81","notes":"📍 13 Rue Léon Blum · 45800 St-Jean-de-Braye"},{"company":"EFCSR Thierry Conduite","contact":"","phone":"02 38 86 79 15","notes":"📍 121 Rue Jean Zay · 45800 St-Jean-de-Braye"},{"company":"AEC2 (St-Jean-de-Braye)","contact":"","phone":"02 38 23 73 65","notes":"📍 26 Rue Mairie · 45800 St-Jean-de-Braye"},{"company":"Auto-Ecole d'Olivet","contact":"","phone":"02 38 69 00 17","notes":"📍 630 Rue Marcel Belot · 45160 Olivet"},{"company":"Easy Conduite","contact":"","phone":"06 15 05 38 76","notes":"📍 606 Rue du Loiret · 45160 Olivet"},{"company":"École de Conduite Gilles (Bergeresse)","contact":"","phone":"02 38 45 85 07","notes":"📍 806 Rue de la Bergeresse · 45160 Olivet"},{"company":"École de Conduite Gilles (Archette)","contact":"","phone":"02 38 63 96 72","notes":"📍 58 Pl. Anciens Combattants · 45160 Olivet"},{"company":"La Chapelle Conduite","contact":"","phone":"02 38 73 60 21","notes":"📍 24 Rue Nationale · 45380 La Chapelle-St-Mesmin"},{"company":"Auto Ecole Casella","contact":"","phone":"","notes":"📍 La Chapelle-Saint-Mesmin · 45380"},{"company":"Montagne André","contact":"André MONTAGNE","phone":"","notes":"📍 27 Rue Château d'Eau · 45140 Ingré"},{"company":"Soltani Miloud (Ingré)","contact":"Miloud SOLTANI","phone":"","notes":"📍 258 Route Nationale · 45140 Ingré"},{"company":"Auto-Ecole de Semoy","contact":"","phone":"","notes":"📍 30 Place François Mitterrand · 45400 Semoy"},{"company":"École Conduite C.Bouin","contact":"","phone":"","notes":"📍 2 Rue Verdun · 45760 Boigny-sur-Bionne"},{"company":"Prestige Auto-École","contact":"","phone":"","notes":"📍 20 Rue Écoles · 45560 Saint-Denis-en-Val"},{"company":"Auto École Chécy","contact":"Tony TISSET","phone":"","notes":"📍 3 Avenue Jean Beaudoin · 45430 Chécy (~12 km)"},{"company":"Auto École Bouin (Jargeau)","contact":"","phone":"","notes":"📍 9 Bd du Saumon · 45150 Jargeau (~20 km)"},{"company":"Auto Ecole des Remparts","contact":"","phone":"","notes":"📍 33 Rue Porte d'Amont · 45130 Meung-sur-Loire (~18 km)"},{"company":"Auto-école La Magdunoise","contact":"","phone":"","notes":"📍 16 Rue des Cordeliers · 45130 Meung-sur-Loire (~18 km)"}];
@@ -8756,7 +8818,11 @@ function renderLeads(){
   // Auto-seed annuaire Orléans à la 1ère visite (par profil)
   maybeAutoSeedAutoecoles();
   const search=(document.getElementById('leadSearch')?.value||'').toLowerCase();
-  const my = myLeads();
+  const my = visibleLeads();
+  const shared = hasCommerce() && commerceMembers().length>1;
+  renderOwnerPills('leadOwnerFilters', sharedLeads().map(l=>l.owner), 'lead');
+  const ltEl=document.getElementById('leadPageTitle'); if(ltEl) ltEl.textContent = shared ? 'Leads' : 'Mes leads';
+  const lhEl=document.getElementById('leadPageHint'); if(lhEl) lhEl.textContent = shared ? 'Les leads de '+commerceMembers().map(m=>memberFirstName(m.id)).join(' et ')+', visibles par vous deux. Les autres profils ne voient que les leurs.' : 'Ton pipeline commercial perso — invisible aux autres profils.';
 
   // Filtres
   const filters = [{k:'all', l:'Tous', cnt:my.length, cls:''}].concat(
@@ -8848,7 +8914,7 @@ function renderLeads(){
     const checkColor=advancedStatus?'background:var(--green);border-color:var(--green);color:#fff':'background:transparent;border:2px solid rgba(255,255,255,.25);color:transparent';
     return `<tr ondblclick="openLeadEdit('${l.id}')" style="cursor:pointer">
       <td style="text-align:center;padding:8px 4px"><div onclick="event.stopPropagation();toggleLeadContacted('${l.id}')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;transition:all .15s;${checkColor}" title="${advancedStatus?'Décocher (revenir à Nouveau)':'Cocher = marquer comme Contacté'}">${advancedStatus?'✓':''}</div></td>
-      <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}</td>
+      <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}${shared?`<div style="margin-top:3px">${ownerBadge(l.owner)}</div>`:''}</td>
       <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${escapeHtml(l.email)}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
       <td><select class="lead-st lead-inline-st ${st.cls}" title="Changer le statut" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','status',this.value)">${LEAD_STATUSES.map(s=>`<option value="${s.k}"${s.k===st.k?' selected':''}>${s.l}</option>`).join('')}</select></td>
       <td style="font-size:12px"><input type="date" class="lead-inline-date ${nextCls}" value="${escapeHtml(l.nextAction||'')}" title="Date à laquelle recontacter" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','nextAction',this.value)">${nextHint?`<div class="lead-next-hint ${nextCls}">${nextHint}</div>`:''}</td>
@@ -8928,6 +8994,8 @@ function openLeadEdit(id){
   document.getElementById('le_signDate').value = l?.signDate || '';
   document.getElementById('le_notes').value = l?.notes || '';
   document.getElementById('le_delBtn').style.display = id ? 'inline-flex' : 'none';
+  const lor=document.getElementById('le_ownerRow');
+  if(lor){ const sh=hasCommerce()&&commerceMembers().length>1; lor.style.display=sh?'':'none'; if(sh) fillOwnerSelect('le_owner', l?l.owner:currentUser.id); }
   document.getElementById('leadEditOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('le_company').focus(),60);
 }
@@ -8955,13 +9023,15 @@ function saveLead(){
     data.signDate=todayISO();
     autoDated=true;
   }
+  const ownSel=document.getElementById('le_owner');
+  const chosenOwner=(hasCommerce()&&ownSel&&document.getElementById('le_ownerRow')?.style.display!=='none'&&ownSel.value)?ownSel.value:null;
   if(_leadEditingId){
     const l=leads.find(x=>x.id===_leadEditingId);
-    if(l) Object.assign(l, data, {updatedAt:new Date().toISOString()});
+    if(l) Object.assign(l, data, chosenOwner?{owner:chosenOwner}:{}, {updatedAt:new Date().toISOString()});
   } else {
     leads.push({
       id:'lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
-      owner:currentUser.id,
+      owner:chosenOwner||currentUser.id,
       createdAt:new Date().toISOString(),
       ...data
     });
@@ -10486,12 +10556,12 @@ function mUrgentMine(){ const tk=todayISO(); return mMyTodos().filter(t=>todoSta
 // ── En-tête ──
 function mSubtitle(p){
   try{
-    if(p==='menu') return (currentUser.name||'')+' · '+(isAdmin()?'Admin':'Équipe');
+    if(p==='menu') return (currentUser.name||'')+' · '+roleLabel(currentUser.role);
     if(p==='clients'){const a=clients.filter(c=>c.status!=='Fin de contrat').length,l=clients.filter(isLate).length;return a+' clients'+(l?' · '+l+' en retard de paiement':' · aucun retard');}
     if(p==='fins') return clients.filter(c=>c.status==='Fin de contrat').length+' anciens clients';
     if(p==='contacts') return 'Appeler ou écrire en un geste';
     if(p==='prospection') return prospects.length+' prospects';
-    if(p==='leads'){const n=myLeads().length;return n+' lead'+(n>1?'s':'')+' · visibles par toi seul';}
+    if(p==='leads'){const n=sharedLeads().length;return n+' lead'+(n>1?'s':'')+(hasCommerce()&&commerceMembers().length>1?' · partagés avec '+commerceMembers().filter(m=>m.id!==currentUser.id).map(m=>memberFirstName(m.id)).join(', '):' · visibles par toi seul');}
     if(p==='todo'){const n=mMyTodos().filter(t=>todoState(t)!=='done').length;return n+' tâche'+(n>1?'s':'')+' pour toi';}
     if(p==='agenda') return 'Tape un jour pour changer ton statut';
   }catch(e){}
@@ -10773,13 +10843,13 @@ function mListProsp(){
 // ── LEADS (privés à chaque profil) ──
 function mSetLeadFilter(k){ mLeadFilter=k; mRenderScreen(); }
 function mScreenLeads(){
-  const my=myLeads(); const tk=todayISO();
+  const my=sharedLeads(); const tk=todayISO();
   const fl=[{k:'all',l:'Tous',n:my.length},{k:'today',l:'⏰ À relancer',n:my.filter(l=>l.nextAction&&l.nextAction<=tk&&l.status!=='signe'&&l.status!=='perdu').length}].concat(LEAD_STATUSES.map(s=>({k:s.k,l:s.l,n:my.filter(l=>l.status===s.k).length})).filter(f=>f.n));
   return mSearchBox('leads','Entreprise, contact, note…')+mFilterChips(fl,mLeadFilter,'mSetLeadFilter')+`<div class="m-list" id="mList">${mListLeads()}</div>`;
 }
 function mListLeads(){
   const tk=todayISO();
-  let list=myLeads();
+  let list=sharedLeads();
   if(mLeadFilter==='today') list=list.filter(l=>l.nextAction&&l.nextAction<=tk&&l.status!=='signe'&&l.status!=='perdu');
   else if(mLeadFilter!=='all') list=list.filter(l=>l.status===mLeadFilter);
   if(mQ.leads) list=list.filter(l=>[l.company,l.contact,l.notes,l.phone,l.email,l.prestation].join(' ').toLowerCase().includes(mQ.leads));
@@ -10790,7 +10860,7 @@ function mListLeads(){
     const na=l.nextAction?String(l.nextAction).slice(0,10):'';
     const late=na&&na<tk&&l.status!=='signe'&&l.status!=='perdu';
     const tel=mTel(l.phone);
-    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}</div>${na?`<div class="m-note ${late?'red':''}">${late?'⚠️ Relance en retard · ':na===tk?'⏰ Relance aujourd\'hui · ':'À contacter le · '}${mEsc(mDateFr(na))}</div>`:''}${l.nextStep?`<div class="m-note">➡️ ${mEsc(l.nextStep)}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
+    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${(hasCommerce()&&commerceMembers().length>1&&l.owner!==currentUser.id)?'<span>· 👤 '+mEsc(memberFirstName(l.owner))+'</span>':''}${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}</div>${na?`<div class="m-note ${late?'red':''}">${late?'⚠️ Relance en retard · ':na===tk?'⏰ Relance aujourd\'hui · ':'À contacter le · '}${mEsc(mDateFr(na))}</div>`:''}${l.nextStep?`<div class="m-note">➡️ ${mEsc(l.nextStep)}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
   }).join('');
 }
 
