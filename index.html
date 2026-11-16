@@ -4704,7 +4704,7 @@ function renderOwnerPills(elId,owners,kind){
 function ownerBadge(id){
   const m=(typeof teamMembers!=='undefined'?teamMembers:[]).find(x=>x.id===id);
   const col=(m&&m.color)||'#116776';
-  return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;background:${col}55;border:1px solid ${col};color:#f4f2ed;white-space:nowrap">👤 ${escapeHtml(memberFirstName(id))}</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:8px;background:${col};color:#fff;white-space:nowrap">👤 ${escapeHtml(memberFirstName(id))}</span>`;
 }
 function fillOwnerSelect(selId,value){
   const sel=document.getElementById(selId); if(!sel) return;
