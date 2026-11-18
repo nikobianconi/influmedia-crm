@@ -2000,6 +2000,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 .lead-st{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;white-space:nowrap}
 .lead-st-nouveau {background:rgba(52,152,219,.18);color:#3498db}
 .lead-st-contacte{background:rgba(243,156,18,.18);color:#f39c12}
+.lead-st-mail    {background:rgba(0,188,212,.18);color:#00bcd4}
 .lead-st-interesse{background:rgba(255,193,7,.18);color:#ffc107}
 .lead-st-rdv     {background:rgba(155,89,182,.18);color:#9b59b6}
 .lead-st-devis   {background:rgba(26,143,163,.18);color:var(--teal-light)}
@@ -2007,6 +2008,7 @@ select:focus{box-shadow:0 0 0 3px rgba(17,103,118,.18)!important;border-color:va
 .lead-st-perdu   {background:rgba(127,140,141,.18);color:#7f8c8d}
 [data-theme="day"] .lead-st-nouveau {background:rgba(37,99,235,.12);color:#2563EB}
 [data-theme="day"] .lead-st-contacte{background:rgba(217,119,6,.14);color:#D97706}
+[data-theme="day"] .lead-st-mail    {background:rgba(8,145,178,.12);color:#0891B2}
 [data-theme="day"] .lead-st-interesse{background:rgba(202,138,4,.14);color:#CA8A04}
 [data-theme="day"] .lead-st-rdv     {background:rgba(124,58,237,.12);color:#7C3AED}
 [data-theme="day"] .lead-st-devis   {background:rgba(14,90,107,.12);color:#0E5A6B}
@@ -2717,16 +2719,16 @@ document.addEventListener('DOMContentLoaded',function(){
 <style>
 .pipeline-board{display:flex;gap:12px;overflow-x:auto;padding:16px 0;min-height:calc(100vh - 200px)}
 .pipeline-col{min-width:200px;flex:0 0 200px;background:var(--dark2,#0d2027);border-radius:14px;border:1px solid var(--border,rgba(255,255,255,.08));display:flex;flex-direction:column}
-.pipeline-col-header{padding:12px 14px;border-bottom:2px solid var(--stage-color,#116776);display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem;color:#fff}
-.pipeline-count{margin-left:auto;background:rgba(255,255,255,.1);border-radius:99px;padding:2px 8px;font-size:.78rem}
+.pipeline-col-header{padding:12px 14px;border-bottom:2px solid var(--stage-color,#116776);display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem;color:var(--cream)}
+.pipeline-count{margin-left:auto;background:var(--dark3);color:var(--cream);border-radius:99px;padding:2px 8px;font-size:.78rem}
 .pipeline-col-body{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto}
-.pipeline-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .2s}
-.pipeline-card:hover{background:rgba(255,255,255,.1)}
-.pipeline-card-name{font-weight:600;font-size:.88rem;color:#f4f2ed;margin-bottom:4px}
-.pipeline-card-tag{display:inline-block;font-size:.72rem;background:rgba(17,103,118,.3);color:#7dd3e0;border-radius:6px;padding:1px 7px;margin-bottom:4px}
-.pipeline-card-notes{font-size:.75rem;color:rgba(244,242,237,.45);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pipeline-card-move{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;border-top:1px solid rgba(255,255,255,.07);padding-top:6px}
-.pmove-btn{background:rgba(255,255,255,.07);border:none;border-radius:6px;padding:3px 7px;font-size:.72rem;color:rgba(244,242,237,.6);cursor:pointer;transition:background .15s}
+.pipeline-card{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .2s}
+.pipeline-card:hover{background:var(--mid)}
+.pipeline-card-name{font-weight:600;font-size:.88rem;color:var(--cream);margin-bottom:4px}
+.pipeline-card-tag{display:inline-block;font-size:.72rem;background:rgba(17,103,118,.18);color:var(--teal-light);border-radius:6px;padding:1px 7px;margin-bottom:4px}
+.pipeline-card-notes{font-size:.75rem;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pipeline-card-move{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;border-top:1px solid var(--border);padding-top:6px}
+.pmove-btn{background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:.72rem;color:var(--muted);cursor:pointer;transition:background .15s}
 .pmove-btn:hover{background:rgba(17,103,118,.5);color:#fff}
 </style>
 <div class="page-header">
@@ -2767,6 +2769,7 @@ document.addEventListener('DOMContentLoaded',function(){
         <select id="le_status" style="width:100%">
           <option value="nouveau">🆕 Nouveau</option>
           <option value="contacte">📞 Contacté</option>
+          <option value="mail">✉️ Mail envoyé</option>
           <option value="interesse">🌟 Intéressé</option>
           <option value="rdv">📅 RDV pris</option>
           <option value="devis">📄 Devis envoyé</option>
@@ -2789,17 +2792,9 @@ document.addEventListener('DOMContentLoaded',function(){
       </div>
     </div>
     <div class="fg-row">
-      <div class="fg"><label>🏷️ Prestation *</label>
-        <select id="le_presta" style="width:100%">
-          <option value="">— Choisir —</option>
-          <option value="Ouiglass">🚗 Ouiglass</option>
-          <option value="Influmedia">⚡ Influmedia</option>
-          <option value="Autre">📦 Autre</option>
-        </select>
-      </div>
+      <div class="fg"><label>📮 Code postal</label><input id="le_cp" inputmode="numeric" maxlength="5" placeholder="Ex. 45000"></div>
       <div class="fg"><label>📅 Contacter le</label><input id="le_next" type="date"></div>
     </div>
-    <div class="fg"><label>➡️ Prochaine action</label><input id="le_nextStep" placeholder="Ex. rappeler pour le devis, envoyer la plaquette…"></div>
     <div class="fg"><label>📅 Date de finalisation (signature &amp; paiement) <span style="color:var(--muted);font-weight:400;font-size:11px">à remplir quand le contrat est signé</span></label><input id="le_signDate" type="date"></div>
     <div class="fg lead-notes-fg">
       <label>📒 Notes / Historique <span style="color:var(--muted);font-weight:400;font-size:11px">compte-rendus d'appels, prochaines étapes…</span></label>
@@ -8710,6 +8705,7 @@ if(backfillSignDates()){
 const LEAD_STATUSES = [
   {k:'nouveau',  l:'🆕 Nouveau',     cls:'lead-st-nouveau'},
   {k:'contacte', l:'📞 Contacté',    cls:'lead-st-contacte'},
+  {k:'mail',     l:'✉️ Mail envoyé', cls:'lead-st-mail'},
   {k:'interesse',l:'🌟 Intéressé',   cls:'lead-st-interesse'},
   {k:'rdv',      l:'📅 RDV pris',    cls:'lead-st-rdv'},
   {k:'devis',    l:'📄 Devis envoyé',cls:'lead-st-devis'},
@@ -8861,6 +8857,7 @@ function renderLeads(){
     (l.contact||'').toLowerCase().includes(search) ||
     (l.notes||'').toLowerCase().includes(search) ||
     (l.nextStep||'').toLowerCase().includes(search) ||
+    (l.postalCode||'').toLowerCase().includes(search) ||
     (l.email||'').toLowerCase().includes(search)
   );
   // Tri : prochaine action ↑ puis création ↓
@@ -8871,7 +8868,7 @@ function renderLeads(){
   });
 
   document.getElementById('leadHead').innerHTML = `
-    <th style="width:32px;text-align:center" title="Cocher = marquer comme Contacté">✓</th><th>Entreprise</th><th>Contact</th><th>Statut</th><th>📅 Contacter le</th><th>Prochaine action</th><th>Note</th><th></th>
+    <th style="width:32px;text-align:center" title="Cocher = marquer comme Contacté">✓</th><th>Entreprise</th><th>Contact</th><th>Code postal</th><th>Statut</th><th>📅 Contacter le</th><th>Note</th><th></th>
   `;
   const body=document.getElementById('leadBody');
   if(!list.length){
@@ -8887,7 +8884,7 @@ function renderLeads(){
       const diff = Math.round((d-today)/86400000);
       const dateStr = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
       let cls = ''; let prefix = '';
-      if(diff<0){cls='lead-next-late';prefix='⚠ Retard '+(-diff)+'j · ';}
+      if(diff<0){cls='';prefix='';}
       else if(diff===0){cls='lead-next-soon';prefix="📌 Aujourd'hui · ";}
       else if(diff<=3){cls='lead-next-soon';prefix='Dans '+diff+'j · ';}
       nextHtml = `<span class="${cls}">${prefix}${dateStr}</span>`;
@@ -8903,6 +8900,7 @@ function renderLeads(){
       signHtml=`<span style="color:var(--orange);font-style:italic;font-size:11px">à renseigner</span>`;
     }
     const notePreview = l.notes ? `<span title="${escapeHtml(l.notes)}">${escapeHtml((l.notes||'').slice(0,60))}${escapeHtml(l.notes.length>60?'…':'')}</span>` : '<span style="color:var(--muted)">—</span>';
+    const cpHtml = l.postalCode ? `<span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px">${escapeHtml(l.postalCode)}</span>` : '<span style="color:var(--muted)">—</span>';
     let prestaBadge='';
     if(l.prestation){
       const pIcon={'Ouiglass':'🚗','Influmedia':'⚡','Autre':'📦'}[l.prestation]||'🏷️';
@@ -8910,15 +8908,15 @@ function renderLeads(){
       prestaBadge=`<div style="margin-top:3px"><span style="display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;padding:2px 8px;border-radius:8px;background:${pColor}">${pIcon} ${escapeHtml(l.prestation)}</span></div>`;
     }
     // Checkbox : cochée si statut "contacté" ou +
-    const advancedStatus=['contacte','interesse','rdv','devis','signe'].includes(l.status);
+    const advancedStatus=['contacte','mail','interesse','rdv','devis','signe'].includes(l.status);
     const checkColor=advancedStatus?'background:var(--green);border-color:var(--green);color:#fff':'background:transparent;border:2px solid rgba(255,255,255,.25);color:transparent';
     return `<tr ondblclick="openLeadEdit('${l.id}')" style="cursor:pointer">
       <td style="text-align:center;padding:8px 4px"><div onclick="event.stopPropagation();toggleLeadContacted('${l.id}')" style="width:24px;height:24px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;transition:all .15s;${checkColor}" title="${advancedStatus?'Décocher (revenir à Nouveau)':'Cocher = marquer comme Contacté'}">${advancedStatus?'✓':''}</div></td>
-      <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${prestaBadge}${shared?`<div style="margin-top:3px">${ownerBadge(l.owner)}</div>`:''}</td>
+      <td><strong>${escapeHtml(l.company||'Sans nom')}</strong>${shared?`<div style="margin-top:3px">${ownerBadge(l.owner)}</div>`:''}</td>
       <td style="font-size:12px;color:var(--muted)">${escapeHtml(contactInfo)||'—'}${l.email?`<br><a href="mailto:${escapeHtml(l.email)}" onclick="event.stopPropagation()" style="color:var(--teal-light);font-size:11px">${escapeHtml(l.email)}</a>`:''}</td>
+      <td style="font-size:12px">${cpHtml}</td>
       <td><select class="lead-st lead-inline-st ${st.cls}" title="Changer le statut" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','status',this.value)">${LEAD_STATUSES.map(s=>`<option value="${s.k}"${s.k===st.k?' selected':''}>${s.l}</option>`).join('')}</select></td>
       <td style="font-size:12px"><input type="date" class="lead-inline-date ${nextCls}" value="${escapeHtml(l.nextAction||'')}" title="Date à laquelle recontacter" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onchange="setLeadField('${l.id}','nextAction',this.value)">${nextHint?`<div class="lead-next-hint ${nextCls}">${nextHint}</div>`:''}</td>
-      <td style="font-size:12px"><input type="text" class="lead-inline-text" value="${escapeHtml(l.nextStep||'')}" placeholder="—" title="Prochaine action (Entrée pour valider)" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){this.blur();}" onchange="setLeadField('${l.id}','nextStep',this.value.trim())"></td>
       <td style="font-size:11px;color:var(--muted);max-width:200px">${notePreview}</td>
       <td><div class="actions-cell">
         <button class="act-btn" onclick="event.stopPropagation();quickNoteLead('${l.id}')" title="Note rapide" style="background:rgba(243,156,18,.18);color:#f39c12">📝</button>
@@ -8988,9 +8986,8 @@ function openLeadEdit(id){
   document.getElementById('le_email').value = l?.email || '';
   document.getElementById('le_status').value = l?.status || 'nouveau';
   document.getElementById('le_source').value = l?.source || '';
-  document.getElementById('le_presta').value = l?.prestation || '';
+  document.getElementById('le_cp').value = l?.postalCode || '';
   document.getElementById('le_next').value = l?.nextAction || '';
-  document.getElementById('le_nextStep').value = l?.nextStep || '';
   document.getElementById('le_signDate').value = l?.signDate || '';
   document.getElementById('le_notes').value = l?.notes || '';
   document.getElementById('le_delBtn').style.display = id ? 'inline-flex' : 'none';
@@ -9010,9 +9007,8 @@ function saveLead(){
     email:document.getElementById('le_email').value.trim(),
     status:document.getElementById('le_status').value,
     source:document.getElementById('le_source').value,
-    prestation:document.getElementById('le_presta').value||'',
+    postalCode:document.getElementById('le_cp').value.trim(),
     nextAction:document.getElementById('le_next').value||'',
-    nextStep:document.getElementById('le_nextStep').value.trim(),
     signDate:document.getElementById('le_signDate').value||'',
     notes:document.getElementById('le_notes').value.trim()
   };
@@ -10852,7 +10848,7 @@ function mListLeads(){
   let list=sharedLeads();
   if(mLeadFilter==='today') list=list.filter(l=>l.nextAction&&l.nextAction<=tk&&l.status!=='signe'&&l.status!=='perdu');
   else if(mLeadFilter!=='all') list=list.filter(l=>l.status===mLeadFilter);
-  if(mQ.leads) list=list.filter(l=>[l.company,l.contact,l.notes,l.phone,l.email,l.prestation].join(' ').toLowerCase().includes(mQ.leads));
+  if(mQ.leads) list=list.filter(l=>[l.company,l.contact,l.notes,l.phone,l.email,l.postalCode].join(' ').toLowerCase().includes(mQ.leads));
   list.sort((a,b)=>{const x=a.nextAction||'9999',y=b.nextAction||'9999';return x.localeCompare(y);});
   if(!list.length) return '<div class="m-empty">Aucun lead ici</div>';
   return list.map(l=>{
@@ -10860,7 +10856,7 @@ function mListLeads(){
     const na=l.nextAction?String(l.nextAction).slice(0,10):'';
     const late=na&&na<tk&&l.status!=='signe'&&l.status!=='perdu';
     const tel=mTel(l.phone);
-    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${(hasCommerce()&&commerceMembers().length>1&&l.owner!==currentUser.id)?'<span>· 👤 '+mEsc(memberFirstName(l.owner))+'</span>':''}${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}</div>${na?`<div class="m-note ${late?'red':''}">${late?'⚠️ Relance en retard · ':na===tk?'⏰ Relance aujourd\'hui · ':'À contacter le · '}${mEsc(mDateFr(na))}</div>`:''}${l.nextStep?`<div class="m-note">➡️ ${mEsc(l.nextStep)}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
+    return `<div class="m-client tap" onclick="openLeadEdit(${mArg(l.id)})"><div class="ci"><div class="cn">${mEsc(l.company||l.contact||'Lead')}</div><div class="cs"><span class="m-st ${mAttr(st.cls)}">${mEsc(st.l)}</span>${(hasCommerce()&&commerceMembers().length>1&&l.owner!==currentUser.id)?'<span>· 👤 '+mEsc(memberFirstName(l.owner))+'</span>':''}${l.contact&&l.company?'<span>· '+mEsc(l.contact)+'</span>':''}${l.postalCode?'<span>· '+mEsc(l.postalCode)+'</span>':''}</div>${na?`<div class="m-note">${na===tk?'⏰ Relance aujourd\'hui · ':'À contacter le · '}${mEsc(mDateFr(na))}</div>`:''}</div><div class="m-acts">${tel?`<a class="m-act" href="tel:${mAttr(tel)}" onclick="event.stopPropagation()" aria-label="Appeler">📞</a>`:''}</div></div>`;
   }).join('');
 }
 
