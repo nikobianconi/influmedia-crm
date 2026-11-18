@@ -960,6 +960,19 @@ body.tab-is-leads #chatFab.visible + #leadFab{display:flex}
 .postit-add .pl{font-size:42px;line-height:1;font-weight:300;opacity:.5;transition:opacity .2s}
 .postit-add:hover{border-color:var(--teal-light);color:var(--teal-light);background:rgba(17,103,118,.06);transform:translateY(-3px)}
 .postit-add:hover .pl{opacity:1}
+/* ── To-Do : ordre libre des post-its, glisser-déposer (18/11/2026) ── */
+.todo-sortable > .postit{cursor:grab}
+.todo-sortable > .postit,.todo-sortable > .m-todo{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.todo-sortable > .todo-drag-src{opacity:.3!important;filter:grayscale(.6)!important;box-shadow:none!important;outline:2px dashed rgba(26,138,158,.8);outline-offset:4px}
+body.todo-dragging{-webkit-user-select:none;user-select:none}
+body.todo-dragging,body.todo-dragging *{cursor:grabbing!important}
+body.todo-dragging .todo-sortable > [data-tid]:not(.todo-drag-src){pointer-events:none}
+.todo-drag-ghost{position:fixed!important;left:0!important;top:0!important;margin:0!important;z-index:9999;pointer-events:none!important;transform:none!important;translate:0 0;opacity:1!important;filter:none!important;transition:scale .18s ease-out,rotate .18s ease-out!important;box-shadow:0 18px 40px rgba(0,0,0,.45),0 6px 14px rgba(0,0,0,.3)!important}
+.todo-drag-ghost.lifted{scale:1.04;rotate:-1.5deg}
+.m-todo.todo-drag-ghost.lifted{scale:1.03;rotate:0deg}
+.postit:focus-visible{outline:3px solid #1A8A9E;outline-offset:4px}
+.todo-sort-hint{text-align:center;color:var(--muted);font-size:12.5px;margin-top:4px}
+@media (prefers-reduced-motion: reduce){.todo-drag-ghost{transition:none!important}.todo-drag-ghost.lifted{scale:1;rotate:0deg}}
 @media(max-width:600px){.postit-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:22px 18px}.postit{padding:24px 14px 14px;min-height:170px}.postit-title{font-size:15px}.postit-notes{font-size:11px}}
 
 /* ===== TO-DO TABS ===== */
@@ -5865,7 +5878,226 @@ function toggleTodoPersoHidden(){
   toast(todoPersoHidden?'🙈 Todos perso masquées':'👁 Todos perso affichées');
 }
 
+// ══ To-Do : ordre libre des post-its (glisser-déposer) ══
+// Choix de Niko (18/11/2026) : il attrape un post-it et le pose où il veut pour classer ses notes.
+// Chaque todo porte un « order » (global, partagé par la synchro). Les notes jamais déplacées
+// gardent l'ancien tri automatique (en cours, puis par échéance) et se placent après les autres.
+function todoAutoCmp(a,b){
+  const r={in_progress:0,todo:1,done:2};
+  const sa=r[todoState(a)]??1, sb=r[todoState(b)]??1;
+  if(sa!==sb) return sa-sb;
+  if(!a.due&&!b.due) return 0; if(!a.due) return 1; if(!b.due) return -1;
+  return a.due.localeCompare(b.due);
+}
+function todoHasOrder(t){ return typeof t.order==='number' && isFinite(t.order); }
+function todoOrderCmp(a,b){
+  const oa=todoHasOrder(a), ob=todoHasOrder(b);
+  if(oa&&ob) return a.order-b.order;
+  if(oa) return -1; if(ob) return 1;
+  return todoAutoCmp(a,b);
+}
+// Ordre d'une nouvelle note : à la fin. null tant que personne n'a jamais rien déplacé.
+function todoNextOrder(){
+  let m=null; todos.forEach(t=>{ if(todoHasOrder(t)&&(m===null||t.order>m)) m=t.order; });
+  return m===null?null:m+1;
+}
+// Applique l'ordre voulu aux notes affichées (ids dans l'ordre), sans changer la place
+// relative des notes non affichées (autres comptes, recherche en cours, terminées).
+function todoApplyOrder(ids){
+  const all=todos.slice().sort(todoOrderCmp);
+  all.forEach((t,i)=>{ t.order=i; });
+  const set=new Set(ids.map(String));
+  const slots=all.filter(t=>set.has(String(t.id))).map(t=>t.order).sort((a,b)=>a-b);
+  ids.forEach((id,i)=>{ const t=todos.find(x=>String(x.id)===String(id)); if(t&&slots[i]!=null) t.order=slots[i]; });
+  Storage.set('influ_todos',todos);
+}
+var TodoDrag={st:null,pendingRender:false,pendingMobile:false,justDropped:0};
+function todoDragging(){ return !!(TodoDrag.st&&TodoDrag.st.dragging); }
+function todoReduceMotion(){ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(_){ return false; } }
+function todoSortableItem(target){
+  if(!target||!target.closest) return null;
+  if(target.closest('button,a,input,textarea,select,label,.cnote-checkitem-circle')) return null;
+  return target.closest('.todo-sortable > .postit[data-tid], .todo-sortable > .m-todo[data-tid]');
+}
+function todoScrollParent(el){
+  for(let p=el.parentElement;p&&p!==document.body;p=p.parentElement){
+    const oy=getComputedStyle(p).overflowY;
+    if((oy==='auto'||oy==='scroll')&&p.scrollHeight>p.clientHeight) return p;
+  }
+  return document.scrollingElement||document.documentElement;
+}
+// Les autres post-its glissent vers leur nouvelle place (FLIP), en partant de leur position réelle
+function todoFlip(cont,mutate){
+  const els=[...cont.querySelectorAll(':scope > [data-tid], :scope > .postit-add')];
+  const first=new Map(els.map(el=>[el,el.getBoundingClientRect()]));
+  mutate();
+  if(todoReduceMotion()) return;
+  els.forEach(el=>{
+    if(el.getAnimations) el.getAnimations().forEach(a=>a.cancel());
+    const a=first.get(el), b=el.getBoundingClientRect();
+    const dx=a.left-b.left, dy=a.top-b.top;
+    if(Math.abs(dx)<1&&Math.abs(dy)<1) return;
+    if(el.animate) el.animate([{translate:dx+'px '+dy+'px'},{translate:'0px 0px'}],{duration:260,easing:'cubic-bezier(.2,.8,.2,1)'});
+  });
+}
+function todoGhostPos(st){
+  st.tx=st.x-st.offX; st.ty=st.y-st.offY;
+  if(st.ghost) st.ghost.style.translate=st.tx+'px '+st.ty+'px';
+}
+function todoDragStart(st){
+  if(!st.it.isConnected){ todoDragReset(); return; }
+  st.dragging=true;
+  const r=st.it.getBoundingClientRect();
+  st.offX=st.x-r.left; st.offY=st.y-r.top;
+  const g=st.it.cloneNode(true);
+  g.classList.remove('todo-drag-src');
+  g.classList.add('todo-drag-ghost');
+  g.removeAttribute('onclick'); g.removeAttribute('tabindex'); g.removeAttribute('onkeydown');
+  g.setAttribute('aria-hidden','true');
+  g.style.width=r.width+'px'; g.style.height=r.height+'px';
+  document.body.appendChild(g);
+  st.ghost=g;
+  todoGhostPos(st);
+  requestAnimationFrame(()=>{ if(st.ghost) st.ghost.classList.add('lifted'); });
+  st.startIndex=[...st.cont.children].indexOf(st.it);
+  st.it.classList.add('todo-drag-src');
+  document.body.classList.add('todo-dragging');
+  st.scroller=todoScrollParent(st.cont);
+  try{ if(st.touch&&navigator.vibrate) navigator.vibrate(12); }catch(_){}
+}
+function todoDragHit(st){
+  const items=[...st.cont.querySelectorAll(':scope > [data-tid]')].filter(el=>el!==st.it);
+  for(const el of items){
+    const r=el.getBoundingClientRect();
+    if(st.x<r.left||st.x>r.right||st.y<r.top||st.y>r.bottom) continue;
+    const before=st.axis==='y' ? (st.y<r.top+r.height/2) : (st.x<r.left+r.width/2);
+    if(before&&el.previousElementSibling===st.it) return;
+    if(!before&&el.nextElementSibling===st.it) return;
+    todoFlip(st.cont,()=>{ st.cont.insertBefore(st.it, before?el:el.nextElementSibling); });
+    return;
+  }
+}
+function todoAutoScroll(st){
+  if(st.raf) return;
+  const step=()=>{
+    st.raf=null;
+    if(TodoDrag.st!==st||!st.dragging) return;
+    const sc=st.scroller, isDoc=(sc===document.scrollingElement||sc===document.documentElement);
+    const box=isDoc?{top:0,bottom:window.innerHeight}:sc.getBoundingClientRect();
+    const edge=70; let v=0;
+    if(st.y<box.top+edge) v=-Math.min(18,Math.ceil((box.top+edge-st.y)/5));
+    else if(st.y>box.bottom-edge) v=Math.min(18,Math.ceil((st.y-(box.bottom-edge))/5));
+    if(!v) return;
+    const before=sc.scrollTop; sc.scrollTop+=v;
+    if(sc.scrollTop!==before){ todoDragHit(st); st.raf=requestAnimationFrame(step); }
+  };
+  st.raf=requestAnimationFrame(step);
+}
+function todoDragMove(e){
+  const st=TodoDrag.st; if(!st||e.pointerId!==st.id||st.landing) return;
+  st.x=e.clientX; st.y=e.clientY;
+  if(!st.it.isConnected){ todoDragReset(); return; }
+  if(!st.dragging){
+    const dist=Math.hypot(st.x-st.x0, st.y-st.y0);
+    if(st.touch){ if(dist>10) todoDragReset(); return; }   // le doigt fait défiler la page : pas un appui long
+    if(dist<8) return;
+    todoDragStart(st);
+    if(!st.dragging) return;
+  }
+  e.preventDefault();
+  todoGhostPos(st);
+  todoDragHit(st);
+  todoAutoScroll(st);
+}
+function todoDragEnd(e){
+  const st=TodoDrag.st; if(!st||e.pointerId!==st.id||st.landing) return;
+  if(!st.dragging){ todoDragReset(); return; }      // simple clic : la note s'ouvre comme avant
+  TodoDrag.justDropped=Date.now();
+  if(!st.it.isConnected){ todoDragReset(); todoFlushRender(); return; }
+  const ids=[...st.cont.querySelectorAll(':scope > [data-tid]')].map(el=>el.getAttribute('data-tid'));
+  const moved=[...st.cont.children].indexOf(st.it)!==st.startIndex;
+  const finish=()=>{ todoDragReset(); if(moved) todoApplyOrder(ids); todoFlushRender(); };
+  const g=st.ghost;
+  if(g&&g.animate&&!todoReduceMotion()){
+    st.landing=true;
+    const r=st.it.getBoundingClientRect(), cs=getComputedStyle(g);
+    const anim=g.animate([
+      {translate:st.tx+'px '+st.ty+'px', scale:cs.scale==='none'?'1':cs.scale, rotate:cs.rotate==='none'?'0deg':cs.rotate},
+      {translate:r.left+'px '+r.top+'px', scale:'1', rotate:'0deg'}
+    ],{duration:200,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'});
+    anim.onfinish=finish; anim.oncancel=finish;
+  } else finish();
+}
+function todoDragCancelEv(e){
+  const st=TodoDrag.st; if(!st||e.pointerId!==st.id) return;
+  todoDragCancel();
+}
+function todoDragCancel(){
+  const st=TodoDrag.st; if(!st) return;
+  if(st.dragging&&st.it.isConnected&&!st.landing){
+    todoFlip(st.cont,()=>{ const ref=[...st.cont.children].filter(c=>c!==st.it&&c!==st.ghost)[st.startIndex]||null; st.cont.insertBefore(st.it,ref); });
+  }
+  const was=st.dragging;
+  todoDragReset();
+  if(was) todoFlushRender();
+}
+function todoDragReset(){
+  const st=TodoDrag.st; if(!st) return;
+  clearTimeout(st.timer); if(st.raf) cancelAnimationFrame(st.raf);
+  if(st.ghost) st.ghost.remove();
+  if(st.it) st.it.classList.remove('todo-drag-src');
+  document.body.classList.remove('todo-dragging');
+  window.removeEventListener('pointermove',todoDragMove);
+  window.removeEventListener('pointerup',todoDragEnd);
+  window.removeEventListener('pointercancel',todoDragCancelEv);
+  TodoDrag.st=null;
+}
+function todoFlushRender(){
+  TodoDrag.pendingRender=false;
+  try{ if(typeof activeTabName==='function'&&activeTabName()==='todo') renderTodo(); }catch(_){}
+  if(TodoDrag.pendingMobile){ TodoDrag.pendingMobile=false; if(typeof mScheduleRender==='function') mScheduleRender(); }
+}
+document.addEventListener('pointerdown',function(e){
+  if(e.pointerType==='mouse'&&e.button!==0) return;
+  if(TodoDrag.st) return;
+  const it=todoSortableItem(e.target); if(!it) return;
+  const cont=it.parentElement;
+  const st={id:e.pointerId,it,cont,touch:e.pointerType!=='mouse',x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,
+            dragging:false,timer:null,raf:null,axis:cont.classList.contains('m-list')?'y':'xy'};
+  TodoDrag.st=st;
+  // Au doigt : appui long (0,38 s) pour attraper, sinon la page défile normalement
+  if(st.touch) st.timer=setTimeout(()=>{ if(TodoDrag.st===st&&!st.dragging) todoDragStart(st); },380);
+  window.addEventListener('pointermove',todoDragMove,{passive:false});
+  window.addEventListener('pointerup',todoDragEnd);
+  window.addEventListener('pointercancel',todoDragCancelEv);
+},true);
+document.addEventListener('touchmove',function(e){ if(todoDragging()) e.preventDefault(); },{passive:false});
+document.addEventListener('contextmenu',function(e){ if(TodoDrag.st&&TodoDrag.st.touch) e.preventDefault(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&todoDragging()){ e.preventDefault(); todoDragCancel(); } });
+// Après un déplacement, le clic qui suit n'ouvre pas la note
+document.addEventListener('click',function(e){
+  if(TodoDrag.justDropped&&Date.now()-TodoDrag.justDropped<400){ e.stopPropagation(); e.preventDefault(); TodoDrag.justDropped=0; }
+},true);
+// Au clavier (ordinateur) : Entrée ouvre la note, Alt + flèche la déplace d'une place
+function todoCardKey(e,id){
+  if(e.target!==e.currentTarget) return;
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); editTodo(id); return; }
+  if(!e.altKey) return;
+  const dir=(e.key==='ArrowLeft'||e.key==='ArrowUp')?-1:((e.key==='ArrowRight'||e.key==='ArrowDown')?1:0);
+  if(!dir) return;
+  e.preventDefault();
+  const cont=e.currentTarget.parentElement; if(!cont||!cont.classList.contains('todo-sortable')) return;
+  const items=[...cont.querySelectorAll(':scope > [data-tid]')];
+  const i=items.indexOf(e.currentTarget), j=i+dir; if(i<0||j<0||j>=items.length) return;
+  const ids=items.map(el=>el.getAttribute('data-tid'));
+  const tmp=ids[i]; ids[i]=ids[j]; ids[j]=tmp;
+  todoApplyOrder(ids); renderTodo();
+  const el=[...document.querySelectorAll('.todo-sortable > [data-tid]')].find(x=>x.getAttribute('data-tid')===String(id));
+  if(el) el.focus();
+}
+
 function renderTodo(){
+  if(todoDragging()){ TodoDrag.pendingRender=true; return; }
   // Update tab counts — perso = uniquement les miennes (invisibles aux autres comptes)
   const persoCnt=todos.filter(t=>t.bucket==='perso'&&t.owner===currentUser.id&&todoState(t)!=='done').length;
   document.getElementById('todoCntPerso').textContent=todoPersoHidden?'•':persoCnt;
@@ -5917,14 +6149,8 @@ function renderTodo(){
   let filtered=[...list];
   if(search) filtered=filtered.filter(t=>(t.title||'').toLowerCase().includes(search)||(t.notes||'').toLowerCase().includes(search));
 
-  // Sort: in_progress first, then todo, then done. Within group: by due asc.
-  const stateRank={in_progress:0,todo:1,done:2};
-  filtered.sort((a,b)=>{
-    const sa=stateRank[todoState(a)]??1, sb=stateRank[todoState(b)]??1;
-    if(sa!==sb) return sa-sb;
-    if(!a.due&&!b.due) return 0;if(!a.due) return 1;if(!b.due) return -1;
-    return a.due.localeCompare(b.due);
-  });
+  // Ordre libre choisi à la main (glisser-déposer) ; tri automatique pour les notes jamais déplacées
+  filtered.sort(todoOrderCmp);
 
   const body=document.getElementById('todoBody');
 
@@ -5953,7 +6179,7 @@ function renderTodo(){
     const delBtn = st==='done'
       ? `<button class="postit-del-btn" onclick="event.stopPropagation();askDeleteTodo('${t.id}')" title="Supprimer définitivement cette tâche">✕</button>`
       : '';
-    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" title="Cliquer pour modifier">
+    return `<div class="postit p-${t.prio||'normal'} ${cls}" data-tid="${t.id}" onclick="editTodo('${t.id}')" tabindex="0" onkeydown="todoCardKey(event,'${t.id}')" title="Cliquer pour modifier · glisser pour déplacer">
       <button class="postit-status-btn ${stBtnCls}" onclick="event.stopPropagation();cycleTodoState('${t.id}')" title="${stBtnTitle}">${stBtnIcon}</button>
       ${delBtn}
       <div class="postit-title">${escapeHtml(t.title)}</div>
@@ -5972,10 +6198,14 @@ function renderTodo(){
   const faites  = filtered.filter(t=>todoState(t)==='done')
                           .sort((a,b)=>String(b.completedAt||'').localeCompare(String(a.completedAt||'')));
 
-  let html='<div class="postit-grid">';
+  const triable = !todoFocus;   // pas de déplacement dans le filtre « en retard » (perso + équipe mélangés)
+  let html='<div class="postit-grid'+(triable?' todo-sortable':'')+'">';
   html+=actives.map(carteTodo).join('');
   html+=`<div class="postit-add" onclick="openTodoModal()"><span class="pl">+</span><span>Nouvelle note</span></div>`;
   html+='</div>';
+  if(triable && actives.length>1){
+    html+=`<div class="todo-sort-hint">Astuce : attrape un post-it et pose-le où tu veux pour classer tes notes.</div>`;
+  }
 
   if(!actives.length){
     html+=`<div style="text-align:center;color:var(--muted);font-size:12px;margin-top:14px;font-style:italic">Rien à faire ici pour le moment 🎉</div>`;
@@ -6192,7 +6422,8 @@ function saveTodo(){
     }
   } else {
     // Création : owner = créateur (= moi)
-    todos.push({id:newTodoId(),...data,owner:currentUser.id,done:false,createdAt:new Date().toISOString(),completedAt:null});
+    const ordre=todoNextOrder();
+    todos.push({id:newTodoId(),...data,owner:currentUser.id,done:false,createdAt:new Date().toISOString(),completedAt:null,...(ordre!=null?{order:ordre}:{})});
     toast('Todo ajoutée ✓');
   }
   Storage.set('influ_todos',todos);
@@ -10685,7 +10916,7 @@ function renderMobile(force){
   mSyncMetrics();
 }
 let _mRenderTimer=null;
-function mScheduleRender(){ if(!isMobileView()) return; clearTimeout(_mRenderTimer); _mRenderTimer=setTimeout(()=>{ try{ renderMobile(); }catch(e){ console.error('renderMobile',e); } },150); }
+function mScheduleRender(){ if(!isMobileView()) return; clearTimeout(_mRenderTimer); _mRenderTimer=setTimeout(()=>{ if(typeof todoDragging==='function'&&todoDragging()){ TodoDrag.pendingMobile=true; return; } try{ renderMobile(); }catch(e){ console.error('renderMobile',e); } },150); }
 // Chaque enregistrement (fiche, tâche, lead…) rafraîchit l'écran mobile en cours
 (function(){ const _set=Storage.set.bind(Storage); Storage.set=function(k,v){ const r=_set(k,v); mScheduleRender(); return r; }; })();
 
@@ -10874,17 +11105,16 @@ function mCycleTodo(id,ev){ if(ev) ev.stopPropagation(); if(typeof cycleTodoStat
 function mNewTodo(){ todoBucket=(mTodoBucket==='team')?'team':'perso'; openTodoModal(); }
 function mScreenTodo(){
   const list=(mTodoBucket==='team'?mTeamTodos():mMyTodos()).slice();
-  const rank={in_progress:0,todo:1,done:2};
-  list.sort((a,b)=>{const sa=rank[todoState(a)]??1,sb=rank[todoState(b)]??1; if(sa!==sb) return sa-sb; if(!a.due&&!b.due) return 0; if(!a.due) return 1; if(!b.due) return -1; return a.due.localeCompare(b.due);});
-  const open=list.filter(t=>todoState(t)!=='done'), done=list.filter(t=>todoState(t)==='done').slice(-8).reverse();
+  list.sort(todoOrderCmp);
+  const open=list.filter(t=>todoState(t)!=='done'), done=list.filter(t=>todoState(t)==='done').sort((a,b)=>String(b.completedAt||'').localeCompare(String(a.completedAt||''))).slice(0,8);
   const myN=mMyTodos().filter(t=>todoState(t)!=='done').length, teamN=mTeamTodos().filter(t=>todoState(t)!=='done').length;
   const tk=todayISO();
   const card=t=>{const st=todoState(t);const overdue=t.due&&t.due<tk&&st!=='done';const ass=teamMembers.find(m=>m.id===t.assignee);
-    return `<div class="m-todo ${st}"><button class="ck" onclick="mCycleTodo(${mArg(t.id)},event)" aria-label="Changer l'état"></button><div class="ti tap" onclick="editTodo(${mArg(t.id)})">${mEsc(t.title)}${t.notes?`<div class="due">${mEsc(String(t.notes).slice(0,90))}${String(t.notes).length>90?'…':''}</div>`:''}${t.due||ass?`<div class="due ${overdue?'red':''}">${t.due?(overdue?'⚠️ ':'📅 ')+mEsc(mDateFr(t.due)):''}${ass?(t.due?' · ':'')+'👤 '+mEsc((ass.name||'').split(' ')[0]):''}</div>`:''}</div></div>`;};
+    return `<div class="m-todo ${st}" data-tid="${mAttr(t.id)}"><button class="ck" onclick="mCycleTodo(${mArg(t.id)},event)" aria-label="Changer l'état"></button><div class="ti tap" onclick="editTodo(${mArg(t.id)})">${mEsc(t.title)}${t.notes?`<div class="due">${mEsc(String(t.notes).slice(0,90))}${String(t.notes).length>90?'…':''}</div>`:''}${t.due||ass?`<div class="due ${overdue?'red':''}">${t.due?(overdue?'⚠️ ':'📅 ')+mEsc(mDateFr(t.due)):''}${ass?(t.due?' · ':'')+'👤 '+mEsc((ass.name||'').split(' ')[0]):''}</div>`:''}</div></div>`;};
   return `<div class="m-toggle"><button class="${mTodoBucket!=='team'?'active':''}" onclick="mSetTodoBucket('mine')">🙋 Mes tâches (${myN})</button><button class="${mTodoBucket==='team'?'active':''}" onclick="mSetTodoBucket('team')">👥 Équipe (${teamN})</button></div>
-    <div class="m-list">${open.length?open.map(card).join(''):'<div class="m-empty">Aucune tâche en cours 🎉</div>'}</div>
+    <div class="m-list${open.length>1?' todo-sortable':''}">${open.length?open.map(card).join(''):'<div class="m-empty">Aucune tâche en cours 🎉</div>'}</div>
     ${done.length?`<div class="m-card-title m-sep">Terminées récemment</div><div class="m-list">${done.map(card).join('')}</div>`:''}
-    <div class="m-hint">Rond = changer l'état (à faire → en cours → fait) · texte = ouvrir la tâche</div>`;
+    <div class="m-hint">Rond = changer l'état (à faire → en cours → fait) · texte = ouvrir la tâche · appui long = déplacer</div>`;
 }
 
 // ── AGENDA ──
