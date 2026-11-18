@@ -642,6 +642,12 @@ tr.drag-over{border-top:2px solid var(--teal-light)!important;background:rgba(17
 @keyframes fabPulse{0%,100%{transform:scale(1)}30%{transform:scale(1.22)}60%{transform:scale(.96)}}
 .chat-fab-badge{position:absolute;top:-2px;right:-2px;background:var(--coral);color:white;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--dark)}
 .chat-fab-badge.show{display:flex}
+/* Bouton « Nouveau lead » flottant, à gauche de la bulle (demande de Nicolas, 18/11/2026) */
+#leadFab{position:fixed;bottom:28px;right:94px;z-index:150;display:none;font-size:15px;min-height:46px!important;transition:transform .1s ease-out}
+body.tab-is-leads #chatFab.visible + #leadFab{display:flex}
+#leadFab:active{transform:scale(.97)}
+#leadFab:focus-visible{outline:3px solid var(--teal-light);outline-offset:2px}
+@media(max-width:760px){#leadFab{display:none!important}}
 .chat-widget{position:fixed;bottom:22px;right:22px;width:344px;height:520px;max-height:calc(100vh - 44px);background:var(--dark2);border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.55);z-index:401;display:none;flex-direction:column;overflow:hidden}
 .chat-widget.open{display:flex;animation:cwIn .22s ease}
 @keyframes cwIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -3474,6 +3480,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- MESSAGERIE FLOTTANTE (style Messenger) -->
 <button id="chatFab" class="chat-fab" onclick="toggleChatWidget()" title="Messagerie">💬<span id="chatFabBadge" class="chat-fab-badge"></span></button>
+<button id="leadFab" class="btn-primary" onclick="openLeadEdit(null)" aria-label="Créer un nouveau lead">＋ Nouveau lead</button>
 <div id="chatWidget" class="chat-widget">
   <!-- VUE LISTE -->
   <div class="cw-view" id="cwListView">
@@ -4351,6 +4358,7 @@ function showTab(name,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const tabEl=document.getElementById('tab-'+name);
   if(tabEl) tabEl.classList.add('active');
+  document.body.classList.toggle('tab-is-leads', name==='leads');
   const ent=entryForPage(name);
   if(ent){const b=document.querySelector(`.nav-btn[data-entry="${ent.id}"]`);if(b)b.classList.add('active');}
   renderPageTabs(name);
